@@ -1,5 +1,7 @@
 # Chalk & Dynasty
 
+**Play the live game: https://chalk-and-dynasty.tyhoag.workers.dev**
+
 Draft across NBA eras, draw a basketball possession, and beat five defenses.
 A complete client-side game built with React, Vite and an SVG court. No sports API,
 account, database, external font, paid binding, or runtime secret is required to play.
@@ -72,10 +74,10 @@ The repository uses the official `cf` CLI and Cloudflare Vite plugin. Configurat
 Worker with no provisioned database, paid service, or custom domain.
 
 ```sh
-npx cf auth whoami
+NODE_USE_ENV_PROXY=1 npx cf auth whoami
 # If not authenticated, use the official OAuth account connection:
 npx cf auth login --no-browser
-npm run deploy
+NODE_USE_ENV_PROXY=1 CLOUDFLARE_ACCOUNT_ID=516850fdbfa65daee3e49f0ed2504d3d npm run deploy
 ```
 
 Account connection requires the account owner. Do not put credentials in source, chat,
@@ -83,6 +85,9 @@ command arguments, or a committed `.env`. A deployment URL is only established b
 actual successful deploy and public browser verification. A dry run is not a deployment.
 For a remote environment that cannot retain OAuth credentials, configure a scoped
 Cloudflare API-token requirement through secure environment settings, not chat.
+
+In the managed cloud environment, Node needs `NODE_USE_ENV_PROXY=1` to use the supplied
+HTTPS proxy. The Account ID above is a public deployment identifier, not a credential.
 
 The current tool version does not expose `cf init`; the checked-in typed configuration
 uses the installed plugin's supported assets-only API. `npm run deploy:check` validates

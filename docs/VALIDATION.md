@@ -1,5 +1,7 @@
 # Verification evidence
 
+**Verified live game: https://chalk-and-dynasty.tyhoag.workers.dev**
+
 ## Current-instance checks
 
 - `npm ci --cache /workspace/.npm-cache`: frozen-lockfile dependency refresh passes.
@@ -46,10 +48,29 @@ shipped code has no cheat mode or deterministic victory. The unmodified-random t
 separately verifies the normal game path. Mobile tests dispatch actual Chromium touch
 input; they are emulation, not a claim of testing physical iOS/Android hardware.
 
-## Limits
+## Public deployment verification
 
-- No live Cloudflare URL was verified: the real deploy is blocked by absent account
-  authentication and the runtime domain policy. See DEPLOYMENT.md.
+The assets-only Cloudflare Worker deployed successfully. All **12 browser tests passed
+against https://chalk-and-dynasty.tyhoag.workers.dev**, using real Chromium in desktop
+and mobile/touch projects. This includes complete drafting, possession outcomes, all
+five levels, final victory, retries, reset, persistence, keyboard controls, responsive
+layout and a normal unmodified-randomness possession with no off-origin dependencies.
+The Cloudflare version is `c1d61b97-960d-40df-8e74-8badbf85cf9d`.
+
+Public HTML returns HTTP 200 with the expected title and five draft choices. Every
+published static file was compared by SHA-256 to the validated local build. No sports
+API, account, installation or credential is needed for classmates to play.
+
+An initial public browser run could not navigate because the workspace sandbox blocked
+initialization of Chromium's NSS certificate store. This was diagnosed as a local
+browser-runtime trust/access problem. The existing proxy CA was trusted using approved
+certificate-store access, and the complete suite then passed with certificate
+verification enabled. No assertions or HTTPS checks were disabled.
+
+The browser dependency check now accepts the configured test origin, allowing the exact
+same test to run against a local server or the public Cloudflare origin.
+
+## Limits
 - No fresh-task snapshot restoration or environment publication is claimed; the user
   publishes environment changes through the onboarding product.
 - Browser tests use Chromium. Safari/Firefox and physical devices were not tested.

@@ -282,9 +282,9 @@ test("keyboard editing, modal Escape, corrupt saved-state recovery", async ({
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });
 
-test('unmodified random gameplay completes a possession without runtime network dependencies', async ({page}) => {
+test('unmodified random gameplay completes a possession without runtime network dependencies', async ({page,baseURL}) => {
   const requests=[];
-  page.on('request',request=>{if(!request.url().startsWith('http://localhost:')&&!request.url().startsWith('http://127.0.0.1:'))requests.push(request.url());});
+  page.on('request',request=>{if(new URL(request.url()).origin!==new URL(baseURL).origin)requests.push(request.url());});
   await page.goto('/');await draftFive(page);
   await page.getByRole('button',{name:'Run the play',exact:false}).click();
   await expect.poll(async()=>(await state(page)).totalAttempts).toBe(1);

@@ -10,7 +10,7 @@ movement routes and passing sequences, and try to score against five increasingl
 challenging defenses. The project combines my interest in basketball with an exploration
 of what it takes to turn a natural-language idea into a tested, playable game.
 
-Public game link: **[Insert the verified Cloudflare URL after deployment.]**
+Public game link: https://chalk-and-dynasty.tyhoag.workers.dev
 
 ## Reflection prompts
 
