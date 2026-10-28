@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.wrangler/
+.cf/
+.env*
+.dev.vars*
+test-results/
+.agents/
+.codex/
+skills-lock.json
+.cloudflare/

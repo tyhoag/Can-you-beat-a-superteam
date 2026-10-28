@@ -1,0 +1,12 @@
+{
+  "records": 2443,
+  "uniquePlayers": 1231,
+  "teamDecadePools": 204,
+  "teams": 55,
+  "earliestSeason": 1960,
+  "latestSeason": 2024,
+  "sourceSha256": "2deb3c12f6cf2c0f4102e35251cdec6baec52406df82a7d2503ca505c650f393",
+  "teamsSourceSha256": "50923959189fea83f703eda4a28aa4af01797945a6a903bc47ba181b84900e92",
+  "unavailableSteals": 364,
+  "unavailableBlocks": 364
+}
