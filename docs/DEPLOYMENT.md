@@ -7,10 +7,10 @@ The complete game is published as an **assets-only Cloudflare Worker** named
 No database, paid resource, custom domain, account provisioning, or billing change
 was created.
 
-- Application source commit: `40ecec8f1464b742451cb366e5dfcc3faa550c39`.
-- Cloudflare version: `c3f296f1-21a8-4963-95c7-89a5f51dde15`.
+- Application source commit: `1a93abe055339f1e98bfce17e98696880886adb1`.
+- Cloudflare version: `2802f380-7b28-4ea4-a727-ed8839553d87`.
 - Account ID: `516850fdbfa65daee3e49f0ed2504d3d` (public identifier).
-- The position-complete draft update uploaded three changed assets and reused three unchanged assets;
+- The simplified play editor update uploaded three changed assets and reused three unchanged assets;
   the Worker and `workers.dev` trigger deployed successfully.
 - Public HTTPS returns 200 and the expected game title and five draft candidates.
 - Browser tests target the actual public URL; see [validation](VALIDATION.md).

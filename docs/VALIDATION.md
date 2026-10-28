@@ -2,7 +2,39 @@
 
 **Verified live game: https://chalk-and-dynasty.tyhoag.workers.dev**
 
-## Position-complete draft update
+## Simpler play editor
+
+- `npm test`: **30 passed**, none failed or skipped.
+- `PLAYWRIGHT_BASE_URL=http://localhost:4173 npm run test:browser`: **22 passed**
+  against the local production preview, covering every existing desktop/mobile interaction.
+- The live Cloudflare run with `--grep 'simple play|advanced controls preserve|full draft|screen, cut'`:
+  **8 passed**, none failed, flaky or skipped, across desktop and mobile.
+- Production build and actual `cf deploy --prebuilt --mode production --dry-run` pass.
+- Deployed application commit: `1a93abe055339f1e98bfce17e98696880886adb1`.
+- Cloudflare version: `2802f380-7b28-4ea4-a727-ed8839553d87`.
+- GitHub main was checked against the application commit after the push.
+
+The default panel now offers a shooter, starter example and Run. Screens, manual passing,
+route beats and estimated probabilities are together in a closed Advanced controls panel.
+New browser assertions verify a normal possession without opening it, keyboard expansion,
+closing without changing a custom play, reload preservation with a visible active notice,
+and a reversible return to automatic delivery that keeps routes, positions, shooter,
+roster and progress. An invalid hidden pass order has visible feedback and a working
+shortcut back to its controls. All earlier reset, progression, position-lock and mobile
+checks also pass locally.
+
+Screenshots from the live browser run: [desktop](screenshots/desktop-simple-play.png)
+and [mobile](screenshots/mobile-simple-play.png).
+
+An initial local browser run found the previous preview server was no longer running
+(`ERR_CONNECTION_REFUSED`); restarting the production preview resolved it. The complete
+22-test run above then passed. A separate Python HTTP asset-hash check was rejected by
+Cloudflare with code 1010 (HTTP 403); no alternate client signature was used to evade
+that restriction. The normal Chromium live-game tests above passed with TLS verification
+and exercised the newly deployed controls. A full asset-hash comparison is not claimed
+for this release.
+
+## Previous position-complete draft update
 
 - `npm test`: **30 passed**, none failed or skipped. Includes all previous drafting,
   data, geometry, defense, probability, progression and save-state checks, plus separate
@@ -30,7 +62,7 @@ the restricted sandbox's child-process IPC otherwise reported only the test file
 rather than individual tests. The verified run reports all 30 tests with zero skipped;
 no assertions were disabled.
 
-## Browser interactions verified
+## Previous browser interactions verified
 
 All 18 interaction checks passed against the production preview. Four focused checks
 then passed on the deployed site, including both desktop and mobile full-draft/play
