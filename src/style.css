@@ -2487,8 +2487,209 @@ footer button {
   }
 }
 /* The visible token stays compact; its transparent hit area is larger for touch. */
-.player-court-name { font-size: 13px; }
+.player-court-name {
+  font-size: 13px;
+}
 @media (max-width: 760px) {
-  .roster-strip b { font-size: 10px; }
-  .roster-strip small { font-size: 7px; }
+  .roster-strip b {
+    font-size: 10px;
+  }
+  .roster-strip small {
+    font-size: 7px;
+  }
+}
+/* Explicit resets and a small three-beat play sequencer. */
+.court-toolbar {
+  flex-wrap: wrap;
+}
+.tool-actions {
+  margin-left: auto;
+}
+.tool-resets {
+  display: flex;
+  gap: 8px;
+  flex-basis: 100%;
+  border-top: 1px solid #dce2d2;
+  padding-top: 8px;
+}
+.tool-resets button {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 8px 11px;
+  border: 1px solid #cad4bd;
+  border-radius: 4px;
+  font-size: 11px;
+  background: #eef1e6;
+}
+.tool-resets button:last-child {
+  margin-left: auto;
+  background: #eee4d5;
+  border-color: #d8c7ad;
+}
+.beat-strip {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 10px 18px;
+  color: #748369;
+  font-size: 10px;
+  background: #edf0e5;
+}
+.beat-strip > span {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.beat-strip b {
+  width: 19px;
+  height: 19px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #bdcbb1;
+  border-radius: 50%;
+  font-size: 9px;
+}
+.beat-strip .current {
+  color: #21462c;
+  font-weight: bold;
+}
+.beat-strip .current b {
+  background: #e5b47c;
+  border-color: #ca9d66;
+}
+.beat-strip small {
+  margin-left: auto;
+  font-size: 8px;
+}
+.sequence-editor {
+  border-top: 1px solid #dce2d3;
+  padding: 18px;
+  background: #f0f2e8;
+}
+.sequence-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.sequence-title .eyebrow {
+  font-size: 8px;
+}
+.sequence-title h3 {
+  font: 22px var(--serif);
+  margin: 6px 0 0;
+  letter-spacing: -0.5px;
+}
+.sequence-editor select {
+  width: 100%;
+  background: #fafaf2;
+  color: #345139;
+  border: 1px solid #ccd6c1;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 12px;
+  min-height: 40px;
+}
+.sequence-editor .field-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+.screen-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 14px;
+}
+.sequence-editor p {
+  font-size: 11px;
+  color: #65765a;
+  line-height: 1.7;
+}
+.sequence-example {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: #e1e8d6;
+  border: 1px solid #c5d2b7;
+  padding: 9px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+.screen-marker text {
+  font: 8px Arial;
+  letter-spacing: 0.6px;
+  fill: #f1d48c;
+  paint-order: stroke;
+  stroke: #1d3931;
+  stroke-width: 3px;
+}
+.pass-timings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+}
+.pass-timings label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: #607256;
+}
+.pass-timings label > span {
+  white-space: nowrap;
+}
+.pass-timings select {
+  margin: 0;
+  min-width: 0;
+  font-size: 10px;
+  padding: 7px;
+  min-height: 34px;
+  flex: 1;
+}
+@media (max-width: 760px) {
+  .beat-strip {
+    gap: 9px;
+    padding: 10px 12px;
+    font-size: 9px;
+  }
+  .beat-strip small {
+    font-size: 7px;
+  }
+  .sequence-title h3 {
+    font-size: 20px;
+  }
+  .sequence-editor {
+    padding: 15px;
+  }
+  .tool-resets button {
+    font-size: 10px;
+  }
+  .sequence-editor select {
+    font-size: 14px;
+  }
+  .screen-fields {
+    gap: 9px;
+  }
+}
+@media (max-width: 420px) {
+  .beat-strip {
+    gap: 6px;
+  }
+  .beat-strip b {
+    width: 17px;
+    height: 17px;
+  }
+  .beat-strip small {
+    font-size: 6px;
+  }
+  .sequence-title .inline-link {
+    font-size: 8px;
+  }
+  .pass-timings select {
+    font-size: 11px;
+  }
 }

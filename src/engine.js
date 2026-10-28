@@ -170,6 +170,125 @@ export const DEFAULT_POSITIONS = [
   { x: 145, y: 145 },
   { x: 355, y: 145 },
 ];
+export const BEATS = ["Setup", "Cut", "Finish"];
+export const ROUTE_WINDOWS = [
+  [0, 0.24],
+  [0.34, 0.58],
+  [0.68, 0.88],
+];
+const PASS_WINDOWS = [
+  [0.25, 0.33],
+  [0.59, 0.67],
+  [0.89, 0.99],
+];
+export const beatAt = (t) => (t < 0.34 ? 0 : t < 0.68 ? 1 : 2);
+export function defaultPassBeats(passes) {
+  const count = Math.max(0, passes.length - 1);
+  return Array.from({ length: count }, (_, i) =>
+    count === 1 ? 2 : Math.floor(((i + 1) * 3) / (count + 1)),
+  );
+}
+export function normalizePlay(play) {
+  return {
+    ...play,
+    routeBeats: play.routeBeats ?? [0, 0, 0, 0, 0],
+    screen: play.screen ?? null,
+    passBeats: play.passBeats ?? defaultPassBeats(play.passes ?? []),
+  };
+}
+export function clearAllRoutes(play) {
+  return { ...play, routes: Array.from({ length: 5 }, () => []) };
+}
+export function resetPlay(play) {
+  const passes =
+    play.starter === play.shooter
+      ? [play.starter]
+      : [play.starter, play.shooter];
+  return {
+    ...clearAllRoutes(play),
+    positions: structuredClone(DEFAULT_POSITIONS),
+    routeBeats: [0, 0, 0, 0, 0],
+    screen: null,
+    passes,
+    passBeats: defaultPassBeats(passes),
+  };
+}
+export function addPass(play, receiver) {
+  if (play.passes.length >= 8) return play;
+  const beats = play.passBeats ?? defaultPassBeats(play.passes);
+  return {
+    ...play,
+    passes: [...play.passes, receiver],
+    passBeats: [...beats, beats.at(-1) ?? 2],
+  };
+}
+export function screenExample(play) {
+  return {
+    ...resetPlay(play),
+    positions: [
+      { x: 250, y: 365 },
+      { x: 80, y: 285 },
+      { x: 420, y: 285 },
+      { x: 130, y: 245 },
+      { x: 355, y: 145 },
+    ],
+    routes: [
+      [],
+      [
+        { x: 165, y: 245 },
+        { x: 215, y: 180 },
+        { x: 290, y: 115 },
+      ],
+      [],
+      [{ x: 250, y: 95 }],
+      [],
+    ],
+    routeBeats: [0, 1, 0, 2, 0],
+    screen: { screener: 3, cutter: 1 },
+    starter: 0,
+    shooter: 1,
+    passes: [0, 1],
+    passBeats: [1],
+  };
+}
+export function playerPoint(play, index, t) {
+  const beat =
+    play.screen?.screener === index ? 2 : (play.routeBeats?.[index] ?? 0);
+  const [start, end] = ROUTE_WINDOWS[beat];
+  return routePoint(
+    play.positions[index],
+    play.routes[index],
+    (t - start) / (end - start),
+  );
+}
+export function schedulePasses(play) {
+  const passes =
+    play.mode === "passes"
+      ? play.passes
+      : play.starter === play.shooter
+        ? [play.starter]
+        : [play.starter, play.shooter];
+  const beats =
+    play.mode === "passes"
+      ? (play.passBeats ?? defaultPassBeats(passes))
+      : defaultPassBeats(passes);
+  const seen = [0, 0, 0],
+    counts = [0, 0, 0];
+  beats.forEach((b) => counts[b]++);
+  return passes.slice(1).map((to, i) => {
+    const beat = beats[i],
+      j = seen[beat]++,
+      [start, end] = PASS_WINDOWS[beat],
+      slot = (end - start) / counts[beat];
+    return {
+      from: passes[i],
+      to,
+      beat,
+      t: start + (j + 0.1) * slot,
+      arrive: start + (j + 0.9) * slot,
+    };
+  });
+}
 export function defaultPlay() {
   return {
     positions: structuredClone(DEFAULT_POSITIONS),
@@ -187,9 +306,14 @@ export function defaultPlay() {
     starter: 0,
     passes: [0, 1, 2],
     mode: "routes",
+    routeBeats: [0, 0, 0, 0, 0],
+    screen: null,
+    passBeats: [1, 2],
   };
 }
 export function routePoint(start, route, t) {
+  if (t <= 0 || route.length === 0) return { ...start };
+  if (t >= 1) return { ...route.at(-1) };
   const pts = [start, ...route];
   if (pts.length === 1) return { ...start };
   const lengths = pts.slice(1).map((p, i) => distance(p, pts[i]));
@@ -241,6 +365,29 @@ export function validatePlay(play) {
     if (pts.slice(1).reduce((sum, p, j) => sum + distance(pts[j], p), 0) > 850)
       return "That route is too long. Clear it and draw a shorter route.";
   }
+  if (
+    play.routeBeats !== undefined &&
+    (!Array.isArray(play.routeBeats) ||
+      play.routeBeats.length !== 5 ||
+      play.routeBeats.some((b) => !Number.isInteger(b) || b < 0 || b > 2))
+  )
+    return "Choose Setup, Cut, or Finish for each route.";
+  if (play.screen !== undefined && play.screen !== null) {
+    const { screener, cutter } = play.screen;
+    if (
+      ![screener, cutter].every(
+        (i) => Number.isInteger(i) && i >= 0 && i < 5,
+      ) ||
+      screener === cutter
+    )
+      return "Choose two different players for the screen.";
+  }
+  if (
+    play.passBeats !== undefined &&
+    (!Array.isArray(play.passBeats) ||
+      play.passBeats.some((b) => !Number.isInteger(b) || b < 0 || b > 2))
+  )
+    return "Choose a valid beat for each pass.";
   if (play.mode === "passes") {
     if (!Array.isArray(play.passes) || play.passes.length < 1)
       return "Add the starting ball handler to the pass sequence.";
@@ -254,6 +401,11 @@ export function validatePlay(play) {
       return "A player cannot pass to themselves. Remove the repeated step.";
     if (play.passes.length > 8)
       return "Use at most seven passes. Undo a pass to shorten the sequence.";
+    const beats = play.passBeats ?? defaultPassBeats(play.passes);
+    if (beats.length !== play.passes.length - 1)
+      return "Choose a timing for each pass.";
+    if (beats.some((b, i) => i > 0 && b < beats[i - 1]))
+      return "Pass timings must follow the sequence: Setup, then Cut, then Finish. Move the later pass to the same or a later beat.";
   }
   return null;
 }
@@ -282,13 +434,7 @@ export function simulate(
       : play.starter === play.shooter
         ? [play.starter]
         : [play.starter, play.shooter];
-  const passEvents = passes
-    .slice(1)
-    .map((to, i) => ({
-      from: passes[i],
-      to,
-      t: 0.2 + ((i + 1) * 0.58) / (passes.length - 1),
-    }));
+  const passEvents = schedulePasses(play);
   let defenders = play.positions.map((p) => ({
     x: p.x + (250 - p.x) * 0.12,
     y: clamp(p.y - level.gap, 25, 445),
@@ -296,12 +442,13 @@ export function simulate(
   const frames = [];
   let turnover = null;
   let passRisk = 0;
+  const screenedDefenders = new Set();
   for (let step = 0; step <= 48; step++) {
     const t = step / 48;
-    const offense = play.positions.map((p, i) =>
-      routePoint(p, play.routes[i], t),
-    );
+    const offense = play.positions.map((p, i) => playerPoint(play, i, t));
     const taken = new Set();
+    const screenActive = Boolean(play.screen) && t <= 0.62;
+    const blocked = [];
     defenders = defenders.map((d, i) => {
       let target = i;
       if (level.style === "switch" || level.style === "elite") {
@@ -322,19 +469,40 @@ export function simulate(
       const dist = distance(d, goal);
       const defRating =
         levelIndex === 4 && opponents[i] ? ratings(opponents[i]).defense : 70;
-      const speed = level.speed * (0.85 + defRating / 450);
+      let speed = level.speed * (0.85 + defRating / 450);
+      const [cutStart, cutEnd] = ROUTE_WINDOWS[play.routeBeats?.[target] ?? 0];
+      if (
+        screenActive &&
+        target === play.screen.cutter &&
+        play.routes[target].length &&
+        t >= cutStart &&
+        t <= cutEnd
+      ) {
+        const screen = offense[play.screen.screener];
+        if (distance(d, screen) < 65 && segmentDistance(screen, d, goal) < 30) {
+          speed *= levelIndex >= 2 ? 0.42 : 0.24;
+          blocked.push(i);
+          screenedDefenders.add(i);
+        }
+      }
       const f = dist === 0 ? 0 : Math.min(1, speed / dist);
       return {
         x: clamp(d.x + (goal.x - d.x) * f, 22, 478),
         y: clamp(d.y + (goal.y - d.y) * f, 25, 445),
       };
     });
-    frames.push({ t, offense, defenders: structuredClone(defenders) });
+    frames.push({
+      t,
+      offense,
+      defenders: structuredClone(defenders),
+      screenActive,
+      blocked,
+    });
   }
   for (const event of passEvents) {
     const frame = frames[Math.round(event.t * 48)];
     const a = frame.offense[event.from],
-      b = frame.offense[event.to];
+      b = frames[Math.round(event.arrive * 48)].offense[event.to];
     const lane = Math.min(
       ...frame.defenders.map((p) => segmentDistance(p, a, b)),
     );
@@ -350,8 +518,8 @@ export function simulate(
     event.risk = risk;
     passRisk = 1 - (1 - passRisk) * (1 - risk);
     if (!turnover && random() < risk) {
-      const lanes=frame.defenders.map(d=>segmentDistance(d,a,b));
-      turnover={...event,by:lanes.indexOf(Math.min(...lanes))};
+      const lanes = frame.defenders.map((d) => segmentDistance(d, a, b));
+      turnover = { ...event, by: lanes.indexOf(Math.min(...lanes)) };
     }
   }
   const final = frames.at(-1);
@@ -374,16 +542,35 @@ export function simulate(
   const spaceBonus = (spacing - 75) / 700;
   const movement =
     distance(play.positions[play.shooter], spot) > 70 ? 0.035 : 0;
+  const screenBonus =
+    play.screen?.cutter === play.shooter && screenedDefenders.size > 0
+      ? 0.04
+      : 0;
   const chance = clamp(
-    base - pressure * 0.24 + spaceBonus + movement - levelIndex * 0.012,
+    base -
+      pressure * 0.24 +
+      spaceBonus +
+      movement +
+      screenBonus -
+      levelIndex * 0.012,
     0.12,
     0.88,
   );
   const made = !turnover && random() < chance;
-  const explanation = turnover
+  let explanation = turnover
     ? "The defense jumped a passing lane. Try a shorter pass or a better passing angle."
     : `${separation > 40 ? "A clean look" : separation > 23 ? "A pressured look" : "A closely contested look"} ${three ? "from outside" : "inside the arc"}. ${spacing > 100 ? "Good team spacing opened the floor." : "Teammates crowded the shooting lane."} ${movement ? "The shooter’s cut helped create the chance." : ""}`;
+  if (play.screen)
+    explanation +=
+      screenedDefenders.size > 0
+        ? " The screen slowed a chasing defender." +
+          (screenBonus > 0
+            ? " The cutter's shot gets a small game-model boost."
+            : "")
+        : " The screen missed the chasing defender. Place the screener nearer the cutter's defensive path.";
   return {
+    screenedDefenders: [...screenedDefenders],
+    screenBonus,
     made,
     turnover,
     shooter: play.shooter,
@@ -442,6 +629,7 @@ export function freshGame(players = []) {
 export function restoreGame(raw, players) {
   try {
     const s = JSON.parse(raw);
+    if (s?.play) s.play = normalizePlay(s.play);
     if (
       s.version !== 2 ||
       !["draft", "game"].includes(s.stage) ||

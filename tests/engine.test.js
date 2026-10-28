@@ -17,6 +17,12 @@ import {
   advance,
   restoreGame,
   routePoint,
+  clearAllRoutes,
+  resetPlay,
+  screenExample,
+  playerPoint,
+  addPass,
+  schedulePasses,
 } from "../src/engine.js";
 const roster = superteam(players);
 const seed = (s) => () => {
@@ -108,8 +114,14 @@ test("invalid passes explain start, finish, self-pass, invalid player, length", 
     validatePlay({ ...p, passes: [0, 1, 0, 1, 0, 1, 0, 1, 2] }),
     /seven passes/,
   );
-  assert.equal(validatePlay({ ...p, starter: 2, passes: [2] }), null);
-  assert.equal(validatePlay({ ...p, passes: [0, 1, 0, 2] }), null);
+  assert.equal(
+    validatePlay({ ...p, starter: 2, passes: [2], passBeats: [] }),
+    null,
+  );
+  assert.equal(
+    validatePlay({ ...p, passes: [0, 1, 0, 2], passBeats: [0, 1, 2] }),
+    null,
+  );
 });
 test("invalid coordinates, overlong routes and missing players cannot run", () => {
   const p = defaultPlay();
@@ -273,25 +285,168 @@ test("saved game roundtrips; malformed state safely starts fresh", () => {
     assert.equal(restoreGame(s, players), null);
 });
 
-test('shooter ability and shot location change the displayed model probability', () => {
+test("shooter ability and shot location change the displayed model probability", () => {
   const base = defaultPlay();
-  base.routes = Array.from({length:5},()=>[]);
-  base.shooter=0; base.starter=0;
-  base.positions[0]={x:250,y:115};
-  const good=structuredClone(roster), weak=structuredClone(roster);
-  good[0]={...good[0],fg:.65,points:35,three:.45,threeAttempts:8};
-  weak[0]={...weak[0],fg:.35,points:6,three:.20,threeAttempts:3};
-  const a=simulate(good,base,1,()=>.99,roster), b=simulate(weak,base,1,()=>.99,roster);
-  assert.ok(a.chance>b.chance);
-  const far=structuredClone(base);far.positions[0]={x:250,y:400};
-  const c=simulate(good,far,1,()=>.99,roster);
-  assert.ok(a.chance>c.chance);assert.equal(a.three,false);assert.equal(c.three,true);
+  base.routes = Array.from({ length: 5 }, () => []);
+  base.shooter = 0;
+  base.starter = 0;
+  base.positions[0] = { x: 250, y: 115 };
+  const good = structuredClone(roster),
+    weak = structuredClone(roster);
+  good[0] = { ...good[0], fg: 0.65, points: 35, three: 0.45, threeAttempts: 8 };
+  weak[0] = { ...weak[0], fg: 0.35, points: 6, three: 0.2, threeAttempts: 3 };
+  const a = simulate(good, base, 1, () => 0.99, roster),
+    b = simulate(weak, base, 1, () => 0.99, roster);
+  assert.ok(a.chance > b.chance);
+  const far = structuredClone(base);
+  far.positions[0] = { x: 250, y: 400 };
+  const c = simulate(good, far, 1, () => 0.99, roster);
+  assert.ok(a.chance > c.chance);
+  assert.equal(a.three, false);
+  assert.equal(c.three, true);
 });
-test('moving a shooter away from a starting defender can create separation', () => {
-  const p=defaultPlay();p.shooter=0;p.starter=0;p.routes=Array.from({length:5},()=>[]);
-  p.positions[0]={x:95,y:350};
-  const still=simulate(roster,p,0,()=>.99,roster);
-  const cut=structuredClone(p);cut.routes[0]=[{x:250,y:110}];
-  const moving=simulate(roster,cut,0,()=>.99,roster);
-  assert.ok(moving.separation>still.separation);assert.ok(moving.chance>still.chance);
+test("moving a shooter away from a starting defender can create separation", () => {
+  const p = defaultPlay();
+  p.shooter = 0;
+  p.starter = 0;
+  p.routes = Array.from({ length: 5 }, () => []);
+  p.positions[0] = { x: 95, y: 350 };
+  const still = simulate(roster, p, 0, () => 0.99, roster);
+  const cut = structuredClone(p);
+  cut.routes[0] = [{ x: 250, y: 110 }];
+  const moving = simulate(roster, cut, 0, () => 0.99, roster);
+  assert.ok(moving.separation > still.separation);
+  assert.ok(moving.chance > still.chance);
+});
+
+test("clear all routes preserves custom positions, pass timing, screen and player choices", () => {
+  const p = screenExample({ ...defaultPlay(), mode: "passes" });
+  p.positions[0] = { x: 222, y: 333 };
+  const before = structuredClone(p),
+    after = clearAllRoutes(p);
+  assert.ok(after.routes.every((r) => r.length === 0));
+  assert.deepEqual(after.positions, before.positions);
+  assert.deepEqual(after.passes, before.passes);
+  assert.deepEqual(after.passBeats, before.passBeats);
+  assert.deepEqual(after.screen, before.screen);
+  assert.equal(after.shooter, before.shooter);
+  assert.deepEqual(p, before);
+});
+test("full reset restores original spots with no routes, screen or inherited sequence", () => {
+  const p = screenExample({ ...defaultPlay(), mode: "passes" });
+  p.positions[0] = { x: 222, y: 333 };
+  const after = resetPlay(p);
+  assert.deepEqual(after.positions, defaultPlay().positions);
+  assert.ok(after.routes.every((r) => r.length === 0));
+  assert.equal(after.screen, null);
+  assert.deepEqual(after.routeBeats, [0, 0, 0, 0, 0]);
+  assert.deepEqual(after.passes, [p.starter, p.shooter]);
+  assert.deepEqual(after.passBeats, [2]);
+  assert.equal(after.mode, "passes");
+  assert.equal(validatePlay(after), null);
+});
+test("route beats wait for Setup, Cut or Finish; screen setter holds then rolls", () => {
+  const p = screenExample(defaultPlay());
+  assert.deepEqual(playerPoint(p, 1, 0.25), p.positions[1]);
+  assert.notDeepEqual(playerPoint(p, 1, 0.45), p.positions[1]);
+  assert.deepEqual(playerPoint(p, 1, 0.6), p.routes[1].at(-1));
+  assert.deepEqual(playerPoint(p, 3, 0.65), p.positions[3]);
+  assert.notDeepEqual(playerPoint(p, 3, 0.75), p.positions[3]);
+  assert.deepEqual(playerPoint(p, 3, 1), p.routes[3].at(-1));
+});
+test("ordered passes leave after the chosen beats and cannot overlap", () => {
+  const p = {
+    ...defaultPlay(),
+    mode: "passes",
+    passes: [0, 1, 0, 2],
+    passBeats: [0, 1, 2],
+  };
+  let events = schedulePasses(p);
+  assert.ok(events[0].t > 0.24 && events[0].arrive < 0.34);
+  assert.ok(events[1].t > 0.58 && events[1].arrive < 0.68);
+  assert.ok(events[2].t > 0.88 && events[2].arrive < 1);
+  events = schedulePasses({ ...p, passBeats: [1, 1, 1] });
+  assert.ok(
+    events.every(
+      (e, i) => e.arrive > e.t && (!i || e.t > events[i - 1].arrive),
+    ),
+  );
+  assert.match(
+    validatePlay({ ...p, passBeats: [2, 1, 2] }),
+    /timings must follow/,
+  );
+  assert.match(validatePlay({ ...p, passBeats: [0] }), /timing for each/);
+  assert.match(
+    validatePlay({ ...p, routeBeats: [0, 0, 0, 0, 5] }),
+    /Choose Setup/,
+  );
+  assert.match(
+    validatePlay({ ...p, screen: { screener: 1, cutter: 1 } }),
+    /different players/,
+  );
+});
+test("moving a screen into a chasing defender path changes pursuit and shot outcome factors", () => {
+  const p = screenExample(defaultPlay()),
+    hit = simulate(roster, p, 1, () => 0.99, roster);
+  const far = structuredClone(p);
+  far.positions[3] = { x: 470, y: 430 };
+  const miss = simulate(roster, far, 1, () => 0.99, roster);
+  const without = simulate(
+    roster,
+    { ...p, screen: null },
+    1,
+    () => 0.99,
+    roster,
+  );
+  assert.ok(hit.screenedDefenders.length > 0);
+  assert.equal(miss.screenedDefenders.length, 0);
+  assert.equal(hit.screenBonus, 0.04);
+  assert.equal(miss.screenBonus, 0);
+  assert.notDeepEqual(hit.frames[24].defenders, without.frames[24].defenders);
+  assert.ok(hit.chance > without.chance);
+  assert.match(hit.explanation, /screen slowed/);
+  assert.match(miss.explanation, /screen missed/);
+});
+test("chosen pass timing changes arrival location and passing risk; Routes mode uses automatic delivery", () => {
+  const p = screenExample({ ...defaultPlay(), mode: "passes" });
+  const early = simulate(
+    roster,
+    { ...p, passBeats: [0] },
+    1,
+    () => 0.99,
+    roster,
+  );
+  const cut = simulate(roster, { ...p, passBeats: [1] }, 1, () => 0.99, roster);
+  assert.notEqual(early.passEvents[0].t, cut.passEvents[0].t);
+  assert.notEqual(early.passRisk, cut.passRisk);
+  assert.deepEqual(
+    early.frames[Math.round(early.passEvents[0].arrive * 48)].offense[1],
+    p.positions[1],
+  );
+  assert.deepEqual(
+    cut.frames[Math.round(cut.passEvents[0].arrive * 48)].offense[1],
+    p.routes[1].at(-1),
+  );
+  const auto = schedulePasses({ ...p, mode: "routes", passBeats: [0] });
+  assert.equal(auto[0].beat, 2);
+  assert.deepEqual(
+    addPass({ ...p, passes: [0], passBeats: [] }, 1).passBeats,
+    [2],
+  );
+});
+test("old saved teams and challenge progress migrate without a new draft", () => {
+  const g = {
+    ...freshGame(players),
+    stage: "game",
+    roster: roster.map((p) => p.key),
+    level: 3,
+    results: [true, false],
+    round: 2,
+    totalAttempts: 11,
+  };
+  const expected = structuredClone(g);
+  delete g.play.routeBeats;
+  delete g.play.passBeats;
+  delete g.play.screen;
+  assert.deepEqual(restoreGame(JSON.stringify(g), players), expected);
 });

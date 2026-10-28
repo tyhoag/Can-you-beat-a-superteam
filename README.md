@@ -27,7 +27,10 @@ npm run build            # complete Cloudflare static-assets production build
 npm run deploy:check      # Cloudflare CLI dry run; does not publish
 ```
 
-Start `npm run dev` before browser tests. The Playwright config uses `/usr/bin/chromium`;
+Start `npm run dev` before browser tests. In a managed cloud instance whose default
+home config is read-only, start it with
+`XDG_CONFIG_HOME=/workspace/.tools/chalk-cloudflare NODE_USE_ENV_PROXY=1 npm run dev`;
+this keeps Cloudflare's local development registry in writable workspace storage. The Playwright config uses `/usr/bin/chromium`;
 set `CHROMIUM_PATH` on machines with Chromium elsewhere. Browser reports, screenshots
 and traces go to ignored `test-results/`. Tests use controlled random rolls in selected
 cases to exercise makes, misses, turnovers and the final victory reliably; the shipped
@@ -39,13 +42,27 @@ game uses fresh `Math.random` rolls. See [verification notes](docs/VALIDATION.md
    from a position-balanced five of its best available players by this game's score.
 2. **Position** drags starting spots. **Draw route** taps waypoints or draws a path.
    Select each numbered player to edit their route. Undo reverses a gesture; the bin
-   clears the selected route; reset restores the default play.
+   clears the selected route. **Clear all routes** removes all five paths and keeps
+   your current positions, screen and pass plan. **Full reset** restores the original
+   positions with no paths or screen and resets passes to direct delivery. Both support
+   Undo and keep your roster and challenge progress. **Load example play** restores the
+   original starter example.
 3. **Routes** handles the ball automatically. **Routes + passes** lets you set a
    starting handler and ordered receivers. The last receiver must be your shooter.
+   Choose **After setup**, **After cut**, or **Before shot** for each pass; the sequence
+   must move forward through these beats. Passes sharing a beat still run in order.
 4. **Run the play** animates routes, defenders, passes and the shot. Outcomes explain
    space, pressure and pass risk. A shot chance is conditional on successful delivery.
 5. Score three makes within five possessions. Three misses end an unwinnable round
    early. Retry without losing your roster. Beat all five levels to finish.
+
+Each selected player's route runs during **Setup → Cut → Finish**. Set one screen by
+choosing a setter and cutter, then place the setter in the chasing defender's path.
+The setter holds through the first two beats and rolls along their drawn route in Finish;
+the cutter defaults to Cut. **Try a screen & cut** loads a complete editable example.
+Screens affect pursuit and can add a small, labeled game-model shot bonus; a screen
+away from the defender's path gives no bonus. Existing saved teams/progress migrate
+without starting over.
 
 The court supports mouse, touch, keyboard selection and arrow-key position/route edits.
 Reduced-motion preferences shorten possession animation. Information dialogs trap focus

@@ -107,7 +107,7 @@ test("full draft, team-era variety, resume, court editing, undo, both modes and 
     .click();
   expect((await state(page)).play.routes[0]).toHaveLength(1);
   await page
-    .getByRole("button", { name: "Reset play to default", exact: true })
+    .getByRole("button", { name: "Load example play", exact: true })
     .click();
   await page
     .getByRole("button", { name: "Routes + passes", exact: true })
@@ -282,13 +282,132 @@ test("keyboard editing, modal Escape, corrupt saved-state recovery", async ({
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });
 
-test('unmodified random gameplay completes a possession without runtime network dependencies', async ({page,baseURL}) => {
-  const requests=[];
-  page.on('request',request=>{if(new URL(request.url()).origin!==new URL(baseURL).origin)requests.push(request.url());});
-  await page.goto('/');await draftFive(page);
-  await page.getByRole('button',{name:'Run the play',exact:false}).click();
-  await expect.poll(async()=>(await state(page)).totalAttempts).toBe(1);
-  const g=await state(page);expect(g.results).toHaveLength(1);expect(typeof g.results[0]).toBe('boolean');
-  await expect(page.locator('.result-panel')).toHaveClass(/has-result/);
+test("unmodified random gameplay completes a possession without runtime network dependencies", async ({
+  page,
+  baseURL,
+}) => {
+  const requests = [];
+  page.on("request", (request) => {
+    if (new URL(request.url()).origin !== new URL(baseURL).origin)
+      requests.push(request.url());
+  });
+  await page.goto("/");
+  await draftFive(page);
+  await page
+    .getByRole("button", { name: "Run the play", exact: false })
+    .click();
+  await expect.poll(async () => (await state(page)).totalAttempts).toBe(1);
+  const g = await state(page);
+  expect(g.results).toHaveLength(1);
+  expect(typeof g.results[0]).toBe("boolean");
+  await expect(page.locator(".result-panel")).toHaveClass(/has-result/);
   expect(requests).toEqual([]);
+});
+
+test("clear-all and full reset have separate semantics, support undo, and preserve the challenge", async ({
+  page,
+}, info) => {
+  await page.goto("/");
+  await draftFive(page);
+  await page
+    .getByRole("button", { name: "Routes + passes", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Position", exact: true }).click();
+  await dragPoint(page, [250, 365], [220, 340], info.project.name === "mobile");
+  const before = await state(page);
+  await page
+    .getByRole("button", { name: "Clear all routes", exact: true })
+    .click();
+  let g = await state(page);
+  expect(g.play.routes.every((r) => r.length === 0)).toBeTruthy();
+  expect(g.play.positions).toEqual(before.play.positions);
+  expect(g.play.passes).toEqual(before.play.passes);
+  await page
+    .getByRole("button", { name: "Undo last edit", exact: true })
+    .click();
+  expect((await state(page)).play).toEqual(before.play);
+  await page
+    .getByRole("button", { name: "Try a screen & cut", exact: false })
+    .click();
+  const screened = await state(page);
+  expect(screened.play.screen).toEqual({ screener: 3, cutter: 1 });
+  await page.getByRole("button", { name: "Full reset", exact: true }).click();
+  g = await state(page);
+  expect(g.play.routes.every((r) => r.length === 0)).toBeTruthy();
+  expect(g.play.positions[0]).toEqual({ x: 250, y: 365 });
+  expect(g.play.screen).toBeNull();
+  expect(g.play.passes).toEqual([0, 1]);
+  expect(g.play.passBeats).toEqual([2]);
+  expect(g.roster).toEqual(before.roster);
+  expect(g.level).toEqual(before.level);
+  expect(g.results).toEqual(before.results);
+  await page
+    .getByRole("button", { name: "Undo last edit", exact: true })
+    .click();
+  expect((await state(page)).play).toEqual(screened.play);
+  await page.reload();
+  expect((await state(page)).play).toEqual(screened.play);
+});
+test("screen, cut, pass timing and replay work in both modes with understandable validation", async ({
+  page,
+}, info) => {
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/");
+  await draftFive(page);
+  await page
+    .getByRole("button", { name: "Try a screen & cut", exact: false })
+    .click();
+  await expect(page.locator(".screen-marker")).toHaveCount(1);
+  await expect(page.getByLabel("Screen setter", { exact: true })).toHaveValue(
+    "3",
+  );
+  await expect(page.getByLabel("Screen for", { exact: true })).toHaveValue("1");
+  await expect(
+    page.getByLabel("Selected player’s route runs during", { exact: true }),
+  ).toHaveValue("1");
+  await page
+    .getByLabel("Selected player’s route runs during", { exact: true })
+    .selectOption("2");
+  expect((await state(page)).play.routeBeats[1]).toBe(2);
+  await page
+    .getByLabel("Selected player’s route runs during", { exact: true })
+    .selectOption("1");
+  await page
+    .getByRole("button", { name: "Routes + passes", exact: true })
+    .click();
+  await page.getByLabel("Timing for pass 1", { exact: true }).selectOption("0");
+  expect((await state(page)).play.passBeats).toEqual([0]);
+  await page.getByLabel("Timing for pass 1", { exact: true }).selectOption("1");
+  await runWithRandom(page, 0.99);
+  await expect(page.locator(".result-panel")).toContainText("screen slowed");
+  await page
+    .getByRole("button", { name: "Pass to ", exact: false })
+    .first()
+    .click();
+  await page.getByLabel("TAKES THE SHOT", { exact: true }).selectOption("0");
+  await page.getByLabel("Timing for pass 2", { exact: true }).selectOption("0");
+  await expect(page.getByRole("alert")).toContainText(
+    "Pass timings must follow",
+  );
+  await expect(
+    page.getByRole("button", { name: "Run the play", exact: false }),
+  ).toBeDisabled();
+  await page.getByLabel("Timing for pass 2", { exact: true }).selectOption("2");
+  await expect(
+    page.getByRole("button", { name: "Run the play", exact: false }),
+  ).toBeEnabled();
+  await page.getByRole("button", { name: "Routes", exact: true }).click();
+  await runWithRandom(page, 0.99);
+  expect((await state(page)).totalAttempts).toBe(2);
+  expect(errors).toEqual([]);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBeTruthy();
+  await page.screenshot({
+    path: `test-results/${info.project.name}-sequencing.png`,
+    fullPage: true,
+  });
 });

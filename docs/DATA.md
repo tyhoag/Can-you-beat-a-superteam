@@ -79,6 +79,19 @@ unused eligible player for PG, SG, SF, PF, C, in that fixed order; tie-breaks ar
 ID then record key alphabetically. Multiple seasons of one identity can never appear
 on that lineup. This is reproducible and balanced, not an objective real-world GOAT list.
 
+Routes and passes use three ordered beats: Setup, Cut, Finish. A single screen holds
+its setter at their chosen starting location through the first two beats; their route
+runs during Finish. A chasing defender passing within 30 court units of a screen,
+and within 65 units of the setter while following a moving cutter, slows down. Switching
+and elite defenses recover faster. If at least one defender contacts the screen and
+the cutter is the shooter, the game adds a **4 percentage point** bonus before applying
+the existing 12–88% shot-probability bounds. A misplaced screen gets no bonus. These
+are clearly labeled game mechanics, not official NBA screening statistics.
+
+Passing risk is sampled at the chosen departure beat using the actual release and
+arrival positions; pass animation uses the same schedule. Passes assigned to one beat
+are spaced in sequence with no overlapping flights.
+
 `engine.js` contains all pursuit, passing and shot math. Route tempo is simplified;
 this is not a physics engine or an NBA forecasting model. Probability bounds of
 12–88% keep the shot roll fallible and the final level beatable. Pass turnovers are
