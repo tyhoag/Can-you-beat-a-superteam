@@ -39,7 +39,9 @@ game uses fresh `Math.random` rolls. See [verification notes](docs/VALIDATION.md
 ## Play
 
 1. Each of five picks assigns a random historical team in a different decade. Choose
-   from a position-balanced five of its best available players by this game's score.
+   one PG, SG, SF, PF and C across the five picks. Filled positions stay visible but
+   are locked. Each player's displayed season position determines their slot.
+   Candidate strength uses this game's score; player identities cannot repeat.
 2. **Position** drags starting spots. **Draw route** taps waypoints or draws a path.
    Select each numbered player to edit their route. Undo reverses a gesture; the bin
    clears the selected route. **Clear all routes** removes all five paths and keeps

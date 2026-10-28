@@ -50,12 +50,20 @@ that team's actual partial-season line; the displayed games count makes that bas
    use the later season as a tie-break. Identity is Basketball-Reference's stable ID,
    so name changes and trades do not permit duplicates.
 3. Retain each position's best candidate, then fill by score to at most 12 unique
-   players. All 204 pools contain at least nine, ensuring five choices even if four
-   of those identities have already been drafted from other pools.
+   players. All 204 pools contain at least nine and include every roster position.
+   Retained replacements help preserve identity deduplication.
 4. Each draft shuffles the seven eras without replacement and uses five. For every
-   pick it uniformly assigns a real team pool in that era. Exclude already-drafted
-   identities; offer the strongest PG/SG/SF/PF/C available, then fill missing positions
-   from the next highest score. A lineup may be position-flexible after choosing picks.
+   pick it assigns a real team pool in that era. Show one candidate per position;
+   candidates whose position is already filled are disabled. Exclude already-drafted
+   identities from selectable candidates, even if their position changed in another
+   season. The displayed season position determines the roster slot: exactly one PG,
+   SG, SF, PF and C. If the planned team has no selectable player for the remaining
+   slots, assign another eligible team within that era, preserving completion.
+
+Existing completed games remain playable. Unfinished legacy drafts containing repeated
+positions keep their valid prefix before the first repeated position; the game explains
+that the remaining slots must be drafted under the new rule. This retains era/pick
+alignment instead of silently assigning players invented positions.
 
 This covers **1,231 identities / 2,443 season records / 204 pools / 55 historical
 abbreviations**. It is intentionally not a claim to include every player or every

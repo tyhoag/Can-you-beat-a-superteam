@@ -29,6 +29,8 @@ import {
 import players from "./players.json";
 import {
   LEVELS,
+  POSITIONS,
+  selectDraftPlayer,
   BEATS,
   beatAt,
   clearAllRoutes,
@@ -169,11 +171,7 @@ function App() {
     setOutcome(null);
   }
   function draft(p) {
-    if (roster.some((r) => r.id === p.id) || roster.length >= 5) return;
-    setGame((g) => {
-      const ids = [...g.roster, p.key];
-      return { ...g, roster: ids, stage: ids.length === 5 ? "game" : "draft" };
-    });
+    setGame((g) => selectDraftPlayer(g, p.key, players));
   }
   function reset() {
     setGame(freshGame(players));
@@ -364,9 +362,28 @@ function App() {
                 </div>
               </div>
               <p className="draft-hint">
-                A random team and decade. Five top available players, balanced
-                by position. Choose your fit.
+                One PG, one SG, one SF, one PF, one C. Draft an open position
+                from each assigned team and decade; filled positions are locked.
               </p>
+              {typeof game.draftPositionNotice === "string" && (
+                <p className="notice" role="status">
+                  {game.draftPositionNotice}
+                </p>
+              )}
+              <div
+                className="draft-position-status"
+                aria-label="Draft position availability"
+              >
+                {POSITIONS.map((position) => {
+                  const player = roster.find((p) => p.position === position);
+                  return (
+                    <span key={position} className={player ? "filled" : "open"}>
+                      <b>{position}</b>
+                      {player ? <>{ico(Check, 13)} Filled</> : "Open"}
+                    </span>
+                  );
+                })}
+              </div>
               <div className="player-cards">
                 {offers.map((p, i) => (
                   <PlayerCard
@@ -383,27 +400,28 @@ function App() {
                   <span>{roster.length}/5 drafted</span>
                 </div>
                 <div className="roster-slots">
-                  {Array.from({ length: 5 }, (_, i) => (
-                    <div
-                      className={`roster-slot ${roster[i] ? "occupied" : ""}`}
-                      key={i}
-                    >
-                      <span className="slot-number">0{i + 1}</span>
-                      {roster[i] ? (
-                        <>
-                          <span>
-                            <b>{roster[i].name}</b>
-                            <small>
-                              {roster[i].position} · {season(roster[i])}
-                            </small>
-                          </span>
-                          {ico(Check, 15)}
-                        </>
-                      ) : (
-                        <span className="empty-label">Your next legend</span>
-                      )}
-                    </div>
-                  ))}
+                  {POSITIONS.map((position) => {
+                    const player = roster.find((p) => p.position === position);
+                    return (
+                      <div
+                        className={`roster-slot ${player ? "occupied" : ""}`}
+                        key={position}
+                      >
+                        <span className="slot-number">{position}</span>
+                        {player ? (
+                          <>
+                            <span>
+                              <b>{player.name}</b>
+                              <small>{season(player)}</small>
+                            </span>
+                            {ico(Check, 15)}
+                          </>
+                        ) : (
+                          <span className="empty-label">Open position</span>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
               <p className="source-note">
@@ -1327,8 +1345,10 @@ function App() {
                         different decade. Choose from its five top available
                         players, balanced by position. Over 1,200 unique players
                         are available across 204 historical team–decade pools.
-                        Stats are single-season per-game numbers; positions are
-                        a guide, not a restriction.
+                        Fill exactly one PG, SG, SF, PF and C. A player’s
+                        displayed season position determines their roster slot;
+                        filled slots are locked. Stats are single-season
+                        per-game numbers.
                       </p>
                     </span>
                   </div>
@@ -1456,9 +1476,11 @@ function App() {
                   totals are excluded. Keep each player’s highest game-score
                   season for that team and decade, then retain up to 12 players,
                   including the top eligible PG, SG, SF, PF and C. For a draft
-                  pick, remove players you already chose, offer the best
-                  remaining player in each position, and fill any missing
-                  position by score. “Best” here means this game’s transparent
+                  pick, show one candidate for each position and lock positions
+                  you already filled. The displayed season position determines
+                  the slot, and each identity can be picked only once. If a team
+                  has no eligible player for your remaining positions, assign
+                  another real team from the same era so the draft can finish. “Best” here means this game’s transparent
                   rating, not an official NBA ranking. Relocations and
                   historical team names remain attached to the teams that
                   actually existed; franchises that did not yet exist are not
@@ -1597,7 +1619,10 @@ function App() {
 function PlayerCard({ p, index, onDraft }) {
   const r = ratings(p);
   return (
-    <article className="player-card" style={{ "--card-accent": colors[index] }}>
+    <article
+      className={`player-card ${p.draftBlockedReason ? "position-locked" : ""}`}
+      style={{ "--card-accent": colors[index] }}
+    >
       <div className="card-top">
         <span>{p.position}</span>
         <span>{season(p)} SEASON</span>
@@ -1647,9 +1672,15 @@ function PlayerCard({ p, index, onDraft }) {
       <button
         className="draft-button"
         onClick={onDraft}
-        aria-label={`Draft ${p.name}`}
+        disabled={Boolean(p.draftBlockedReason)}
+        aria-label={
+          p.draftBlockedReason
+            ? `${p.draftBlockedReason}: ${p.name}`
+            : `Draft ${p.name}`
+        }
       >
-        Draft player {ico(ArrowUpRight, 18)}
+        {p.draftBlockedReason ?? "Draft player"}{" "}
+        {ico(p.draftBlockedReason ? Check : ArrowUpRight, 18)}
       </button>
     </article>
   );

@@ -12,14 +12,23 @@ async function draftFive(page) {
     eras.push(g.eras[i]);
     teams.push(g.draftTeams[i]);
     const choices = page.getByRole("button", { name: /^Draft / });
-    await expect(choices).toHaveCount(5);
-    await choices.nth(i % 5).click();
+    await expect(choices).toHaveCount(5 - i);
+    await expect(
+      page.locator(".player-card .draft-button:disabled"),
+    ).toHaveCount(i);
+    await choices.nth(i % (5 - i)).click();
     const next = await state(page);
     ids.push(next.roster.at(-1));
   }
   expect(new Set(eras).size).toBe(5);
   expect(new Set(ids).size).toBe(5);
   expect(teams.every(Boolean)).toBeTruthy();
+  const drafted = await page.evaluate(async (key) => {
+    const g = JSON.parse(localStorage.getItem(key));
+    const data = await fetch("/players.json").then((r) => r.json());
+    return g.roster.map((id) => data.find((p) => p.key === id).position);
+  }, KEY);
+  expect([...drafted].sort()).toEqual(["C", "PF", "PG", "SF", "SG"]);
   await expect(
     page.getByRole("button", { name: "Run the play", exact: false }),
   ).toBeVisible();
@@ -410,4 +419,50 @@ test("screen, cut, pass timing and replay work in both modes with understandable
     path: `test-results/${info.project.name}-sequencing.png`,
     fullPage: true,
   });
+});
+
+test("draft locks a filled position, persists the lock, and finishes one PG SG SF PF C", async ({
+  page,
+}, info) => {
+  await page.goto("/");
+  const pg = page.locator(".player-card").filter({
+    has: page.locator(".card-top>span").filter({ hasText: /^PG$/ }),
+  });
+  await pg.getByRole("button", { name: /^Draft / }).click();
+  await expect(
+    page.getByRole("button", { name: /^PG filled:/ }),
+  ).toBeDisabled();
+  await expect(page.getByRole("button", { name: /^Draft / })).toHaveCount(4);
+  await expect(page.locator(".draft-position-status .filled")).toHaveCount(1);
+  const first = (await state(page)).roster[0];
+  await page.reload();
+  expect((await state(page)).roster).toEqual([first]);
+  await expect(
+    page.getByRole("button", { name: /^PG filled:/ }),
+  ).toBeDisabled();
+  await page.screenshot({
+    path: `test-results/${info.project.name}-position-lock.png`,
+    fullPage: true,
+  });
+  for (const position of ["SG", "SF", "PF", "C"]) {
+    const card = page.locator(".player-card").filter({
+      has: page
+        .locator(".card-top>span")
+        .filter({ hasText: new RegExp("^" + position + "$") }),
+    });
+    await card.getByRole("button", { name: /^Draft / }).click();
+  }
+  const g = await state(page);
+  expect(g.roster).toHaveLength(5);
+  expect(g.stage).toBe("game");
+  const positions = await page.evaluate(async (key) => {
+    const data = await fetch("/players.json").then((r) => r.json());
+    return JSON.parse(localStorage.getItem(key)).roster.map(
+      (id) => data.find((p) => p.key === id).position,
+    );
+  }, KEY);
+  expect(positions).toEqual(["PG", "SG", "SF", "PF", "C"]);
+  await expect(
+    page.getByRole("button", { name: "Run the play", exact: false }),
+  ).toBeVisible();
 });

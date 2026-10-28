@@ -128,40 +128,88 @@ export function draftPools(players, era) {
     a.teamName.localeCompare(b.teamName),
   );
 }
+export const POSITIONS = ["PG", "SG", "SF", "PF", "C"];
 export function draftOffers(players, era, roster, team = null) {
-  const used = new Set(
-    roster.map((key) => players.find((p) => p.key === key)?.id || key),
-  );
-  const eligible = players
-    .filter(
-      (p) => p.era === era && (!team || p.team === team) && !used.has(p.id),
-    )
+  const picked = roster
+    .map((key) => players.find((p) => p.key === key))
+    .filter(Boolean);
+  const usedIds = new Set(picked.map((p) => p.id));
+  const filled = new Set(picked.map((p) => p.position));
+  const pool = players
+    .filter((p) => p.era === era && (!team || p.team === team))
     .sort(
       (a, b) =>
         ratings(b).strength - ratings(a).strength ||
         a.id.localeCompare(b.id) ||
         a.key.localeCompare(b.key),
     );
-  const selected = [];
-  const ids = new Set();
-  // Start with a position-balanced five, filling any missing slot by strength.
-  for (const pos of ["PG", "SG", "SF", "PF", "C"]) {
-    const p = eligible.find(
-      (p) => p.position.split("-").includes(pos) && !ids.has(p.id),
+  return POSITIONS.map((position) => {
+    const candidates = pool.filter((p) => p.position === position);
+    const player = candidates.find((p) => !usedIds.has(p.id)) ?? candidates[0];
+    if (!player) return null;
+    return {
+      ...player,
+      draftBlockedReason: filled.has(position)
+        ? `${position} filled`
+        : usedIds.has(player.id)
+          ? "Already drafted"
+          : null,
+    };
+  }).filter(Boolean);
+}
+export function eligibleDraftTeam(
+  players,
+  era,
+  roster,
+  preferred,
+  random = Math.random,
+) {
+  const hasChoice = (team) =>
+    draftOffers(players, era, roster, team).some((p) => !p.draftBlockedReason);
+  if (preferred && hasChoice(preferred)) return preferred;
+  return (
+    shuffle(
+      draftPools(players, era).filter((p) => hasChoice(p.team)),
+      random,
+    )[0]?.team ?? null
+  );
+}
+export function selectDraftPlayer(state, key, players, random = Math.random) {
+  if (state.stage !== "draft" || state.roster.length >= 5) return state;
+  const picked = state.roster.map((key) => players.find((p) => p.key === key));
+  if (
+    picked.some((p) => !p) ||
+    new Set(picked.map((p) => p.position)).size !== picked.length
+  )
+    return state;
+  const index = state.roster.length;
+  const choice = draftOffers(
+    players,
+    state.eras[index],
+    state.roster,
+    state.draftTeams[index],
+  ).find((p) => p.key === key && !p.draftBlockedReason);
+  if (!choice) return state;
+  const roster = [...state.roster, choice.key];
+  const draftTeams = [...state.draftTeams];
+  if (roster.length < 5) {
+    const next = eligibleDraftTeam(
+      players,
+      state.eras[roster.length],
+      roster,
+      draftTeams[roster.length],
+      random,
     );
-    if (p) {
-      selected.push(p);
-      ids.add(p.id);
-    }
+    if (!next) return state;
+    draftTeams[roster.length] = next;
   }
-  for (const p of eligible) {
-    if (selected.length >= 5) break;
-    if (!ids.has(p.id)) {
-      selected.push(p);
-      ids.add(p.id);
-    }
-  }
-  return selected;
+  return {
+    ...state,
+    roster,
+    draftTeams,
+    stage: roster.length === 5 ? "game" : "draft",
+    draftPositionNotice: null,
+  };
 }
 export const DEFAULT_POSITIONS = [
   { x: 250, y: 365 },
@@ -688,6 +736,29 @@ export function restoreGame(raw, players) {
       s.round < 1
     )
       return null;
+    if (s.stage === "draft") {
+      const seen = new Set();
+      let count = 0;
+      for (const key of s.roster) {
+        const position = players.find((p) => p.key === key).position;
+        if (seen.has(position)) break;
+        seen.add(position);
+        count++;
+      }
+      if (count < s.roster.length) {
+        s.roster = s.roster.slice(0, count);
+        s.draftPositionNotice =
+          "Drafts now require one PG, SG, SF, PF and C. Your picks before the first repeated position were kept; finish the open positions.";
+      }
+      const next = eligibleDraftTeam(
+        players,
+        s.eras[s.roster.length],
+        s.roster,
+        s.draftTeams[s.roster.length],
+      );
+      if (!next) return null;
+      s.draftTeams[s.roster.length] = next;
+    }
     return s;
   } catch {
     return null;

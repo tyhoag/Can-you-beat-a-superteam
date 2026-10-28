@@ -3,6 +3,9 @@ import assert from "node:assert/strict";
 import players from "../src/players.json" with { type: "json" };
 import {
   ERAS,
+  POSITIONS,
+  selectDraftPlayer,
+  eligibleDraftTeam,
   LEVELS,
   ratings,
   superteam,
@@ -48,52 +51,136 @@ test("dataset spans every historical team-era pool and more than 1,200 unique pl
     }
   }
 });
-test("every team-era pool supports a duplicate-safe five-candidate draft", () => {
+test("every team-era pool has one card per position and locks filled positions", () => {
   for (const era of ERAS)
     for (const pool of draftPools(players, era)) {
-      const available = players.filter(
-        (p) => p.era === era && p.team === pool.team,
+      const offers = draftOffers(players, era, [], pool.team);
+      assert.deepEqual(
+        offers.map((p) => p.position),
+        POSITIONS,
       );
-      assert.ok(available.length >= 9);
-      const used = available.slice(0, 4).map((p) => p.key);
-      const offers = draftOffers(players, era, used, pool.team);
-      assert.equal(offers.length, 5);
-      const usedIds = new Set(available.slice(0, 4).map((p) => p.id));
-      assert.ok(offers.every((p) => !usedIds.has(p.id)));
-      assert.equal(new Set(offers.map((p) => p.id)).size, 5);
+      assert.ok(offers.every((p) => !p.draftBlockedReason));
+      for (const first of offers) {
+        const next = draftOffers(players, era, [first.key], pool.team);
+        assert.equal(next.length, 5);
+        assert.equal(next.filter((p) => p.draftBlockedReason).length, 1);
+        assert.equal(
+          next.find((p) => p.position === first.position).draftBlockedReason,
+          `${first.position} filled`,
+        );
+        assert.ok(
+          next
+            .filter((p) => !p.draftBlockedReason)
+            .every((p) => p.id !== first.id && p.position !== first.position),
+        );
+      }
     }
 });
-test("100 full drafts produce exactly five unique players from five real team-era pools", () => {
-  for (let n = 0; n < 100; n++) {
-    const g = freshGame(players);
+test("200 randomized drafts finish with exactly one of all five positions and no duplicate identities", () => {
+  const rng = seed(713);
+  for (let n = 0; n < 200; n++) {
+    let g = freshGame(players);
     assert.equal(new Set(g.eras).size, 5);
-    g.eras.forEach((era, i) => {
-      const offers = draftOffers(players, era, g.roster, g.draftTeams[i]);
-      assert.equal(offers.length, 5);
-      assert.ok(
-        offers.every((p) => p.era === era && p.team === g.draftTeams[i]),
-      );
-      const selected = offers[n % 5];
-      assert.ok(
-        !g.roster
-          .map((key) => players.find((p) => p.key === key).id)
-          .includes(selected.id),
-      );
-      g.roster.push(selected.key);
-    });
-    assert.equal(g.roster.length, 5);
+    for (let i = 0; i < 5; i++) {
+      const all = draftOffers(players, g.eras[i], g.roster, g.draftTeams[i]);
+      const available = all.filter((p) => !p.draftBlockedReason);
+      assert.ok(available.length > 0);
+      const selected = available[Math.floor(rng() * available.length)];
+      const next = selectDraftPlayer(g, selected.key, players, rng);
+      assert.notEqual(next, g);
+      g = next;
+      assert.equal(g.roster.length, i + 1);
+    }
+    const roster = g.roster.map((key) => players.find((p) => p.key === key));
+    assert.equal(g.stage, "game");
+    assert.equal(new Set(roster.map((p) => p.id)).size, 5);
+    assert.deepEqual(
+      roster.map((p) => p.position).sort(),
+      [...POSITIONS].sort(),
+    );
   }
 });
-test("duplicate prevention uses player identity across team and season records", () => {
+test("selection rejects filled positions, stale cards and picks after the draft", () => {
+  let g = freshGame(players);
+  const offers = draftOffers(players, g.eras[0], g.roster, g.draftTeams[0]);
+  g = selectDraftPlayer(g, offers[0].key, players);
+  const next = draftOffers(players, g.eras[1], g.roster, g.draftTeams[1]);
+  const locked = next.find((p) => p.position === offers[0].position);
+  assert.ok(locked.draftBlockedReason);
+  assert.equal(selectDraftPlayer(g, locked.key, players), g);
+  assert.equal(selectDraftPlayer(g, offers[0].key, players), g);
+  assert.equal(selectDraftPlayer(g, "missing-player", players), g);
+  while (g.stage === "draft") {
+    const i = g.roster.length,
+      p = draftOffers(players, g.eras[i], g.roster, g.draftTeams[i]).find(
+        (p) => !p.draftBlockedReason,
+      );
+    g = selectDraftPlayer(g, p.key, players);
+  }
+  assert.equal(selectDraftPlayer(g, offers[1].key, players), g);
+});
+test("duplicate prevention uses player identity across team, season and position records", () => {
   const jordan = players.find((p) => p.name === "Michael Jordan");
-  const all = players.filter((p) => p.id === jordan.id);
-  assert.ok(all.length >= 2);
-  for (const p of all)
+  for (const p of players.filter((p) => p.id === jordan.id)) {
+    const offers = draftOffers(players, p.era, [jordan.key], p.team);
     assert.ok(
-      draftOffers(players, p.era, [jordan.key], p.team).every(
-        (q) => q.id !== jordan.id,
-      ),
+      offers
+        .filter((q) => !q.draftBlockedReason)
+        .every((q) => q.id !== jordan.id),
     );
+  }
+});
+test("team selection recovers when the last open position has only an already-drafted identity", () => {
+  const template = players[0];
+  const fixture = [
+    ...POSITIONS.map((position, i) => ({
+      ...template,
+      id: `old${i}`,
+      key: `old${i}`,
+      position,
+      era: 1960,
+      team: "OLD",
+      teamName: "Old",
+    })),
+    ...POSITIONS.map((position, i) => ({
+      ...template,
+      id: i === 0 ? "old4" : `a${i}`,
+      key: `a${i}`,
+      position,
+      era: 2020,
+      team: "A",
+      teamName: "A",
+    })),
+    ...POSITIONS.map((position, i) => ({
+      ...template,
+      id: `b${i}`,
+      key: `b${i}`,
+      position,
+      era: 2020,
+      team: "B",
+      teamName: "B",
+    })),
+  ];
+  const roster = ["old1", "old2", "old3", "old4"];
+  assert.ok(
+    draftOffers(fixture, 2020, roster, "A").every((p) => p.draftBlockedReason),
+  );
+  assert.equal(
+    eligibleDraftTeam(fixture, 2020, roster, "A", () => 0),
+    "B",
+  );
+  const g = {
+    ...freshGame(players),
+    stage: "draft",
+    eras: [1970, 1980, 1990, 1960, 2020],
+    draftTeams: ["X", "X", "X", "OLD", "A"],
+    roster: roster.slice(0, 3),
+  };
+  const next = selectDraftPlayer(g, "old4", fixture, () => 0);
+  assert.equal(next.roster.length, 4);
+  assert.equal(next.draftTeams[4], "B");
+  const done = selectDraftPlayer(next, "b0", fixture, () => 0);
+  assert.equal(done.stage, "game");
 });
 test("default play is immediately valid in both modes", () => {
   const p = defaultPlay();
@@ -449,4 +536,33 @@ test("old saved teams and challenge progress migrate without a new draft", () =>
   delete g.play.passBeats;
   delete g.play.screen;
   assert.deepEqual(restoreGame(JSON.stringify(g), players), expected);
+});
+
+test("unfinished legacy drafts keep the valid prefix before a repeated position; completed games remain playable", () => {
+  const g = freshGame(players),
+    pgs = players.filter((p) => p.position === "PG");
+  g.roster = [pgs[0].key, pgs.find((p) => p.id !== pgs[0].id).key];
+  const restored = restoreGame(JSON.stringify(g), players);
+  assert.deepEqual(restored.roster, [g.roster[0]]);
+  assert.match(restored.draftPositionNotice, /one PG/);
+  assert.ok(
+    draftOffers(
+      players,
+      restored.eras[1],
+      restored.roster,
+      restored.draftTeams[1],
+    ).some((p) => !p.draftBlockedReason),
+  );
+  const unique = [];
+  for (const p of pgs)
+    if (!unique.some((q) => q.id === p.id) && unique.length < 5) unique.push(p);
+  const legacy = {
+    ...freshGame(players),
+    stage: "game",
+    roster: unique.map((p) => p.key),
+    level: 3,
+    results: [true, false],
+    totalAttempts: 17,
+  };
+  assert.deepEqual(restoreGame(JSON.stringify(legacy), players), legacy);
 });
