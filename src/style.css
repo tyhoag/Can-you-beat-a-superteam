@@ -2693,6 +2693,91 @@ footer button {
     font-size: 11px;
   }
 }
+/* Keep the everyday play flow small; reveal custom coaching on request. */
+.example-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.advanced-controls {
+  border-top: 1px solid #d7ddce;
+  margin-top: 20px;
+  padding-top: 4px;
+}
+.advanced-controls > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 0 8px;
+  font-size: 12px;
+}
+.advanced-controls > summary::-webkit-details-marker {
+  display: none;
+}
+.advanced-controls > summary small {
+  display: block;
+  color: #718066;
+  font-size: 10px;
+  font-weight: normal;
+  margin-top: 5px;
+}
+.advanced-controls[open] > summary > svg {
+  transform: rotate(90deg);
+}
+.advanced-content {
+  padding-top: 16px;
+}
+.advanced-content .sequence-editor {
+  padding: 16px 0 0;
+  margin-top: 16px;
+  background: transparent;
+}
+.advanced-content .sequence-title h3 {
+  font-size: 20px;
+}
+.advanced-content .beat-strip {
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  margin-top: 16px;
+  border-radius: 4px;
+}
+.advanced-content .beat-strip small {
+  display: none;
+}
+.advanced-content .screen-fields {
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin-top: 0;
+}
+.custom-play-note {
+  border-left: 2px solid #bf8d5e;
+  padding: 4px 0 4px 10px;
+  margin: 0 0 18px;
+  font-size: 11px;
+  color: #65765a;
+  line-height: 1.6;
+}
+.custom-play-note button {
+  display: block;
+  margin-top: 5px;
+}
+.play-error {
+  margin-bottom: 16px;
+}
+.help-advanced {
+  border-block: 1px solid #d7ddce;
+  padding: 14px 0;
+  margin: 22px 0;
+}
+.help-advanced > summary {
+  cursor: pointer;
+  font-size: 14px;
+}
 .draft-position-status {
   display: flex;
   gap: 8px;

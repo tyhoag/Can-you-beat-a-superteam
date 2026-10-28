@@ -90,7 +90,8 @@ function App() {
     [outcome, setOutcome] = useState(null),
     [animation, setAnimation] = useState(null),
     [notice, setNotice] = useState(""),
-    [dataSearch, setDataSearch] = useState("");
+    [dataSearch, setDataSearch] = useState(""),
+    [advancedOpen, setAdvancedOpen] = useState(false);
   const roster = game.roster.map((id) => players.find((p) => p.key === id));
   const level = LEVELS[game.level];
   const play = game.play;
@@ -104,6 +105,11 @@ function App() {
       ),
     [game.eras, game.roster, game.draftTeams],
   );
+  const customPlay =
+    play.mode === "passes" ||
+    Boolean(play.screen) ||
+    play.starter !== 0 ||
+    play.routeBeats.some((beat) => beat !== 0);
   const status = roundStatus(game.results);
   const running = animation !== null;
   const error = roster.length === 5 ? validatePlay(play) : null;
@@ -180,6 +186,21 @@ function App() {
     setOutcome(null);
     setAnimation(null);
     setSelected(0);
+    setTool("route");
+    setAdvancedOpen(false);
+  }
+  function useAutomaticPlay() {
+    edit((p) => ({
+      ...p,
+      mode: "routes",
+      starter: 0,
+      passes: p.shooter === 0 ? [0] : [0, p.shooter],
+      passBeats: p.shooter === 0 ? [] : [2],
+      routeBeats: [0, 0, 0, 0, 0],
+      screen: null,
+    }));
+    setTool("route");
+    setAdvancedOpen(false);
   }
   function run() {
     if (error || running || status !== "playing") return;
@@ -598,27 +619,6 @@ function App() {
                         </button>
                       </div>
                     </div>
-                    <div
-                      className="beat-strip"
-                      aria-label="Possession timeline"
-                    >
-                      {BEATS.map((beat, i) => (
-                        <span
-                          key={beat}
-                          className={
-                            running &&
-                            beatAt(clamp(animation.progress / 0.74, 0, 1)) === i
-                              ? "current"
-                              : ""
-                          }
-                        >
-                          <b>{i + 1}</b>
-                          {beat}
-                          {i < 2 && ico(ChevronRight, 12)}
-                        </span>
-                      ))}
-                      <small>then the shot</small>
-                    </div>
                     <Court
                       play={play}
                       roster={roster}
@@ -676,146 +676,6 @@ function App() {
                         </button>
                       ))}
                     </div>
-                    <section
-                      className="sequence-editor"
-                      aria-label="Movement and screen timing"
-                    >
-                      <div className="sequence-title">
-                        <div>
-                          <span className="eyebrow muted">
-                            SEQUENCE THE PLAY
-                          </span>
-                          <h3>
-                            {selected + 1}. {roster[selected].name}
-                          </h3>
-                        </div>
-                        <button
-                          className="inline-link"
-                          disabled={running}
-                          onClick={() => edit(defaultPlay())}
-                        >
-                          Load example play
-                        </button>
-                      </div>
-                      <label className="field-label" htmlFor="route-beat">
-                        Selected player’s route runs during
-                      </label>
-                      <select
-                        id="route-beat"
-                        disabled={running || play.screen?.screener === selected}
-                        value={
-                          play.screen?.screener === selected
-                            ? 2
-                            : play.routeBeats[selected]
-                        }
-                        onChange={(e) =>
-                          edit((p) => ({
-                            ...p,
-                            routeBeats: p.routeBeats.map((b, i) =>
-                              i === selected ? +e.target.value : b,
-                            ),
-                          }))
-                        }
-                      >
-                        {BEATS.map((beat, i) => (
-                          <option key={beat} value={i}>
-                            {i + 1}. {beat}
-                          </option>
-                        ))}
-                      </select>
-                      <div className="screen-fields">
-                        <div>
-                          <label className="field-label" htmlFor="screener">
-                            Screen setter
-                          </label>
-                          <select
-                            id="screener"
-                            disabled={running}
-                            value={play.screen?.screener ?? ""}
-                            onChange={(e) =>
-                              edit((p) => {
-                                if (e.target.value === "")
-                                  return { ...p, screen: null };
-                                const screener = +e.target.value,
-                                  cutter =
-                                    p.screen?.cutter !== undefined &&
-                                    p.screen.cutter !== screener
-                                      ? p.screen.cutter
-                                      : p.shooter !== screener
-                                        ? p.shooter
-                                        : (screener + 1) % 5;
-                                return {
-                                  ...p,
-                                  screen: { screener, cutter },
-                                  routeBeats: p.routeBeats.map((b, i) =>
-                                    i === screener ? 2 : i === cutter ? 1 : b,
-                                  ),
-                                };
-                              })
-                            }
-                          >
-                            <option value="">No screen</option>
-                            {roster.map((p, i) => (
-                              <option key={p.id} value={i}>
-                                {i + 1}. {last(p.name)}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div>
-                          <label
-                            className="field-label"
-                            htmlFor="screen-cutter"
-                          >
-                            Screen for
-                          </label>
-                          <select
-                            id="screen-cutter"
-                            disabled={running || !play.screen}
-                            value={play.screen?.cutter ?? ""}
-                            onChange={(e) =>
-                              edit((p) => ({
-                                ...p,
-                                screen: {
-                                  ...p.screen,
-                                  cutter: +e.target.value,
-                                },
-                                routeBeats: p.routeBeats.map((b, i) =>
-                                  i === +e.target.value ? 1 : b,
-                                ),
-                              }))
-                            }
-                          >
-                            <option value="" disabled>
-                              Choose cutter
-                            </option>
-                            {roster.map(
-                              (p, i) =>
-                                i !== play.screen?.screener && (
-                                  <option key={p.id} value={i}>
-                                    {i + 1}. {last(p.name)}
-                                  </option>
-                                ),
-                            )}
-                          </select>
-                        </div>
-                      </div>
-                      <p>
-                        {play.screen
-                          ? `Player ${play.screen.screener + 1} holds their starting position through Setup and Cut, then follows their route in Finish. Player ${play.screen.cutter + 1} moves during ${BEATS[play.routeBeats[play.screen.cutter]]}. Place the screen in the chasing defender’s path.`
-                          : "Routes run on the beat you choose. Add one stationary screen, then let the screener roll in Finish. In Routes + passes, choose when each pass leaves."}
-                      </p>
-                      <button
-                        className="sequence-example"
-                        disabled={running}
-                        onClick={() => {
-                          edit(screenExample(play));
-                          setSelected(1);
-                        }}
-                      >
-                        Try a screen & cut {ico(ArrowRight, 14)}
-                      </button>
-                    </section>
                     <details className="keyboard-controls">
                       <summary>Keyboard controls & player details</summary>
                       <p>
@@ -958,62 +818,22 @@ function App() {
                       </div>
                     </section>
                     <section className="play-controls">
-                      <div className="eyebrow muted">THE PLAYBOOK</div>
-                      <h3>You’re the coach.</h3>
-                      <div
-                        className="mode-toggle"
-                        role="group"
-                        aria-label="Play mode"
-                      >
-                        <button
-                          disabled={running}
-                          aria-pressed={play.mode === "routes"}
-                          className={play.mode === "routes" ? "active" : ""}
-                          onClick={() => {
-                            edit((p) => ({ ...p, mode: "routes" }));
-                            if (tool === "pass") setTool("route");
-                          }}
-                        >
-                          Routes
-                        </button>
-                        <button
-                          disabled={running}
-                          aria-pressed={play.mode === "passes"}
-                          className={play.mode === "passes" ? "active" : ""}
-                          onClick={() =>
-                            edit((p) => ({ ...p, mode: "passes" }))
-                          }
-                        >
-                          Routes + passes
-                        </button>
-                      </div>
+                      <div className="eyebrow muted">YOUR PLAY</div>
+                      <h3>Draw it. Run it.</h3>
                       <p className="control-hint">
-                        {play.mode === "routes"
-                          ? "Draw the movement. We deliver the ball to your shooter automatically."
-                          : "Draw the movement and choose each receiver. The last receiver must be your shooter."}
+                        Draw your routes and choose who shoots. Passing is
+                        automatic unless you customize it below.
                       </p>
-                      <label className="field-label" htmlFor="starter">
-                        STARTS WITH THE BALL
-                      </label>
-                      <select
-                        id="starter"
+                      <button
+                        className="inline-link example-play"
                         disabled={running}
-                        value={play.starter}
-                        onChange={(e) =>
-                          edit((p) => ({
-                            ...p,
-                            starter: +e.target.value,
-                            passes: [+e.target.value],
-                            passBeats: [],
-                          }))
-                        }
+                        onClick={() => {
+                          edit(defaultPlay());
+                          setTool("route");
+                        }}
                       >
-                        {roster.map((p, i) => (
-                          <option value={i} key={p.id}>
-                            {i + 1}. {p.name}
-                          </option>
-                        ))}
-                      </select>
+                        Load example play {ico(ArrowRight, 14)}
+                      </button>
                       <label className="field-label" htmlFor="shooter">
                         TAKES THE SHOT
                       </label>
@@ -1031,107 +851,31 @@ function App() {
                           </option>
                         ))}
                       </select>
-                      {play.mode === "passes" && (
-                        <div className="pass-builder">
-                          <div className="pass-label">
-                            <span className="field-label">PASS ORDER</span>
-                            <button
-                              disabled={running || play.passes.length <= 1}
-                              onClick={() =>
-                                edit((p) => ({
-                                  ...p,
-                                  passes: p.passes.slice(0, -1),
-                                  passBeats: p.passBeats.slice(0, -1),
-                                }))
-                              }
-                              className="inline-link"
-                            >
-                              Undo pass
-                            </button>
-                          </div>
-                          <div
-                            className="pass-sequence"
-                            aria-label="Ordered pass sequence"
+                      {customPlay && (
+                        <div className="custom-play-note">
+                          <span>Custom passing or timing is active.</span>
+                          <button
+                            className="inline-link"
+                            disabled={running}
+                            onClick={useAutomaticPlay}
                           >
-                            {play.passes.map((n, i) => (
-                              <React.Fragment key={i}>
-                                {i > 0 && ico(ArrowRight, 13)}
-                                <span style={{ "--player": colors[n] }}>
-                                  {n + 1}
-                                </span>
-                              </React.Fragment>
-                            ))}
-                          </div>
-                          <div className="pass-receivers">
-                            {roster.map((p, i) => (
-                              <button
-                                key={p.id}
-                                disabled={running || play.passes.length >= 8}
-                                aria-label={`Pass to ${p.name}`}
-                                onClick={() => edit((p) => addPass(p, i))}
-                              >
-                                {i + 1}
-                              </button>
-                            ))}
-                          </div>
-                          <div className="pass-timings">
-                            {play.passes.slice(1).map((receiver, i) => (
-                              <label key={i}>
-                                <span>
-                                  Pass {i + 1}:{" "}
-                                  <b>
-                                    {play.passes[i] + 1} → {receiver + 1}
-                                  </b>
-                                </span>
-                                <select
-                                  aria-label={`Timing for pass ${i + 1}`}
-                                  disabled={running}
-                                  value={play.passBeats[i]}
-                                  onChange={(e) =>
-                                    edit((p) => ({
-                                      ...p,
-                                      passBeats: p.passBeats.map((b, j) =>
-                                        i === j ? +e.target.value : b,
-                                      ),
-                                    }))
-                                  }
-                                >
-                                  {BEATS.map((beat, b) => (
-                                    <option key={beat} value={b}>
-                                      {b === 2
-                                        ? "Before shot"
-                                        : "After " + beat.toLowerCase()}
-                                    </option>
-                                  ))}
-                                </select>
-                              </label>
-                            ))}
-                          </div>
-                          <small>
-                            Tap a number to add a receiver. You can revisit a
-                            player after a different receiver.
-                          </small>
+                            Use automatic play
+                          </button>
                         </div>
                       )}
                       {error && (
-                        <p className="validation" role="alert">
-                          {ico(Info, 15)}
-                          {error}
-                        </p>
-                      )}
-                      {preview && (
-                        <div className="play-read">
-                          <span>
-                            {ico(Target, 16)} Estimated look{" "}
-                            <small>GAME MODEL</small>
-                          </span>
-                          <div>
-                            <b>{pct(preview.chance)}</b>
-                            <span>
-                              shot chance · {pct(preview.passRisk)} pass
-                              turnover risk
-                            </span>
-                          </div>
+                        <div className="play-error">
+                          <p className="validation" role="alert">
+                            {ico(Info, 15)} {error}
+                          </p>
+                          {!advancedOpen && (
+                            <button
+                              className="inline-link"
+                              onClick={() => setAdvancedOpen(true)}
+                            >
+                              Edit advanced controls
+                            </button>
+                          )}
                         </div>
                       )}
                       <button
@@ -1148,6 +892,339 @@ function App() {
                       <p className="rule-note">
                         Make 3 shots in up to 5 possessions. Unlimited retries.
                       </p>
+                      <details
+                        className="advanced-controls"
+                        open={advancedOpen}
+                        onToggle={(e) => setAdvancedOpen(e.currentTarget.open)}
+                      >
+                        <summary>
+                          <span>
+                            Advanced controls
+                            <small>Screens, passing & timing</small>
+                          </span>
+                          {ico(ChevronRight, 16)}
+                        </summary>
+                        <div className="advanced-content">
+                          <div
+                            className="mode-toggle"
+                            role="group"
+                            aria-label="Play mode"
+                          >
+                            <button
+                              disabled={running}
+                              aria-pressed={play.mode === "routes"}
+                              className={play.mode === "routes" ? "active" : ""}
+                              onClick={() => {
+                                edit((p) => ({ ...p, mode: "routes" }));
+                                if (tool === "pass") setTool("route");
+                              }}
+                            >
+                              Routes
+                            </button>
+                            <button
+                              disabled={running}
+                              aria-pressed={play.mode === "passes"}
+                              className={play.mode === "passes" ? "active" : ""}
+                              onClick={() =>
+                                edit((p) => ({ ...p, mode: "passes" }))
+                              }
+                            >
+                              Routes + passes
+                            </button>
+                          </div>
+                          <p className="control-hint">
+                            {play.mode === "routes"
+                              ? "Draw the movement. We deliver the ball to your shooter automatically."
+                              : "Draw the movement and choose each receiver. The last receiver must be your shooter."}
+                          </p>
+                          <label className="field-label" htmlFor="starter">
+                            STARTS WITH THE BALL
+                          </label>
+                          <select
+                            id="starter"
+                            disabled={running}
+                            value={play.starter}
+                            onChange={(e) =>
+                              edit((p) => ({
+                                ...p,
+                                starter: +e.target.value,
+                                passes: [+e.target.value],
+                                passBeats: [],
+                              }))
+                            }
+                          >
+                            {roster.map((p, i) => (
+                              <option value={i} key={p.id}>
+                                {i + 1}. {p.name}
+                              </option>
+                            ))}
+                          </select>
+                          {play.mode === "passes" && (
+                            <div className="pass-builder">
+                              <div className="pass-label">
+                                <span className="field-label">PASS ORDER</span>
+                                <button
+                                  disabled={running || play.passes.length <= 1}
+                                  onClick={() =>
+                                    edit((p) => ({
+                                      ...p,
+                                      passes: p.passes.slice(0, -1),
+                                      passBeats: p.passBeats.slice(0, -1),
+                                    }))
+                                  }
+                                  className="inline-link"
+                                >
+                                  Undo pass
+                                </button>
+                              </div>
+                              <div
+                                className="pass-sequence"
+                                aria-label="Ordered pass sequence"
+                              >
+                                {play.passes.map((n, i) => (
+                                  <React.Fragment key={i}>
+                                    {i > 0 && ico(ArrowRight, 13)}
+                                    <span style={{ "--player": colors[n] }}>
+                                      {n + 1}
+                                    </span>
+                                  </React.Fragment>
+                                ))}
+                              </div>
+                              <div className="pass-receivers">
+                                {roster.map((p, i) => (
+                                  <button
+                                    key={p.id}
+                                    disabled={
+                                      running || play.passes.length >= 8
+                                    }
+                                    aria-label={`Pass to ${p.name}`}
+                                    onClick={() => edit((p) => addPass(p, i))}
+                                  >
+                                    {i + 1}
+                                  </button>
+                                ))}
+                              </div>
+                              <div className="pass-timings">
+                                {play.passes.slice(1).map((receiver, i) => (
+                                  <label key={i}>
+                                    <span>
+                                      Pass {i + 1}:{" "}
+                                      <b>
+                                        {play.passes[i] + 1} → {receiver + 1}
+                                      </b>
+                                    </span>
+                                    <select
+                                      aria-label={`Timing for pass ${i + 1}`}
+                                      disabled={running}
+                                      value={play.passBeats[i]}
+                                      onChange={(e) =>
+                                        edit((p) => ({
+                                          ...p,
+                                          passBeats: p.passBeats.map((b, j) =>
+                                            i === j ? +e.target.value : b,
+                                          ),
+                                        }))
+                                      }
+                                    >
+                                      {BEATS.map((beat, b) => (
+                                        <option key={beat} value={b}>
+                                          {b === 2
+                                            ? "Before shot"
+                                            : "After " + beat.toLowerCase()}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </label>
+                                ))}
+                              </div>
+                              <small>
+                                Tap a number to add a receiver. You can revisit
+                                a player after a different receiver.
+                              </small>
+                            </div>
+                          )}
+                          <div
+                            className="beat-strip"
+                            aria-label="Possession timeline"
+                          >
+                            {BEATS.map((beat, i) => (
+                              <span
+                                key={beat}
+                                className={
+                                  running &&
+                                  beatAt(
+                                    clamp(animation.progress / 0.74, 0, 1),
+                                  ) === i
+                                    ? "current"
+                                    : ""
+                                }
+                              >
+                                <b>{i + 1}</b>
+                                {beat}
+                                {i < 2 && ico(ChevronRight, 12)}
+                              </span>
+                            ))}
+                            <small>then the shot</small>
+                          </div>
+                          <section
+                            className="sequence-editor"
+                            aria-label="Movement and screen timing"
+                          >
+                            <div className="sequence-title">
+                              <div>
+                                <span className="eyebrow muted">
+                                  SEQUENCE THE PLAY
+                                </span>
+                                <h3>
+                                  {selected + 1}. {roster[selected].name}
+                                </h3>
+                              </div>
+                            </div>
+                            <label className="field-label" htmlFor="route-beat">
+                              Selected player’s route runs during
+                            </label>
+                            <select
+                              id="route-beat"
+                              disabled={
+                                running || play.screen?.screener === selected
+                              }
+                              value={
+                                play.screen?.screener === selected
+                                  ? 2
+                                  : play.routeBeats[selected]
+                              }
+                              onChange={(e) =>
+                                edit((p) => ({
+                                  ...p,
+                                  routeBeats: p.routeBeats.map((b, i) =>
+                                    i === selected ? +e.target.value : b,
+                                  ),
+                                }))
+                              }
+                            >
+                              {BEATS.map((beat, i) => (
+                                <option key={beat} value={i}>
+                                  {i + 1}. {beat}
+                                </option>
+                              ))}
+                            </select>
+                            <div className="screen-fields">
+                              <div>
+                                <label
+                                  className="field-label"
+                                  htmlFor="screener"
+                                >
+                                  Screen setter
+                                </label>
+                                <select
+                                  id="screener"
+                                  disabled={running}
+                                  value={play.screen?.screener ?? ""}
+                                  onChange={(e) =>
+                                    edit((p) => {
+                                      if (e.target.value === "")
+                                        return { ...p, screen: null };
+                                      const screener = +e.target.value,
+                                        cutter =
+                                          p.screen?.cutter !== undefined &&
+                                          p.screen.cutter !== screener
+                                            ? p.screen.cutter
+                                            : p.shooter !== screener
+                                              ? p.shooter
+                                              : (screener + 1) % 5;
+                                      return {
+                                        ...p,
+                                        screen: { screener, cutter },
+                                        routeBeats: p.routeBeats.map((b, i) =>
+                                          i === screener
+                                            ? 2
+                                            : i === cutter
+                                              ? 1
+                                              : b,
+                                        ),
+                                      };
+                                    })
+                                  }
+                                >
+                                  <option value="">No screen</option>
+                                  {roster.map((p, i) => (
+                                    <option key={p.id} value={i}>
+                                      {i + 1}. {last(p.name)}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div>
+                                <label
+                                  className="field-label"
+                                  htmlFor="screen-cutter"
+                                >
+                                  Screen for
+                                </label>
+                                <select
+                                  id="screen-cutter"
+                                  disabled={running || !play.screen}
+                                  value={play.screen?.cutter ?? ""}
+                                  onChange={(e) =>
+                                    edit((p) => ({
+                                      ...p,
+                                      screen: {
+                                        ...p.screen,
+                                        cutter: +e.target.value,
+                                      },
+                                      routeBeats: p.routeBeats.map((b, i) =>
+                                        i === +e.target.value ? 1 : b,
+                                      ),
+                                    }))
+                                  }
+                                >
+                                  <option value="" disabled>
+                                    Choose cutter
+                                  </option>
+                                  {roster.map(
+                                    (p, i) =>
+                                      i !== play.screen?.screener && (
+                                        <option key={p.id} value={i}>
+                                          {i + 1}. {last(p.name)}
+                                        </option>
+                                      ),
+                                  )}
+                                </select>
+                              </div>
+                            </div>
+                            <p>
+                              {play.screen
+                                ? `Player ${play.screen.screener + 1} holds their starting position through Setup and Cut, then follows their route in Finish. Player ${play.screen.cutter + 1} moves during ${BEATS[play.routeBeats[play.screen.cutter]]}. Place the screen in the chasing defender’s path.`
+                                : "Routes run on the beat you choose. Add one stationary screen, then let the screener roll in Finish. In Routes + passes, choose when each pass leaves."}
+                            </p>
+                            <button
+                              className="sequence-example"
+                              disabled={running}
+                              onClick={() => {
+                                edit(screenExample(play));
+                                setSelected(1);
+                              }}
+                            >
+                              Try a screen & cut {ico(ArrowRight, 14)}
+                            </button>
+                          </section>
+                          {preview && (
+                            <div className="play-read">
+                              <span>
+                                {ico(Target, 16)} Estimated look{" "}
+                                <small>GAME MODEL</small>
+                              </span>
+                              <div>
+                                <b>{pct(preview.chance)}</b>
+                                <span>
+                                  shot chance · {pct(preview.passRisk)} pass
+                                  turnover risk
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </details>
                     </section>
                   </aside>
                 </div>
@@ -1368,14 +1445,14 @@ function App() {
                   <div>
                     <b>03</b>
                     <span>
-                      <h3>Choose your level of control.</h3>
+                      <h3>Pick a shooter. Run the play.</h3>
                       <p>
-                        <strong>Routes:</strong> automatic ball delivery to your
-                        shooter. <strong>Routes + passes:</strong> choose a
-                        starting ball handler, add numbered receivers in order,
-                        and end with your shooter. Passes happen during the
-                        routes; the shot happens after the movement finishes. A
-                        one-player sequence means no pass.
+                        Choose who takes the shot, then hit{" "}
+                        <strong>Run the play</strong>. Passing is automatic. The
+                        example play is ready to try, and you can change your
+                        routes between possessions. Open{" "}
+                        <strong>Advanced controls</strong> only when you want
+                        screens, ordered passes or custom timing.
                       </p>
                     </span>
                   </div>
@@ -1393,22 +1470,35 @@ function App() {
                     </span>
                   </div>
                 </div>
-                <h3>Setup → Cut → Finish</h3>
-                <p>
-                  Choose a beat for each selected player’s route. Passes can
-                  leave after Setup, after Cut, or just before the shot; later
-                  passes must stay on the same or a later beat. Several passes
-                  on the same beat still happen in order. In Routes mode,
-                  delivery is automatic just before the shot.
-                </p>
-                <p>
-                  A screen setter holds their starting position through the
-                  first two beats, then follows their route during Finish. The
-                  cutter defaults to Cut. Move the screen into the chasing
-                  defender’s path; nearby defenders slow down when they hit it.
-                  Switching defenses recover faster. One screen is supported per
-                  possession. Try the screen-and-cut example, then edit it.
-                </p>
+                <details className="help-advanced">
+                  <summary>Optional: screens, passing & timing</summary>
+                  <p>
+                    <strong>Routes</strong> handles delivery automatically.
+                    <strong> Routes + passes</strong> lets you choose a starting
+                    ball handler and receivers in order. End with your shooter.
+                    A one-player sequence means no pass.
+                    <strong> Use automatic play</strong> removes custom passing,
+                    screens and timing while keeping your drawn routes,
+                    positions and shooter.
+                  </p>
+                  <h3>Setup → Cut → Finish</h3>
+                  <p>
+                    Choose a beat for each selected player’s route. Passes can
+                    leave after Setup, after Cut, or just before the shot; later
+                    passes must stay on the same or a later beat. Several passes
+                    on the same beat still happen in order. In Routes mode,
+                    delivery is automatic just before the shot.
+                  </p>
+                  <p>
+                    A screen setter holds their starting position through the
+                    first two beats, then follows their route during Finish. The
+                    cutter defaults to Cut. Move the screen into the chasing
+                    defender’s path; nearby defenders slow down when they hit
+                    it. Switching defenses recover faster. One screen is
+                    supported per possession. Try the screen-and-cut example,
+                    then edit it.
+                  </p>
+                </details>
                 <p>
                   <strong>Clear all routes</strong> removes all five paths while
                   keeping your positions, pass plan and screen.{" "}
@@ -1480,11 +1570,11 @@ function App() {
                   you already filled. The displayed season position determines
                   the slot, and each identity can be picked only once. If a team
                   has no eligible player for your remaining positions, assign
-                  another real team from the same era so the draft can finish. “Best” here means this game’s transparent
-                  rating, not an official NBA ranking. Relocations and
-                  historical team names remain attached to the teams that
-                  actually existed; franchises that did not yet exist are not
-                  invented.
+                  another real team from the same era so the draft can finish.
+                  “Best” here means this game’s transparent rating, not an
+                  official NBA ranking. Relocations and historical team names
+                  remain attached to the teams that actually existed; franchises
+                  that did not yet exist are not invented.
                 </p>
                 <h3>The ratings are ours</h3>
                 <p>

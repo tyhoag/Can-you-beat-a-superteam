@@ -49,22 +49,29 @@ game uses fresh `Math.random` rolls. See [verification notes](docs/VALIDATION.md
    positions with no paths or screen and resets passes to direct delivery. Both support
    Undo and keep your roster and challenge progress. **Load example play** restores the
    original starter example.
-3. **Routes** handles the ball automatically. **Routes + passes** lets you set a
-   starting handler and ordered receivers. The last receiver must be your shooter.
-   Choose **After setup**, **After cut**, or **Before shot** for each pass; the sequence
-   must move forward through these beats. Passes sharing a beat still run in order.
+3. Choose who **takes the shot**. Passing is automatic, and the example play is ready
+   to run. Screens, pass orders, route timing and probability details stay inside the
+   collapsed **Advanced controls** panel until you want them.
 4. **Run the play** animates routes, defenders, passes and the shot. Outcomes explain
    space, pressure and pass risk. A shot chance is conditional on successful delivery.
 5. Score three makes within five possessions. Three misses end an unwinnable round
    early. Retry without losing your roster. Beat all five levels to finish.
 
-Each selected player's route runs during **Setup → Cut → Finish**. Set one screen by
+Optional **Advanced controls**: **Routes + passes** lets you set a starting handler,
+ordered receivers and **After setup**, **After cut**, or **Before shot** timing.
+The last receiver must be your shooter, and timing must move forward; passes sharing
+a beat still run in order. Each selected player's route runs during
+**Setup → Cut → Finish**. Set one screen by
 choosing a setter and cutter, then place the setter in the chasing defender's path.
 The setter holds through the first two beats and rolls along their drawn route in Finish;
 the cutter defaults to Cut. **Try a screen & cut** loads a complete editable example.
 Screens affect pursuit and can add a small, labeled game-model shot bonus; a screen
 away from the defender's path gives no bonus. Existing saved teams/progress migrate
-without starting over.
+without starting over. Closing Advanced controls keeps a custom play intact, and an
+active notice prevents hidden settings from being forgotten. **Use automatic play**
+clears custom passing, screens and timing while keeping your positions, routes, shooter,
+team and progress. Undo restores the previous custom play. Invalid custom plays have a
+visible error and a shortcut to reopen the relevant controls.
 
 The court supports mouse, touch, keyboard selection and arrow-key position/route edits.
 Reduced-motion preferences shorten possession animation. Information dialogs trap focus

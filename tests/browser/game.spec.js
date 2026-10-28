@@ -3,6 +3,12 @@ const KEY = "chalk-dynasty-v2";
 async function state(page) {
   return page.evaluate((key) => JSON.parse(localStorage.getItem(key)), KEY);
 }
+async function openAdvanced(page) {
+  const panel = page.locator(".advanced-controls");
+  if (!(await panel.evaluate((el) => el.open)))
+    await panel.locator("summary").click();
+  await expect(panel).toHaveAttribute("open", "");
+}
 async function draftFive(page) {
   const eras = [],
     teams = [],
@@ -118,6 +124,7 @@ test("full draft, team-era variety, resume, court editing, undo, both modes and 
   await page
     .getByRole("button", { name: "Load example play", exact: true })
     .click();
+  await openAdvanced(page);
   await page
     .getByRole("button", { name: "Routes + passes", exact: true })
     .click();
@@ -318,6 +325,7 @@ test("clear-all and full reset have separate semantics, support undo, and preser
 }, info) => {
   await page.goto("/");
   await draftFive(page);
+  await openAdvanced(page);
   await page
     .getByRole("button", { name: "Routes + passes", exact: true })
     .click();
@@ -364,6 +372,7 @@ test("screen, cut, pass timing and replay work in both modes with understandable
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
   await draftFive(page);
+  await openAdvanced(page);
   await page
     .getByRole("button", { name: "Try a screen & cut", exact: false })
     .click();
@@ -465,4 +474,94 @@ test("draft locks a filled position, persists the lock, and finishes one PG SG S
   await expect(
     page.getByRole("button", { name: "Run the play", exact: false }),
   ).toBeVisible();
+});
+
+test("simple play keeps optional controls tucked away and runs without configuring them", async ({
+  page,
+}, info) => {
+  await page.goto("/");
+  await draftFive(page);
+  await expect(page.locator(".advanced-controls")).not.toHaveAttribute("open");
+  await expect(
+    page.getByLabel("Screen setter", { exact: true }),
+  ).not.toBeVisible();
+  await expect(
+    page.getByLabel("STARTS WITH THE BALL", { exact: true }),
+  ).not.toBeVisible();
+  await expect(page.locator(".beat-strip")).not.toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Routes + passes", exact: true }),
+  ).not.toBeVisible();
+  await expect(
+    page.getByLabel("TAKES THE SHOT", { exact: true }),
+  ).toBeVisible();
+  await page.getByLabel("TAKES THE SHOT", { exact: true }).selectOption("0");
+  await runWithRandom(page, 0.99);
+  expect((await state(page)).results).toHaveLength(1);
+  await expect(page.locator(".custom-play-note")).toHaveCount(0);
+  await page.screenshot({
+    path: `test-results/${info.project.name}-simple-play.png`,
+    fullPage: true,
+  });
+});
+
+test("advanced controls preserve custom plays when closed and offer a reversible return to automatic play", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await draftFive(page);
+  const summary = page.locator(".advanced-controls > summary");
+  await summary.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByLabel("Screen setter", { exact: true })).toBeVisible();
+  await page
+    .getByRole("button", { name: "Try a screen & cut", exact: false })
+    .click();
+  await page
+    .getByRole("button", { name: "Routes + passes", exact: true })
+    .click();
+  const custom = await state(page);
+  await summary.click();
+  expect((await state(page)).play).toEqual(custom.play);
+  await expect(page.locator(".custom-play-note")).toContainText(
+    "Custom passing or timing is active",
+  );
+  await page.reload();
+  await expect(page.locator(".advanced-controls")).not.toHaveAttribute("open");
+  expect((await state(page)).play).toEqual(custom.play);
+  await expect(page.locator(".custom-play-note")).toBeVisible();
+  await page
+    .getByRole("button", { name: "Use automatic play", exact: true })
+    .click();
+  const automatic = await state(page);
+  expect(automatic.play.mode).toBe("routes");
+  expect(automatic.play.screen).toBeNull();
+  expect(automatic.play.routeBeats).toEqual([0, 0, 0, 0, 0]);
+  expect(automatic.play.positions).toEqual(custom.play.positions);
+  expect(automatic.play.routes).toEqual(custom.play.routes);
+  expect(automatic.play.shooter).toBe(custom.play.shooter);
+  expect(automatic.roster).toEqual(custom.roster);
+  expect(automatic.results).toEqual(custom.results);
+  await expect(page.locator(".custom-play-note")).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "Undo last edit", exact: true })
+    .click();
+  expect((await state(page)).play).toEqual(custom.play);
+  await openAdvanced(page);
+  await page.getByLabel("TAKES THE SHOT", { exact: true }).selectOption("4");
+  await summary.click();
+  await expect(page.getByRole("alert")).toContainText("End the pass sequence");
+  await page
+    .getByRole("button", { name: "Edit advanced controls", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Undo pass", exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Use automatic play", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Run the play", exact: false }),
+  ).toBeEnabled();
+  expect((await state(page)).play.shooter).toBe(4);
 });
