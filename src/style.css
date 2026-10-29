@@ -2498,7 +2498,7 @@ footer button {
     font-size: 7px;
   }
 }
-/* Explicit resets and a small three-beat play sequencer. */
+/* Separate clear/reset actions and route-inferred screen markers. */
 .court-toolbar {
   flex-wrap: wrap;
 }
@@ -2527,97 +2527,6 @@ footer button {
   background: #eee4d5;
   border-color: #d8c7ad;
 }
-.beat-strip {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 10px 18px;
-  color: #748369;
-  font-size: 10px;
-  background: #edf0e5;
-}
-.beat-strip > span {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-.beat-strip b {
-  width: 19px;
-  height: 19px;
-  display: grid;
-  place-items: center;
-  border: 1px solid #bdcbb1;
-  border-radius: 50%;
-  font-size: 9px;
-}
-.beat-strip .current {
-  color: #21462c;
-  font-weight: bold;
-}
-.beat-strip .current b {
-  background: #e5b47c;
-  border-color: #ca9d66;
-}
-.beat-strip small {
-  margin-left: auto;
-  font-size: 8px;
-}
-.sequence-editor {
-  border-top: 1px solid #dce2d3;
-  padding: 18px;
-  background: #f0f2e8;
-}
-.sequence-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-.sequence-title .eyebrow {
-  font-size: 8px;
-}
-.sequence-title h3 {
-  font: 22px var(--serif);
-  margin: 6px 0 0;
-  letter-spacing: -0.5px;
-}
-.sequence-editor select {
-  width: 100%;
-  background: #fafaf2;
-  color: #345139;
-  border: 1px solid #ccd6c1;
-  border-radius: 4px;
-  padding: 10px;
-  font-size: 12px;
-  min-height: 40px;
-}
-.sequence-editor .field-label {
-  font-size: 9px;
-  text-transform: uppercase;
-  line-height: 1.4;
-}
-.screen-fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 14px;
-}
-.sequence-editor p {
-  font-size: 11px;
-  color: #65765a;
-  line-height: 1.7;
-}
-.sequence-example {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  background: #e1e8d6;
-  border: 1px solid #c5d2b7;
-  padding: 9px 12px;
-  border-radius: 4px;
-  font-size: 11px;
-}
 .screen-marker text {
   font: 8px Arial;
   letter-spacing: 0.6px;
@@ -2626,73 +2535,6 @@ footer button {
   stroke: #1d3931;
   stroke-width: 3px;
 }
-.pass-timings {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 15px;
-}
-.pass-timings label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 10px;
-  color: #607256;
-}
-.pass-timings label > span {
-  white-space: nowrap;
-}
-.pass-timings select {
-  margin: 0;
-  min-width: 0;
-  font-size: 10px;
-  padding: 7px;
-  min-height: 34px;
-  flex: 1;
-}
-@media (max-width: 760px) {
-  .beat-strip {
-    gap: 9px;
-    padding: 10px 12px;
-    font-size: 9px;
-  }
-  .beat-strip small {
-    font-size: 7px;
-  }
-  .sequence-title h3 {
-    font-size: 20px;
-  }
-  .sequence-editor {
-    padding: 15px;
-  }
-  .tool-resets button {
-    font-size: 10px;
-  }
-  .sequence-editor select {
-    font-size: 14px;
-  }
-  .screen-fields {
-    gap: 9px;
-  }
-}
-@media (max-width: 420px) {
-  .beat-strip {
-    gap: 6px;
-  }
-  .beat-strip b {
-    width: 17px;
-    height: 17px;
-  }
-  .beat-strip small {
-    font-size: 6px;
-  }
-  .sequence-title .inline-link {
-    font-size: 8px;
-  }
-  .pass-timings select {
-    font-size: 11px;
-  }
-}
 /* Keep the everyday play flow small; reveal custom coaching on request. */
 .example-play {
   display: inline-flex;
@@ -2700,12 +2542,12 @@ footer button {
   gap: 8px;
   margin-bottom: 22px;
 }
-.advanced-controls {
+.passing-options {
   border-top: 1px solid #d7ddce;
   margin-top: 20px;
   padding-top: 4px;
 }
-.advanced-controls > summary {
+.passing-options > summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2715,44 +2557,29 @@ footer button {
   padding: 14px 0 8px;
   font-size: 12px;
 }
-.advanced-controls > summary::-webkit-details-marker {
+.passing-options > summary::-webkit-details-marker {
   display: none;
 }
-.advanced-controls > summary small {
+.passing-options > summary small {
   display: block;
   color: #718066;
   font-size: 10px;
   font-weight: normal;
   margin-top: 5px;
 }
-.advanced-controls[open] > summary > svg {
+.passing-options[open] > summary > svg {
   transform: rotate(90deg);
 }
-.advanced-content {
+.passing-content {
   padding-top: 16px;
 }
-.advanced-content .sequence-editor {
-  padding: 16px 0 0;
-  margin-top: 16px;
-  background: transparent;
-}
-.advanced-content .sequence-title h3 {
-  font-size: 20px;
-}
-.advanced-content .beat-strip {
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 10px;
-  margin-top: 16px;
-  border-radius: 4px;
-}
-.advanced-content .beat-strip small {
-  display: none;
-}
-.advanced-content .screen-fields {
-  grid-template-columns: 1fr;
-  gap: 0;
-  margin-top: 0;
+.screen-hint {
+  margin: 0;
+  border-top: 1px solid #d7ddce;
+  padding: 12px 18px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #65765a;
 }
 .custom-play-note {
   border-left: 2px solid #bf8d5e;
@@ -2768,15 +2595,6 @@ footer button {
 }
 .play-error {
   margin-bottom: 16px;
-}
-.help-advanced {
-  border-block: 1px solid #d7ddce;
-  padding: 14px 0;
-  margin: 22px 0;
-}
-.help-advanced > summary {
-  cursor: pointer;
-  font-size: 14px;
 }
 .draft-position-status {
   display: flex;

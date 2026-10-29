@@ -3,8 +3,8 @@ const KEY = "chalk-dynasty-v2";
 async function state(page) {
   return page.evaluate((key) => JSON.parse(localStorage.getItem(key)), KEY);
 }
-async function openAdvanced(page) {
-  const panel = page.locator(".advanced-controls");
+async function openPassing(page) {
+  const panel = page.locator(".passing-options");
   if (!(await panel.evaluate((el) => el.open)))
     await panel.locator("summary").click();
   await expect(panel).toHaveAttribute("open", "");
@@ -124,7 +124,7 @@ test("full draft, team-era variety, resume, court editing, undo, both modes and 
   await page
     .getByRole("button", { name: "Load example play", exact: true })
     .click();
-  await openAdvanced(page);
+  await openPassing(page);
   await page
     .getByRole("button", { name: "Routes + passes", exact: true })
     .click();
@@ -249,7 +249,7 @@ test("responsive layout, help dialog, data search and historical unavailable sta
     ).toBeTruthy();
   }
   await page.getByRole("button", { name: "How to play", exact: false }).click();
-  await expect(page.getByRole("dialog")).toContainText("Routes + passes");
+  await expect(page.getByRole("dialog")).toContainText("Passing options");
   await page
     .getByRole("button", { name: "Let’s draw it up", exact: false })
     .click();
@@ -325,7 +325,7 @@ test("clear-all and full reset have separate semantics, support undo, and preser
 }, info) => {
   await page.goto("/");
   await draftFive(page);
-  await openAdvanced(page);
+  await openPassing(page);
   await page
     .getByRole("button", { name: "Routes + passes", exact: true })
     .click();
@@ -344,17 +344,18 @@ test("clear-all and full reset have separate semantics, support undo, and preser
     .click();
   expect((await state(page)).play).toEqual(before.play);
   await page
-    .getByRole("button", { name: "Try a screen & cut", exact: false })
+    .getByRole("button", { name: "Try a screen play", exact: false })
     .click();
   const screened = await state(page);
-  expect(screened.play.screen).toEqual({ screener: 3, cutter: 1 });
+  await expect(
+    page.locator('.screen-marker[data-screener="3"][data-cutter="1"]'),
+  ).toHaveCount(1);
   await page.getByRole("button", { name: "Full reset", exact: true }).click();
   g = await state(page);
   expect(g.play.routes.every((r) => r.length === 0)).toBeTruthy();
   expect(g.play.positions[0]).toEqual({ x: 250, y: 365 });
-  expect(g.play.screen).toBeNull();
+  await expect(page.locator(".screen-marker")).toHaveCount(0);
   expect(g.play.passes).toEqual([0, 1]);
-  expect(g.play.passBeats).toEqual([2]);
   expect(g.roster).toEqual(before.roster);
   expect(g.level).toEqual(before.level);
   expect(g.results).toEqual(before.results);
@@ -365,67 +366,73 @@ test("clear-all and full reset have separate semantics, support undo, and preser
   await page.reload();
   expect((await state(page)).play).toEqual(screened.play);
 });
-test("screen, cut, pass timing and replay work in both modes with understandable validation", async ({
+test("drawing directly into a defender implies an off-ball screen and automatic delivery", async ({
   page,
 }, info) => {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
   await draftFive(page);
-  await openAdvanced(page);
-  await page
-    .getByRole("button", { name: "Try a screen & cut", exact: false })
-    .click();
-  await expect(page.locator(".screen-marker")).toHaveCount(1);
-  await expect(page.getByLabel("Screen setter", { exact: true })).toHaveValue(
-    "3",
-  );
-  await expect(page.getByLabel("Screen for", { exact: true })).toHaveValue("1");
+  await page.getByRole("button", { name: "Full reset", exact: true }).click();
+  const mobile = info.project.name === "mobile";
+  // Releasing a route on a teammate must finish the route, rather than select them.
+  await dragPoint(page, [145, 145], [80, 285], mobile);
+  expect((await state(page)).play.routes[3].at(-1).x).toBeCloseTo(80, 0);
   await expect(
-    page.getByLabel("Selected player’s route runs during", { exact: true }),
-  ).toHaveValue("1");
+    page.locator('.screen-marker[data-screener="3"][data-cutter="1"]'),
+  ).toHaveCount(1);
   await page
-    .getByLabel("Selected player’s route runs during", { exact: true })
-    .selectOption("2");
-  expect((await state(page)).play.routeBeats[1]).toBe(2);
+    .getByRole("button", { name: "Undo last edit", exact: true })
+    .click();
+  // Draw from the numbered setter straight into the other player's defender.
+  await dragPoint(page, [145, 145], [100.4, 253], mobile);
+  await expect(
+    page.locator('.screen-marker[data-screener="3"][data-cutter="1"]'),
+  ).toHaveCount(1);
+  // Draw the off-ball cutter around that screen and toward the basket.
+  await dragPoint(page, [80, 285], [135, 245], mobile);
+  await tapCourt(page, 165, 185, mobile);
+  await tapCourt(page, 265, 105, mobile);
+  await page.getByLabel("TAKES THE SHOT", { exact: true }).selectOption("1");
+  const drawn = await state(page);
+  expect(drawn.play.starter).toBe(0);
+  expect(drawn.play.shooter).toBe(1);
+  expect(drawn.play.routes[3].at(-1).x).toBeCloseTo(100.4, 0);
+  expect(drawn.play.routes[1].length).toBeGreaterThan(2);
+  expect(drawn.play).not.toHaveProperty("routeBeats");
+  expect(drawn.play).not.toHaveProperty("passBeats");
+  expect(drawn.play).not.toHaveProperty("screen");
+  await runWithRandom(page, 0.99);
+  await expect(page.locator(".result-panel")).toContainText("screen slowed");
+  await page.reload();
+  expect((await state(page)).play).toEqual(drawn.play);
+  await expect(
+    page.locator('.screen-marker[data-screener="3"][data-cutter="1"]'),
+  ).toHaveCount(1);
+  await openPassing(page);
+  await expect(
+    page.locator(".pass-timings, .screen-fields, .beat-strip, #route-beat"),
+  ).toHaveCount(0);
   await page
-    .getByLabel("Selected player’s route runs during", { exact: true })
-    .selectOption("1");
+    .getByRole("button", { name: "Try a screen play", exact: false })
+    .click();
   await page
     .getByRole("button", { name: "Routes + passes", exact: true })
     .click();
-  await page.getByLabel("Timing for pass 1", { exact: true }).selectOption("0");
-  expect((await state(page)).play.passBeats).toEqual([0]);
-  await page.getByLabel("Timing for pass 1", { exact: true }).selectOption("1");
   await runWithRandom(page, 0.99);
   await expect(page.locator(".result-panel")).toContainText("screen slowed");
-  await page
-    .getByRole("button", { name: "Pass to ", exact: false })
-    .first()
-    .click();
-  await page.getByLabel("TAKES THE SHOT", { exact: true }).selectOption("0");
-  await page.getByLabel("Timing for pass 2", { exact: true }).selectOption("0");
-  await expect(page.getByRole("alert")).toContainText(
-    "Pass timings must follow",
-  );
-  await expect(
-    page.getByRole("button", { name: "Run the play", exact: false }),
-  ).toBeDisabled();
-  await page.getByLabel("Timing for pass 2", { exact: true }).selectOption("2");
-  await expect(
-    page.getByRole("button", { name: "Run the play", exact: false }),
-  ).toBeEnabled();
-  await page.getByRole("button", { name: "Routes", exact: true }).click();
-  await runWithRandom(page, 0.99);
   expect((await state(page)).totalAttempts).toBe(2);
   expect(errors).toEqual([]);
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
-    ),
-  ).toBeTruthy();
+  for (const width of mobile ? [320, 390, 430] : [768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBeTruthy();
+  }
   await page.screenshot({
-    path: `test-results/${info.project.name}-sequencing.png`,
+    path: `test-results/${info.project.name}-natural-screens.png`,
     fullPage: true,
   });
 });
@@ -481,14 +488,16 @@ test("simple play keeps optional controls tucked away and runs without configuri
 }, info) => {
   await page.goto("/");
   await draftFive(page);
-  await expect(page.locator(".advanced-controls")).not.toHaveAttribute("open");
-  await expect(
-    page.getByLabel("Screen setter", { exact: true }),
-  ).not.toBeVisible();
+  await expect(page.locator(".passing-options")).not.toHaveAttribute("open");
+  await expect(page.getByLabel("Screen setter", { exact: true })).toHaveCount(
+    0,
+  );
   await expect(
     page.getByLabel("STARTS WITH THE BALL", { exact: true }),
   ).not.toBeVisible();
-  await expect(page.locator(".beat-strip")).not.toBeVisible();
+  await expect(
+    page.locator(".beat-strip, .pass-timings, #route-beat"),
+  ).toHaveCount(0);
   await expect(
     page.getByRole("button", { name: "Routes + passes", exact: true }),
   ).not.toBeVisible();
@@ -505,17 +514,19 @@ test("simple play keeps optional controls tucked away and runs without configuri
   });
 });
 
-test("advanced controls preserve custom plays when closed and offer a reversible return to automatic play", async ({
+test("optional receiver choices preserve drawings, implied screens and saved progress", async ({
   page,
 }) => {
   await page.goto("/");
   await draftFive(page);
-  const summary = page.locator(".advanced-controls > summary");
+  const summary = page.locator(".passing-options > summary");
   await summary.focus();
   await page.keyboard.press("Enter");
-  await expect(page.getByLabel("Screen setter", { exact: true })).toBeVisible();
+  await expect(
+    page.getByLabel("STARTS WITH THE BALL", { exact: true }),
+  ).toBeVisible();
   await page
-    .getByRole("button", { name: "Try a screen & cut", exact: false })
+    .getByRole("button", { name: "Try a screen play", exact: false })
     .click();
   await page
     .getByRole("button", { name: "Routes + passes", exact: true })
@@ -524,19 +535,22 @@ test("advanced controls preserve custom plays when closed and offer a reversible
   await summary.click();
   expect((await state(page)).play).toEqual(custom.play);
   await expect(page.locator(".custom-play-note")).toContainText(
-    "Custom passing or timing is active",
+    "Your chosen pass order is on",
   );
   await page.reload();
-  await expect(page.locator(".advanced-controls")).not.toHaveAttribute("open");
+  await expect(page.locator(".passing-options")).not.toHaveAttribute("open");
   expect((await state(page)).play).toEqual(custom.play);
   await expect(page.locator(".custom-play-note")).toBeVisible();
   await page
-    .getByRole("button", { name: "Use automatic play", exact: true })
+    .getByRole("button", { name: "Use automatic passing", exact: true })
     .click();
   const automatic = await state(page);
   expect(automatic.play.mode).toBe("routes");
-  expect(automatic.play.screen).toBeNull();
-  expect(automatic.play.routeBeats).toEqual([0, 0, 0, 0, 0]);
+  await expect(
+    page.locator('.screen-marker[data-screener="3"][data-cutter="1"]'),
+  ).toHaveCount(1);
+  expect(automatic.play).not.toHaveProperty("routeBeats");
+  expect(automatic.play).not.toHaveProperty("passBeats");
   expect(automatic.play.positions).toEqual(custom.play.positions);
   expect(automatic.play.routes).toEqual(custom.play.routes);
   expect(automatic.play.shooter).toBe(custom.play.shooter);
@@ -547,18 +561,18 @@ test("advanced controls preserve custom plays when closed and offer a reversible
     .getByRole("button", { name: "Undo last edit", exact: true })
     .click();
   expect((await state(page)).play).toEqual(custom.play);
-  await openAdvanced(page);
+  await openPassing(page);
   await page.getByLabel("TAKES THE SHOT", { exact: true }).selectOption("4");
   await summary.click();
   await expect(page.getByRole("alert")).toContainText("End the pass sequence");
   await page
-    .getByRole("button", { name: "Edit advanced controls", exact: true })
+    .getByRole("button", { name: "Edit passing options", exact: true })
     .click();
   await expect(
     page.getByRole("button", { name: "Undo pass", exact: true }),
   ).toBeVisible();
   await page
-    .getByRole("button", { name: "Use automatic play", exact: true })
+    .getByRole("button", { name: "Use automatic passing", exact: true })
     .click();
   await expect(
     page.getByRole("button", { name: "Run the play", exact: false }),

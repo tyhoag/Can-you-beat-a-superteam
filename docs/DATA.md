@@ -87,18 +87,27 @@ unused eligible player for PG, SG, SF, PF, C, in that fixed order; tie-breaks ar
 ID then record key alphabetically. Multiple seasons of one identity can never appear
 on that lineup. This is reproducible and balanced, not an objective real-world GOAT list.
 
-Routes and passes use three ordered beats: Setup, Cut, Finish. A single screen holds
-its setter at their chosen starting location through the first two beats; their route
-runs during Finish. A chasing defender passing within 30 court units of a screen,
-and within 65 units of the setter while following a moving cutter, slows down. Switching
-and elite defenses recover faster. If at least one defender contacts the screen and
-the cutter is the shooter, the game adds a **4 percentage point** bonus before applying
-the existing 12–88% shot-probability bounds. A misplaced screen gets no bonus. These
-are clearly labeled game mechanics, not official NBA screening statistics.
+Movement follows drawn geometry with distance-based duration. Screen intent is inferred
+when a route ends within 38 court units of another offensive player or their initial
+defender. A planted teammate within 27 units of a through-cut can also screen; a route
+that merely ends in a crowd is not treated as a through-cut. Several setters are
+supported. Automatic dependencies allow a setter to arrive before the cutter moves;
+cyclic screen dependencies are excluded so movement cannot deadlock.
 
-Passing risk is sampled at the chosen departure beat using the actual release and
-arrival positions; pass animation uses the same schedule. Passes assigned to one beat
-are spaced in sequence with no overlapping flights.
+Once planted, a setter can slow a chasing defender within 58 units if the setter is
+within 28 units of the defender's path. Switching and elite defenses recover faster.
+Actual contact before the shot can give the screened shooter a **4 percentage point**
+bonus, capped once per shot before the existing 12–88% bounds. Moving, late or misplaced
+screens get no bonus. These are entertainment mechanics, not recorded NBA screening stats.
+
+Passes choose arrival/departure times by scoring receiver separation, route progress,
+passing-lane clearance and pass distance over the simulated movement. The schedule keeps
+one ball and reserves room for up to seven ordered passes. The shot follows final delivery;
+a no-pass ball handler chooses a look during their own movement. Passing risk uses the
+actual release/catch coordinates and defense. The same schedule drives animation and
+probabilities, with no user-selected timeline slots. Contacts after the shot cannot
+increase its probability. Existing saves keep drawings, receivers, roster and challenge
+progress while obsolete `screen`, `routeBeats` and `passBeats` fields are removed.
 
 `engine.js` contains all pursuit, passing and shot math. Route tempo is simplified;
 this is not a physics engine or an NBA forecasting model. Probability bounds of

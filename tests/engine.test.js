@@ -25,7 +25,8 @@ import {
   screenExample,
   playerPoint,
   addPass,
-  schedulePasses,
+  planPlay,
+  initialDefenders,
 } from "../src/engine.js";
 const roster = superteam(players);
 const seed = (s) => () => {
@@ -406,7 +407,7 @@ test("moving a shooter away from a starting defender can create separation", () 
   assert.ok(moving.chance > still.chance);
 });
 
-test("clear all routes preserves custom positions, pass timing, screen and player choices", () => {
+test("clear all routes keeps positions, receiver order and shooter but removes drawn picks", () => {
   const p = screenExample({ ...defaultPlay(), mode: "passes" });
   p.positions[0] = { x: 222, y: 333 };
   const before = structuredClone(p),
@@ -414,114 +415,184 @@ test("clear all routes preserves custom positions, pass timing, screen and playe
   assert.ok(after.routes.every((r) => r.length === 0));
   assert.deepEqual(after.positions, before.positions);
   assert.deepEqual(after.passes, before.passes);
-  assert.deepEqual(after.passBeats, before.passBeats);
-  assert.deepEqual(after.screen, before.screen);
   assert.equal(after.shooter, before.shooter);
   assert.deepEqual(p, before);
 });
-test("full reset restores original spots with no routes, screen or inherited sequence", () => {
+test("full reset restores original spots and direct delivery with no drawn screens", () => {
   const p = screenExample({ ...defaultPlay(), mode: "passes" });
   p.positions[0] = { x: 222, y: 333 };
   const after = resetPlay(p);
   assert.deepEqual(after.positions, defaultPlay().positions);
   assert.ok(after.routes.every((r) => r.length === 0));
-  assert.equal(after.screen, null);
-  assert.deepEqual(after.routeBeats, [0, 0, 0, 0, 0]);
+  assert.deepEqual(planPlay(after).screens, []);
   assert.deepEqual(after.passes, [p.starter, p.shooter]);
-  assert.deepEqual(after.passBeats, [2]);
   assert.equal(after.mode, "passes");
   assert.equal(validatePlay(after), null);
 });
-test("route beats wait for Setup, Cut or Finish; screen setter holds then rolls", () => {
+test("routes ending at another defender or teammate infer a screen without selecting a setter", () => {
+  for (const target of ["defender", "teammate"]) {
+    const p = screenExample(defaultPlay());
+    p.routes[3] = [
+      {
+        ...(target === "defender" ? initialDefenders(p, 1)[1] : p.positions[1]),
+      },
+    ];
+    const plan = planPlay(p, 1),
+      screen = plan.screens.find((s) => s.screener === 3 && s.cutter === 1);
+    assert.ok(screen, target);
+    assert.deepEqual(screen.point, p.routes[3].at(-1));
+    assert.ok(plan.movements[1].start > screen.ready);
+    assert.deepEqual(playerPoint(p, 1, screen.ready, plan), p.positions[1]);
+    assert.deepEqual(
+      playerPoint(p, 3, screen.ready + 0.05, plan),
+      screen.point,
+    );
+    assert.notDeepEqual(
+      playerPoint(p, 1, plan.movements[1].start + 0.1, plan),
+      p.positions[1],
+    );
+  }
+});
+test("a planted teammate beside a through-cut also sets an implied screen", () => {
   const p = screenExample(defaultPlay());
-  assert.deepEqual(playerPoint(p, 1, 0.25), p.positions[1]);
-  assert.notDeepEqual(playerPoint(p, 1, 0.45), p.positions[1]);
-  assert.deepEqual(playerPoint(p, 1, 0.6), p.routes[1].at(-1));
-  assert.deepEqual(playerPoint(p, 3, 0.65), p.positions[3]);
-  assert.notDeepEqual(playerPoint(p, 3, 0.75), p.positions[3]);
-  assert.deepEqual(playerPoint(p, 3, 1), p.routes[3].at(-1));
+  p.positions[3] = { x: 110, y: 260 };
+  p.routes[3] = [];
+  const r = simulate(roster, p, 1, () => 0.99, roster);
+  assert.ok(r.plan.screens.some((s) => s.screener === 3 && s.cutter === 1));
+  assert.ok(r.screenEvents.some((s) => s.screener === 3 && s.cutter === 1));
 });
-test("ordered passes leave after the chosen beats and cannot overlap", () => {
-  const p = {
-    ...defaultPlay(),
-    mode: "passes",
-    passes: [0, 1, 0, 2],
-    passBeats: [0, 1, 2],
-  };
-  let events = schedulePasses(p);
-  assert.ok(events[0].t > 0.24 && events[0].arrive < 0.34);
-  assert.ok(events[1].t > 0.58 && events[1].arrive < 0.68);
-  assert.ok(events[2].t > 0.88 && events[2].arrive < 1);
-  events = schedulePasses({ ...p, passBeats: [1, 1, 1] });
+test("off-ball and on-ball screens make actual defender contact; misplaced routes give no boost", () => {
+  for (const starter of [0, 1]) {
+    const p = { ...screenExample(defaultPlay()), starter };
+    const hit = simulate(roster, p, 1, () => 0.99, roster);
+    const far = structuredClone(p);
+    far.routes[3] = [{ x: 470, y: 430 }];
+    const miss = simulate(roster, far, 1, () => 0.99, roster);
+    assert.ok(hit.screenEvents.some((s) => s.cutter === 1));
+    assert.equal(hit.screenBonus, 0.04);
+    assert.equal(miss.screenEvents.length, 0);
+    assert.equal(miss.screenBonus, 0);
+    assert.notDeepEqual(hit.frames[12].defenders, miss.frames[12].defenders);
+    assert.match(hit.explanation, /screen slowed/);
+    if (starter === 0) assert.ok(hit.screenEvents[0].t < hit.passEvents[0].t);
+    else assert.equal(hit.passEvents.length, 0);
+  }
+});
+test("two independent off-ball screens can work in one possession", () => {
+  const p = screenExample(defaultPlay());
+  p.positions[4] = { x: 360, y: 255 };
+  p.routes[4] = [{ x: 400, y: 260 }];
+  p.routes[2] = [
+    { x: 380, y: 260 },
+    { x: 335, y: 185 },
+    { x: 265, y: 105 },
+  ];
+  const r = simulate(roster, p, 1, () => 0.99, roster);
+  assert.ok(r.screenEvents.some((s) => s.screener === 3 && s.cutter === 1));
+  assert.ok(r.screenEvents.some((s) => s.screener === 4 && s.cutter === 2));
   assert.ok(
-    events.every(
-      (e, i) => e.arrive > e.t && (!i || e.t > events[i - 1].arrive),
-    ),
-  );
-  assert.match(
-    validatePlay({ ...p, passBeats: [2, 1, 2] }),
-    /timings must follow/,
-  );
-  assert.match(validatePlay({ ...p, passBeats: [0] }), /timing for each/);
-  assert.match(
-    validatePlay({ ...p, routeBeats: [0, 0, 0, 0, 5] }),
-    /Choose Setup/,
-  );
-  assert.match(
-    validatePlay({ ...p, screen: { screener: 1, cutter: 1 } }),
-    /different players/,
+    r.screenBonus <= 0.04,
+    "multiple picks do not stack unlimited bonuses",
   );
 });
-test("moving a screen into a chasing defender path changes pursuit and shot outcome factors", () => {
-  const p = screenExample(defaultPlay()),
-    hit = simulate(roster, p, 1, () => 0.99, roster);
-  const far = structuredClone(p);
-  far.positions[3] = { x: 470, y: 430 };
-  const miss = simulate(roster, far, 1, () => 0.99, roster);
-  const without = simulate(
+test("circular and zero-length drawings stay finite and cannot deadlock movement", () => {
+  const p = resetPlay(defaultPlay());
+  p.routes[0] = [{ ...p.positions[1] }];
+  p.routes[1] = [{ ...p.positions[0] }];
+  p.routes[2] = [{ ...p.positions[2] }, { ...p.positions[2] }];
+  const r = simulate(roster, p, 1, () => 0.99, roster);
+  for (const m of r.plan.movements)
+    assert.ok(Number.isFinite(m.end) && m.end <= 0.94);
+  for (const f of r.frames)
+    for (const point of f.offense)
+      assert.ok(Number.isFinite(point.x) && Number.isFinite(point.y));
+});
+test("chained screens finish setting before each cutter moves", () => {
+  const p = resetPlay(defaultPlay());
+  p.positions = [50, 150, 250, 350, 450].map((x) => ({ x, y: 400 }));
+  const defenders = initialDefenders(p, 1);
+  p.routes = defenders.slice(1).map((point) => [{ ...point }]);
+  p.routes.push([{ x: 250, y: 80 }]);
+  const plan = planPlay(p, 1);
+  assert.equal(plan.screens.length, 4);
+  for (const screen of plan.screens) {
+    assert.ok(plan.movements[screen.cutter].start > screen.ready);
+    assert.ok(plan.movements[screen.cutter].end <= 0.94);
+  }
+});
+test("automatic passes react to the cut and coverage; old timing choices have no effect", () => {
+  const p = screenExample(defaultPlay());
+  const r = simulate(roster, p, 1, () => 0.99, roster);
+  const changed = simulate(
     roster,
-    { ...p, screen: null },
+    {
+      ...p,
+      routeBeats: [2, 2, 2, 2, 2],
+      passBeats: [0],
+      screen: { screener: 0, cutter: 4 },
+    },
     1,
     () => 0.99,
     roster,
   );
-  assert.ok(hit.screenedDefenders.length > 0);
-  assert.equal(miss.screenedDefenders.length, 0);
-  assert.equal(hit.screenBonus, 0.04);
-  assert.equal(miss.screenBonus, 0);
-  assert.notDeepEqual(hit.frames[24].defenders, without.frames[24].defenders);
-  assert.ok(hit.chance > without.chance);
-  assert.match(hit.explanation, /screen slowed/);
-  assert.match(miss.explanation, /screen missed/);
-});
-test("chosen pass timing changes arrival location and passing risk; Routes mode uses automatic delivery", () => {
-  const p = screenExample({ ...defaultPlay(), mode: "passes" });
-  const early = simulate(
-    roster,
-    { ...p, passBeats: [0] },
-    1,
-    () => 0.99,
-    roster,
-  );
-  const cut = simulate(roster, { ...p, passBeats: [1] }, 1, () => 0.99, roster);
-  assert.notEqual(early.passEvents[0].t, cut.passEvents[0].t);
-  assert.notEqual(early.passRisk, cut.passRisk);
+  assert.deepEqual(changed.passEvents, r.passEvents);
+  assert.deepEqual(changed.frames, r.frames);
+  assert.equal(changed.chance, r.chance);
+  const p2 = structuredClone(p);
+  p2.routes[1] = [{ x: 90, y: 200 }];
+  const different = simulate(roster, p2, 1, () => 0.99, roster);
+  assert.notEqual(different.passEvents[0].t, r.passEvents[0].t);
+  assert.ok(r.passEvents[0].arrive > r.plan.movements[1].start);
+  assert.ok(r.passEvents[0].arrive <= r.plan.movements[1].end);
+  assert.ok(r.shotT > r.passEvents[0].arrive && r.shotT <= 1);
   assert.deepEqual(
-    early.frames[Math.round(early.passEvents[0].arrive * 48)].offense[1],
-    p.positions[1],
+    r.spot,
+    r.frames[Math.round(r.shotT * 48)].offense[p.shooter],
   );
-  assert.deepEqual(
-    cut.frames[Math.round(cut.passEvents[0].arrive * 48)].offense[1],
-    p.routes[1].at(-1),
-  );
-  const auto = schedulePasses({ ...p, mode: "routes", passBeats: [0] });
-  assert.equal(auto[0].beat, 2);
-  assert.deepEqual(
-    addPass({ ...p, passes: [0], passBeats: [] }, 1).passBeats,
-    [2],
+  assert.ok(
+    r.screenEvents.every((s) => s.t <= r.shotT),
+    "future screens cannot boost an earlier shot",
   );
 });
-test("old saved teams and challenge progress migrate without a new draft", () => {
+test("up to seven automatic passes remain ordered with one ball and no timing controls", () => {
+  for (const passes of [[0], [0, 1], [0, 1, 0, 2], [0, 1, 2, 3, 4, 0, 1, 2]]) {
+    const p = {
+      ...defaultPlay(),
+      mode: "passes",
+      passes,
+      shooter: passes.at(-1),
+    };
+    assert.equal(validatePlay(p), null);
+    const r = simulate(roster, p, 1, () => 0.99, roster);
+    assert.equal(r.passEvents.length, passes.length - 1);
+    assert.ok(
+      r.passEvents.every(
+        (e, i) =>
+          e.t >= 0 &&
+          e.arrive > e.t &&
+          e.arrive <= r.shotT &&
+          (!i || e.t > r.passEvents[i - 1].arrive),
+      ),
+    );
+  }
+  assert.deepEqual(
+    addPass({ ...defaultPlay(), passes: [0] }, 1).passes,
+    [0, 1],
+  );
+});
+test("a turnover cannot claim a screen that would happen after possession ended", () => {
+  const p = {
+    ...screenExample(defaultPlay()),
+    mode: "passes",
+    passes: [0, 2, 1],
+  };
+  const r = simulate(roster, p, 1, () => 0, roster);
+  assert.ok(r.turnover);
+  const interception = (r.turnover.t + r.turnover.arrive) / 2;
+  assert.ok(r.screenEvents.every((s) => s.t <= interception));
+  assert.equal(r.made, false);
+});
+test("saved legacy timelines retire without losing drawings, receivers, team or progress", () => {
   const g = {
     ...freshGame(players),
     stage: "game",
@@ -532,9 +603,9 @@ test("old saved teams and challenge progress migrate without a new draft", () =>
     totalAttempts: 11,
   };
   const expected = structuredClone(g);
-  delete g.play.routeBeats;
-  delete g.play.passBeats;
-  delete g.play.screen;
+  g.play.routeBeats = [2, 1, 0, 2, 0];
+  g.play.passBeats = [2, 0];
+  g.play.screen = { screener: 3, cutter: 1 };
   assert.deepEqual(restoreGame(JSON.stringify(g), players), expected);
 });
 

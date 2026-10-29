@@ -45,33 +45,31 @@ game uses fresh `Math.random` rolls. See [verification notes](docs/VALIDATION.md
 2. **Position** drags starting spots. **Draw route** taps waypoints or draws a path.
    Select each numbered player to edit their route. Undo reverses a gesture; the bin
    clears the selected route. **Clear all routes** removes all five paths and keeps
-   your current positions, screen and pass plan. **Full reset** restores the original
-   positions with no paths or screen and resets passes to direct delivery. Both support
+   your current positions and pass plan. **Full reset** restores the original
+   positions with no paths and resets passes to direct delivery. Both support
    Undo and keep your roster and challenge progress. **Load example play** restores the
    original starter example.
-3. Choose who **takes the shot**. Passing is automatic, and the example play is ready
-   to run. Screens, pass orders, route timing and probability details stay inside the
-   collapsed **Advanced controls** panel until you want them.
+3. Choose who **takes the shot**. Draw into another player to set a screen; send a
+   teammate cutting around it. Screens and pass timing come from the play itself.
+   **Try a screen play** loads a complete off-ball example.
 4. **Run the play** animates routes, defenders, passes and the shot. Outcomes explain
    space, pressure and pass risk. A shot chance is conditional on successful delivery.
 5. Score three makes within five possessions. Three misses end an unwinnable round
    early. Retry without losing your roster. Beat all five levels to finish.
 
-Optional **Advanced controls**: **Routes + passes** lets you set a starting handler,
-ordered receivers and **After setup**, **After cut**, or **Before shot** timing.
-The last receiver must be your shooter, and timing must move forward; passes sharing
-a beat still run in order. Each selected player's route runs during
-**Setup → Cut → Finish**. Set one screen by
-choosing a setter and cutter, then place the setter in the chasing defender's path.
-The setter holds through the first two beats and rolls along their drawn route in Finish;
-the cutter defaults to Cut. **Try a screen & cut** loads a complete editable example.
-Screens affect pursuit and can add a small, labeled game-model shot bonus; a screen
-away from the defender's path gives no bonus. Existing saved teams/progress migrate
-without starting over. Closing Advanced controls keeps a custom play intact, and an
-active notice prevents hidden settings from being forgotten. **Use automatic play**
-clears custom passing, screens and timing while keeping your positions, routes, shooter,
-team and progress. Undo restores the previous custom play. Invalid custom plays have a
-visible error and a shortcut to reopen the relevant controls.
+Draw a route from any numbered player, or select them and tap waypoints. Ending a
+route at another defender or teammate implies a screen: the setter gets into place,
+plants, and the cutter waits briefly before moving off it. A stationary teammate
+beside a through-cut can screen too. Multiple on-ball or off-ball picks are supported;
+there are no setter, cutter or timing dropdowns. Only actual contact slows a defender.
+
+Passing chooses an opening from receiver movement, defensive coverage and passing lanes.
+The shot follows delivery instead of waiting for every route to finish. Optional
+**Passing options → Routes + passes** lets you choose receivers in order; the game
+still handles when each pass happens. **Use automatic passing** restores automatic
+delivery while preserving your routes, implied screens, positions and shooter. Undo
+restores a previous edit. Saved teams and drawings stay intact; legacy timeline and
+screen-selector fields retire automatically.
 
 The court supports mouse, touch, keyboard selection and arrow-key position/route edits.
 Reduced-motion preferences shorten possession animation. Information dialogs trap focus
