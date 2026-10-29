@@ -1,133 +1,109 @@
 # Chalk & Dynasty
 
-**Play the live game: https://chalk-and-dynasty.tyhoag.workers.dev**
+**Play: https://chalk-and-dynasty.tyhoag.workers.dev**
 
-Draft across NBA eras, draw a basketball possession, and beat five defenses.
-A complete client-side game built with React, Vite and an SVG court. No sports API,
-account, database, external font, paid binding, or runtime secret is required to play.
+Draft five basketball legends, draw a play and beat five defenses. A free, client-side
+React/Vite game with an original SVG arena, optional local audio and no account or backend.
 
-## Develop
+## Play
 
-Requires Node.js 24 (or Node.js >=22.18) and npm.
+1. Draft exactly one PG, SG, SF, PF and C from five different team–decade draws. Season
+   facts and player details are available on each card; identities cannot repeat.
+2. Try the optional three-step warm-up, or jump straight into the challenge.
+3. Tap a jersey. **Start with ball** and **Take the shot** work with automatic passing.
+   **Draw** drags a route or adds tapped waypoints; **Move** changes starting positions.
+4. Draw into a defender or teammate to imply a screen. Cut another player around it.
+   Continue the screener’s path toward the rim for a pick and roll. Screens must actually
+   contact a defender; moving players cannot keep receiving planted-screen benefits.
+5. **Play** runs the possession. Make three buckets within five attempts to advance.
+   Three misses end the round early. **Rematch** keeps your team and drawing.
+
+Four editable starting plays: Backdoor cut, Screen & cut, Pick & roll, Give & go.
+Passing reads openings automatically. To choose receivers, select **Pass** and tap
+jerseys on the court. The last receiver shoots; no timing form is required. **Auto
+passes** keeps the chosen starting handler and shooter.
+
+**Clear** erases all routes and keeps positions. **Reset** restores the original formation
+and direct delivery. **Undo** reverses either. These actions preserve the drafted team.
+A new draft requires a separate confirmation. Existing compatible saved teams, progress,
+roles and drawings remain usable; unfinished invalid manual passing recovers to automatic.
+
+Keyboard: Tab to a jersey, Enter to select, arrow keys to draw points or move. Sound is
+opt-in and remembered. Reduced-motion preferences shorten playback. Modal dialogs support
+Escape and trap keyboard focus. Progress saves locally in this browser.
+
+## Develop and verify
+
+Node.js 24 (or >=22.18) and npm:
 
 ```sh
 npm ci
 npm run dev
+npm test
+npm run test:browser
+npm run build
+node scripts/balance.mjs
 ```
 
-Use this existing checkout. Cloud tasks are isolated already; a Git worktree is unnecessary.
-Progress stays in this browser's local storage. **New draft → Start fresh** clears it.
-
-## Checks
+Browser tests need a running local game and Chromium. The default executable is
+`/usr/bin/chromium`; override with `CHROMIUM_PATH`. `PLAYWRIGHT_BASE_URL` selects a preview
+or the public site. On a managed cloud machine with a read-only home configuration:
 
 ```sh
-npm test                 # draft, data, passes, simulation, challenge and storage tests
-npm run test:browser      # real Chromium mouse/touch, both viewport projects
-npm run build            # complete Cloudflare static-assets production build
-npm run deploy:check      # Cloudflare CLI dry run; does not publish
+XDG_CONFIG_HOME=/workspace/.tools/chalk-cloudflare NODE_USE_ENV_PROXY=1 npm run dev
 ```
 
-Start `npm run dev` before browser tests. In a managed cloud instance whose default
-home config is read-only, start it with
-`XDG_CONFIG_HOME=/workspace/.tools/chalk-cloudflare NODE_USE_ENV_PROXY=1 npm run dev`;
-this keeps Cloudflare's local development registry in writable workspace storage. The Playwright config uses `/usr/bin/chromium`;
-set `CHROMIUM_PATH` on machines with Chromium elsewhere. Browser reports, screenshots
-and traces go to ignored `test-results/`. Tests use controlled random rolls in selected
-cases to exercise makes, misses, turnovers and the final victory reliably; the shipped
-game uses fresh `Math.random` rolls. See [verification notes](docs/VALIDATION.md).
+For the exact production output, serve
+`.cloudflare/output/v0/workers/default/assets` with a local static server.
+`node scripts/experience-walk.mjs` records ordinary full-speed mouse and touch journeys
+against localhost only; it uses the installed `/usr/bin/ffmpeg` encoder through Chromium
+screencasting. No randomness or saved state is injected into those journeys.
 
-## Play
+Reports, traces and recordings live in ignored `test-results/`. The review, balance
+measurements and walkthrough notes are in [docs/qa/rebuild](docs/qa/rebuild).
+See [verification evidence](docs/VALIDATION.md) for actual results and limitations.
 
-1. Each of five picks assigns a random historical team in a different decade. Choose
-   one PG, SG, SF, PF and C across the five picks. Filled positions stay visible but
-   are locked. Each player's displayed season position determines their slot.
-   Candidate strength uses this game's score; player identities cannot repeat.
-2. **Position** drags starting spots. **Draw route** taps waypoints or draws a path.
-   Select each numbered player to edit their route. Undo reverses a gesture; the bin
-   clears the selected route. **Clear all routes** removes all five paths and keeps
-   your current positions and pass plan. **Full reset** restores the original
-   positions with no paths and resets passes to direct delivery. Both support
-   Undo and keep your roster and challenge progress. **Load example play** restores the
-   original starter example.
-3. Choose who **takes the shot**. Draw into another player to set a screen; send a
-   teammate cutting around it. Screens and pass timing come from the play itself.
-   **Try a screen play** loads a complete off-ball example.
-4. **Run the play** animates routes, defenders, passes and the shot. Outcomes explain
-   space, pressure and pass risk. A shot chance is conditional on successful delivery.
-5. Score three makes within five possessions. Three misses end an unwinnable round
-   early. Retry without losing your roster. Beat all five levels to finish.
+## Historical data
 
-Draw a route from any numbered player, or select them and tap waypoints. Ending a
-route at another defender or teammate implies a screen: the setter gets into place,
-plants, and the cutter waits briefly before moving off it. A stationary teammate
-beside a through-cut can screen too. Multiple on-ball or off-ball picks are supported;
-there are no setter, cutter or timing dropdowns. Only actual contact slows a defender.
+- 1,231 player identities, 2,443 team-player-season records, 204 historical team–decade
+  pools and 55 team abbreviations, covering seasons ending 1960–2024.
+- Up to 12 eligible players per pool; at least 20 games with that team. No combined
+  multi-team totals, invented teams or ABA records.
+- Points, rebounds, assists, steals and blocks are real single-season per-game facts.
+  Unavailable historical fields remain null and display “—”.
+- Ability ratings and possession probabilities are explicit game estimates. The final
+  opponent is a reproducible, position-balanced lineup selected by those ratings.
+- Data origins, selection method, missing fields and licensing limits: [DATA.md](docs/DATA.md).
+- Barlow Condensed by Jeremy Tribby is bundled under the SIL Open Font License in
+  `public/fonts/OFL.txt`. Artwork and synth cues are original; no runtime font service.
 
-Passing chooses an opening from receiver movement, defensive coverage and passing lanes.
-The shot follows delivery instead of waiting for every route to finish. Optional
-**Passing options → Routes + passes** lets you choose receivers in order; the game
-still handles when each pass happens. **Use automatic passing** restores automatic
-delivery while preserving your routes, implied screens, positions and shooter. Undo
-restores a previous edit. Saved teams and drawings stay intact; legacy timeline and
-screen-selector fields retire automatically.
+## Deploy
 
-The court supports mouse, touch, keyboard selection and arrow-key position/route edits.
-Reduced-motion preferences shorten possession animation. Information dialogs trap focus
-and close with Escape. This is an entertainment model, not an NBA prediction tool.
-
-## Data and mechanics
-
-- **1,231 unique players**, **2,443 factual team-player-season records**, and **204
-  team–decade pools** covering season-ending years 1960–2024.
-- Includes all 55 NBA team abbreviations represented in those years, including historical
-  relocations; absent franchises in a decade are not invented. Only NBA records, not ABA.
-- A season must contain at least 20 games for that team. Combined multi-team rows are
-  excluded. Up to 12 player identities are retained per pool, protecting all five
-  positions and supplying duplicate-safe replacements.
-- Single-season points, rebounds, assists, steals and blocks per game. Unrecorded
-  statistics remain `null`, displayed as **—**. See [data provenance](docs/DATA.md).
-- Player ability ratings and probabilities are explicitly game estimates. The pure
-  model, validation and reproducible final lineup are in `src/engine.js`.
-- Easy: loose zone. Medium: man coverage. Hard: assignment switches. Extra Hard:
-  passing-lane pressure. Impossible: the dataset's position-balanced Statistical Five.
-
-## Deploy to Cloudflare
-
-The repository uses the official `cf` CLI and Cloudflare Vite plugin. Configuration is
-`cloudflare.config.ts`; the Worker name is `chalk-and-dynasty`. It is an assets-only
-Worker with no provisioned database, paid service, or custom domain.
+The existing assets-only Cloudflare Worker is `chalk-and-dynasty`. No database, paid
+binding, custom domain or runtime credential is required.
 
 ```sh
-NODE_USE_ENV_PROXY=1 npx cf auth whoami
-# If not authenticated, use the official OAuth account connection:
-npx cf auth login --no-browser
-NODE_USE_ENV_PROXY=1 CLOUDFLARE_ACCOUNT_ID=516850fdbfa65daee3e49f0ed2504d3d npm run deploy
+npm run build
+NODE_USE_ENV_PROXY=1 CLOUDFLARE_ACCOUNT_ID=516850fdbfa65daee3e49f0ed2504d3d \
+  ./node_modules/.bin/cf deploy --prebuilt --mode production --dry-run
+NODE_USE_ENV_PROXY=1 CLOUDFLARE_ACCOUNT_ID=516850fdbfa65daee3e49f0ed2504d3d \
+  ./node_modules/.bin/cf deploy --prebuilt --mode production
 ```
 
-Account connection requires the account owner. Do not put credentials in source, chat,
-command arguments, or a committed `.env`. A deployment URL is only established by an
-actual successful deploy and public browser verification. A dry run is not a deployment.
-For a remote environment that cannot retain OAuth credentials, configure a scoped
-Cloudflare API-token requirement through secure environment settings, not chat.
+Use the existing secure account binding; never put token values in chat, source or command
+arguments. Check the printed version and the actual public game. A dry run is not a release.
+See [deployment notes](docs/DEPLOYMENT.md) for verified versions and environment details.
 
-In the managed cloud environment, Node needs `NODE_USE_ENV_PROXY=1` to use the supplied
-HTTPS proxy. The Account ID above is a public deployment identifier, not a credential.
+## Code map
 
-The current tool version does not expose `cf init`; the checked-in typed configuration
-uses the installed plugin's supported assets-only API. `npm run deploy:check` validates
-its production Build Output. Official references and exact deployment blockers are in
-[deployment notes](docs/DEPLOYMENT.md).
+- `src/main.jsx`: application shell and information dialogs
+- `src/components/`: draft, interactive court, arena/HUD, season details, accessible modal
+- `src/game/useGame.js`: persistence, edit history, practice, playback and challenge actions
+- `src/game/playbook.js`: editable plays, role selection and contextual coaching
+- `src/game/audio.js`: opt-in, locally generated sounds
+- `src/engine.js`: pure drafting, movement, inferred screens, passing, defense and progression
+- `src/players.json`, `public/players.json`: unchanged sourced historical facts
+- `tests/`: pure mechanics plus real mouse/touch and ordinary-randomness ladder checks
 
-## Structure
-
-- `src/main.jsx`: draft, editor, animation, accessible information dialogs, game UI
-- `src/style.css`: responsive local-only visual design
-- `src/engine.js`: pure draft, validation, simulation, progression and save-state logic
-- `src/players.json`: offline source records; a download copy is in `public/players.json`
-- `scripts/bundle-data.py`: reproducible source-CSV selection
-- `tests/`: meaningful unit and actual Chromium interaction tests
-- `docs/`: provenance, verification, deployment and optional assignment starter
-
-Independent student project. Not affiliated with the NBA or its teams or players.
-Original interface and court artwork. The era/team draft concept is inspired by 82-0;
-no 82-0 branding, assets or interface is reused.
+Independent project, not affiliated with the NBA, its teams or players. The era/team draft
+concept is inspired by 82-0; no 82-0 branding, artwork or interface is copied.

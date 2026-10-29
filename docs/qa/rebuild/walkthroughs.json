@@ -1,0 +1,253 @@
+[
+  {
+    "name": "desktop",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "randomness": "Unmodified Math.random. No injected game state.",
+    "durationSeconds": 83,
+    "roster": [
+      "abdulma01-1969-ATL",
+      "middlkh01-2021-MIL",
+      "lopezbr01-2019-MIL",
+      "lucasje01-1971-SFW",
+      "petrodr01-1993-NJN"
+    ],
+    "levels": [
+      {
+        "level": 1,
+        "attempts": 4,
+        "retries": 0,
+        "results": [
+          false,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "level": 2,
+        "attempts": 7,
+        "retries": 1,
+        "results": [
+          false,
+          false,
+          false,
+          true,
+          false,
+          true,
+          true
+        ]
+      },
+      {
+        "level": 3,
+        "attempts": 3,
+        "retries": 0,
+        "results": [
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "level": 4,
+        "attempts": 3,
+        "retries": 0,
+        "results": [
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "level": 5,
+        "attempts": 4,
+        "retries": 0,
+        "results": [
+          true,
+          true,
+          false,
+          true
+        ]
+      }
+    ],
+    "errors": [],
+    "video": "test-results/experience-video/desktop.webm",
+    "steps": [
+      {
+        "title": "Draft",
+        "expected": "Choose a player for each open position.",
+        "observed": "Five readable cards with position, season, three factual headline stats and detail buttons.",
+        "screenshot": "walk-desktop-0.png"
+      },
+      {
+        "title": "Practice result",
+        "expected": "Practice teaches the controls without costing a possession.",
+        "observed": "Ball choice preserved; real shot feedback; Start challenge is visible.",
+        "screenshot": "walk-desktop-1.png"
+      },
+      {
+        "title": "Match 1",
+        "expected": "Same court controls; opponent 1 and an editable play.",
+        "observed": "MATCH 1 / 5\nTHE REC LEAGUE\n\nLoose zone. Cut behind it.\n\n0\n/ 3\nBUCKETS",
+        "screenshot": "walk-desktop-2.png"
+      },
+      {
+        "title": "Match 2",
+        "expected": "Same court controls; opponent 2 and an editable play.",
+        "observed": "MATCH 2 / 5\nCITY SELECT\n\nThey chase. Make a sharp cut.\n\n0\n/ 3\nBUCKETS",
+        "screenshot": "walk-desktop-3.png"
+      },
+      {
+        "title": "Match 3",
+        "expected": "Same court controls; opponent 3 and an editable play.",
+        "observed": "MATCH 3 / 5\nTHE SWITCHMEN\n\nThey switch. Use the pick and roll.\n\n0\n/ 3\nBUCKETS",
+        "screenshot": "walk-desktop-4.png"
+      },
+      {
+        "title": "Match 4",
+        "expected": "Same court controls; opponent 4 and an editable play.",
+        "observed": "MATCH 4 / 5\nFULL COURT PRESSURE\n\nPressure defense. Keep your passes short.\n\n0\n/ 3\nBUCKETS",
+        "screenshot": "walk-desktop-5.png"
+      },
+      {
+        "title": "Match 5",
+        "expected": "Same court controls; opponent 5 and an editable play.",
+        "observed": "MATCH 5 / 5\nTHE SUPERTEAM\nMeet their five ↗\n0\n/ 3\nBUCKETS",
+        "screenshot": "walk-desktop-6.png"
+      },
+      {
+        "title": "Victory",
+        "expected": "All five opponents lead to a trophy and retained roster.",
+        "observed": "Victory screen with drafted jerseys, possession count and a new-run action.",
+        "screenshot": "walk-desktop-7.png"
+      }
+    ]
+  },
+  {
+    "name": "touch",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "randomness": "Unmodified Math.random. No injected game state.",
+    "durationSeconds": 78,
+    "roster": [
+      "mcgratr01-2005-HOU",
+      "holmgch01-2024-OKC",
+      "griffda01-1985-UTA",
+      "stavela01-1963-CHZ",
+      "johnsma02-1990-LAL"
+    ],
+    "levels": [
+      {
+        "level": 1,
+        "attempts": 4,
+        "retries": 0,
+        "results": [
+          false,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "level": 2,
+        "attempts": 5,
+        "retries": 0,
+        "results": [
+          true,
+          false,
+          false,
+          true,
+          true
+        ]
+      },
+      {
+        "level": 3,
+        "attempts": 4,
+        "retries": 0,
+        "results": [
+          false,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "level": 4,
+        "attempts": 4,
+        "retries": 0,
+        "results": [
+          false,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "level": 5,
+        "attempts": 3,
+        "retries": 0,
+        "results": [
+          true,
+          true,
+          true
+        ]
+      }
+    ],
+    "errors": [],
+    "video": "test-results/experience-video/touch.webm",
+    "steps": [
+      {
+        "title": "Draft",
+        "expected": "Choose a player for each open position.",
+        "observed": "Five readable cards with position, season, three factual headline stats and detail buttons.",
+        "screenshot": "walk-touch-0.png"
+      },
+      {
+        "title": "Practice result",
+        "expected": "Practice teaches the controls without costing a possession.",
+        "observed": "Ball choice preserved; real shot feedback; Start challenge is visible.",
+        "screenshot": "walk-touch-1.png"
+      },
+      {
+        "title": "Match 1",
+        "expected": "Same court controls; opponent 1 and an editable play.",
+        "observed": "MATCH 1 / 5\nTHE REC LEAGUE\n\nLoose zone. Cut behind it.\n\n0\n/ 3\nBUCKETS",
+        "screenshot": "walk-touch-2.png"
+      },
+      {
+        "title": "Match 2",
+        "expected": "Same court controls; opponent 2 and an editable play.",
+        "observed": "MATCH 2 / 5\nCITY SELECT\n\nThey chase. Make a sharp cut.\n\n0\n/ 3\nBUCKETS",
+        "screenshot": "walk-touch-3.png"
+      },
+      {
+        "title": "Match 3",
+        "expected": "Same court controls; opponent 3 and an editable play.",
+        "observed": "MATCH 3 / 5\nTHE SWITCHMEN\n\nThey switch. Use the pick and roll.\n\n0\n/ 3\nBUCKETS",
+        "screenshot": "walk-touch-4.png"
+      },
+      {
+        "title": "Match 4",
+        "expected": "Same court controls; opponent 4 and an editable play.",
+        "observed": "MATCH 4 / 5\nFULL COURT PRESSURE\n\nPressure defense. Keep your passes short.\n\n0\n/ 3\nBUCKETS",
+        "screenshot": "walk-touch-5.png"
+      },
+      {
+        "title": "Match 5",
+        "expected": "Same court controls; opponent 5 and an editable play.",
+        "observed": "MATCH 5 / 5\nTHE SUPERTEAM\nMeet their five ↗\n0\n/ 3\nBUCKETS",
+        "screenshot": "walk-touch-6.png"
+      },
+      {
+        "title": "Victory",
+        "expected": "All five opponents lead to a trophy and retained roster.",
+        "observed": "Victory screen with drafted jerseys, possession count and a new-run action.",
+        "screenshot": "walk-touch-7.png"
+      }
+    ]
+  }
+]

@@ -1,0 +1,76 @@
+[
+  {
+    "project": "desktop",
+    "roster": [
+      "davisri01-2003-CLE",
+      "searske01-1960-NYK",
+      "wilkele01-1973-CLE",
+      "batumni01-2016-CHO",
+      "mournal01-1993-CHH"
+    ],
+    "log": [
+      {
+        "level": 1,
+        "attempts": 3,
+        "retries": 0
+      },
+      {
+        "level": 2,
+        "attempts": 3,
+        "retries": 0
+      },
+      {
+        "level": 3,
+        "attempts": 8,
+        "retries": 1
+      },
+      {
+        "level": 4,
+        "attempts": 4,
+        "retries": 0
+      },
+      {
+        "level": 5,
+        "attempts": 5,
+        "retries": 0
+      }
+    ]
+  },
+  {
+    "project": "mobile",
+    "roster": [
+      "butlera01-2007-NOK",
+      "waltobi01-1983-SDC",
+      "vanardi01-1970-PHO",
+      "searske01-1960-NYK",
+      "nashst01-2010-PHO"
+    ],
+    "log": [
+      {
+        "level": 1,
+        "attempts": 3,
+        "retries": 0
+      },
+      {
+        "level": 2,
+        "attempts": 4,
+        "retries": 0
+      },
+      {
+        "level": 3,
+        "attempts": 5,
+        "retries": 0
+      },
+      {
+        "level": 4,
+        "attempts": 3,
+        "retries": 0
+      },
+      {
+        "level": 5,
+        "attempts": 5,
+        "retries": 0
+      }
+    ]
+  }
+]

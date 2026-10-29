@@ -54,8 +54,8 @@ export const LEVELS = [
       "Aggressive coverage jumps passing lanes. Short passes and decisive movement help.",
   },
   {
-    name: "Impossible",
-    team: "The Statistical Five",
+    name: "Final boss",
+    team: "The Superteam",
     short: "V",
     subtitle: "Legends on the other side.",
     style: "elite",
@@ -308,33 +308,75 @@ export function planPlay(play, levelIndex = 0) {
   const endpoints = play.routes.map((r, i) => r.at(-1) ?? play.positions[i]);
   const candidates = [];
   for (let setter = 0; setter < 5; setter++) {
-    const point = endpoints[setter];
     for (let cutter = 0; cutter < 5; cutter++) {
       if (setter === cutter) continue;
-      const aim = Math.min(
+      const route = play.routes[setter];
+      let point = endpoints[setter],
+        split = route.length - 1;
+      let aim = Math.min(
         distance(point, play.positions[cutter]),
         distance(point, defenders[cutter]),
       );
+      // A through-route can plant at an intermediate point, then roll. Choose the
+      // closest deliberately drawn waypoint; sample-independent segments are below.
+      if (aim > 38 && lengths[setter] > 70) {
+        const path = [play.positions[setter], ...route];
+        let travelled = 0,
+          best = null;
+        for (let j = 0; j < path.length - 1; j++) {
+          const a = path[j],
+            b = path[j + 1],
+            len = distance(a, b);
+          for (const target of [defenders[cutter], play.positions[cutter]]) {
+            const f = len
+              ? clamp(
+                  ((target.x - a.x) * (b.x - a.x) +
+                    (target.y - a.y) * (b.y - a.y)) /
+                    (len * len),
+                  0,
+                  1,
+                )
+              : 0;
+            const spot = { x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f };
+            const along = travelled + len * f,
+              near = distance(spot, target);
+            if (
+              along > 25 &&
+              lengths[setter] - along > 45 &&
+              near <= 24 &&
+              (!best || near < best.aim)
+            )
+              best = { point: spot, split: j, aim: near };
+          }
+          travelled += len;
+        }
+        if (best) ({ point, split, aim } = best);
+      }
       const path = [play.positions[cutter], ...play.routes[cutter]];
       const nearCut = path
         .slice(1)
         .some((p, j) => segmentDistance(point, path[j], p) < 27);
-      // A deliberate route into another player is a pick. A planted teammate beside
-      // a through-cut is also a pick; merely finishing in a crowd is not one.
       const aimed = lengths[setter] > 8 && aim <= 38;
       const through =
         lengths[cutter] > 45 &&
         nearCut &&
         distance(point, play.positions[cutter]) > 28 &&
         distance(point, endpoints[cutter]) > 42;
-      if (aimed || through)
+      if (aimed || through) {
+        const rolling =
+          distance(point, endpoints[setter]) > 45 && split < route.length;
+        const approach = rolling ? [...route.slice(0, split), point] : route;
+        const roll = rolling ? route.slice(split) : [];
         candidates.push({
           screener: setter,
           cutter,
           point: { ...point },
           aimed,
-          score: aimed ? aim : 60,
+          score: !lengths[setter] && through ? -1 : aimed ? aim : 60,
+          approach,
+          roll,
         });
+      }
     }
   }
   candidates.sort(
@@ -350,11 +392,15 @@ export function planPlay(play, levelIndex = 0) {
       .filter((s) => s.screener === from)
       .some((s) => reaches(s.cutter, to, seen));
   };
-  for (const candidate of candidates) {
-    if (screens.some((s) => s.screener === candidate.screener)) continue;
-    if (!reaches(candidate.cutter, candidate.screener)) screens.push(candidate);
-  }
+  for (const c of candidates)
+    if (
+      !screens.some((s) => s.screener === c.screener) &&
+      !reaches(c.cutter, c.screener)
+    )
+      screens.push(c);
   const movements = Array(5);
+  const duration = (length) =>
+    length > 0 ? clamp(length / 620, 0.16, 0.7) : 0;
   function movement(index) {
     if (movements[index]) return movements[index];
     const setup = screens.filter(
@@ -362,35 +408,51 @@ export function planPlay(play, levelIndex = 0) {
     );
     const start = Math.max(
       0,
-      ...setup.map((s) => movement(s.screener).end + 0.025),
+      ...setup.map((s) => movement(s.screener).ready + 0.025),
     );
-    const duration =
-      lengths[index] > 0 ? clamp(lengths[index] / 620, 0.16, 0.7) : 0;
+    const screen = screens.find((s) => s.screener === index);
+    const approach = screen?.approach ?? play.routes[index];
+    const ready =
+      start + duration(routeLength(play.positions[index], approach));
+    const roll = screen?.roll ?? [];
+    const release = ready + (roll.length ? 0.19 : 0);
     return (movements[index] = {
       start,
-      end: start + duration,
+      ready,
+      release,
+      end:
+        release +
+        duration(routeLength(screen?.point ?? endpoints[index], roll)),
       length: lengths[index],
+      approach,
+      roll,
+      point: screen?.point ?? endpoints[index],
     });
   }
   for (let i = 0; i < 5; i++) movement(i);
-  // Fit a chain into one possession without cutting off a setter's preparation.
   const scale = 0.94 / Math.max(0.94, ...movements.map((m) => m.end));
-  for (const m of movements) {
-    m.start *= scale;
-    m.end = Math.min(0.94, m.end * scale);
-  }
+  for (const m of movements)
+    for (const k of ["start", "ready", "release", "end"])
+      m[k] = Math.min(0.94, m[k] * scale);
   return {
-    screens: screens.map((s) => ({ ...s, ready: movements[s.screener].end })),
+    screens: screens.map((s) => ({
+      ...s,
+      ready: movements[s.screener].ready,
+      release: s.roll.length ? movements[s.screener].release : 1,
+    })),
     movements,
   };
 }
 export function playerPoint(play, index, t, plan = planPlay(play)) {
-  const { start, end } = plan.movements[index];
-  return routePoint(
-    play.positions[index],
-    play.routes[index],
-    end > start ? (t - start) / (end - start) : 1,
-  );
+  const m = plan.movements[index];
+  if (t <= m.ready || !m.roll.length)
+    return routePoint(
+      play.positions[index],
+      m.approach,
+      m.ready > m.start ? (t - m.start) / (m.ready - m.start) : 1,
+    );
+  if (t <= m.release) return { ...m.point };
+  return routePoint(m.point, m.roll, (t - m.release) / (m.end - m.release));
 }
 function openingScore(play, frames, plan, receiver, time) {
   const frame = frames[Math.round(time * 48)],
@@ -570,7 +632,10 @@ export function simulate(
     const offense = play.positions.map((_, i) => playerPoint(play, i, t, plan));
     const taken = new Set();
     const activeScreens = plan.screens.filter(
-      (s) => t >= s.ready && t <= plan.movements[s.cutter].end + 0.12,
+      (s) =>
+        t >= s.ready &&
+        t <= s.release &&
+        t <= plan.movements[s.cutter].end + 0.12,
     );
     const blocked = [];
     defenders = defenders.map((d, i) => {
@@ -632,7 +697,7 @@ export function simulate(
       blocked,
     });
   }
-  const passEvents = schedulePasses(play, frames, plan);
+  let passEvents = schedulePasses(play, frames, plan);
   let shotT = passEvents.length
     ? Math.min(1, passEvents.at(-1).arrive + 0.04)
     : 0.15;
@@ -667,6 +732,8 @@ export function simulate(
     if (!turnover && random() < risk) {
       const lanes = frame.defenders.map((d) => segmentDistance(d, a, b));
       turnover = { ...event, by: lanes.indexOf(Math.min(...lanes)) };
+      passEvents = passEvents.slice(0, passEvents.indexOf(event) + 1);
+      break;
     }
   }
   const possessionEnd = turnover ? (turnover.t + turnover.arrive) / 2 : shotT;

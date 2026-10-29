@@ -1,0 +1,5354 @@
+{
+  "seed": 20261029,
+  "lineups": 120,
+  "uniquePlayers": 361,
+  "method": "120 random valid drafts. Geometry/ratings compute each possession probability. Independent seeded uniform rolls sample the equivalent bucket/miss distribution, including pass risk. A predeclared simple play is used per opponent, not an oracle best play. This measures the model, not human enjoyment.",
+  "levels": [
+    {
+      "level": 1,
+      "strategy": "cut",
+      "stationaryBucketRate": 0.34392329376993847,
+      "templates": [
+        {
+          "id": "cut",
+          "meanBucketRate": 0.7426252578801184,
+          "minBucketRate": 0.7266456336694386,
+          "maxBucketRate": 0.7599489538211073,
+          "meanRoundWinRate": 0.8883819041370985
+        },
+        {
+          "id": "screen",
+          "meanBucketRate": 0.7482363279297204,
+          "minBucketRate": 0.7323034879297201,
+          "maxBucketRate": 0.7655674879297202,
+          "meanRoundWinRate": 0.8944449680884345
+        },
+        {
+          "id": "roll",
+          "meanBucketRate": 0.8497266585076161,
+          "minBucketRate": 0.836454600636821,
+          "maxBucketRate": 0.87296,
+          "meanRoundWinRate": 0.9730606368579847
+        },
+        {
+          "id": "give",
+          "meanBucketRate": 0.7430503308658083,
+          "minBucketRate": 0.7249220173607192,
+          "maxBucketRate": 0.7729401708494682,
+          "meanRoundWinRate": 0.8887967058587996
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "strategy": "cut",
+      "stationaryBucketRate": 0.307776463597388,
+      "templates": [
+        {
+          "id": "cut",
+          "meanBucketRate": 0.7248632550657105,
+          "minBucketRate": 0.7054624136032331,
+          "maxBucketRate": 0.746229,
+          "meanRoundWinRate": 0.8680219879440166
+        },
+        {
+          "id": "screen",
+          "meanBucketRate": 0.736758743842428,
+          "minBucketRate": 0.7208259038424278,
+          "maxBucketRate": 0.7540899038424278,
+          "meanRoundWinRate": 0.8818615041214056
+        },
+        {
+          "id": "roll",
+          "meanBucketRate": 0.8339259828344553,
+          "minBucketRate": 0.8137478508284026,
+          "maxBucketRate": 0.8664110556976452,
+          "meanRoundWinRate": 0.9645963044400337
+        },
+        {
+          "id": "give",
+          "meanBucketRate": 0.6910669702420041,
+          "minBucketRate": 0.6689397977650182,
+          "maxBucketRate": 0.7246943468279285,
+          "meanRoundWinRate": 0.8246886391629203
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "strategy": "screen",
+      "stationaryBucketRate": 0.2585525704903985,
+      "templates": [
+        {
+          "id": "cut",
+          "meanBucketRate": 0.7035714803032515,
+          "minBucketRate": 0.6828906996806886,
+          "maxBucketRate": 0.7315270637037071,
+          "meanRoundWinRate": 0.8413755713947376
+        },
+        {
+          "id": "screen",
+          "meanBucketRate": 0.7235318980657902,
+          "minBucketRate": 0.7075990580657904,
+          "maxBucketRate": 0.7408630580657903,
+          "meanRoundWinRate": 0.8664621151929636
+        },
+        {
+          "id": "roll",
+          "meanBucketRate": 0.7718461187722963,
+          "minBucketRate": 0.7495407766035932,
+          "maxBucketRate": 0.8089615041069418,
+          "meanRoundWinRate": 0.9177559205903489
+        },
+        {
+          "id": "give",
+          "meanBucketRate": 0.6494242869725896,
+          "minBucketRate": 0.6266364800986063,
+          "maxBucketRate": 0.6815950351403549,
+          "meanRoundWinRate": 0.7637312760598968
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "strategy": "roll",
+      "stationaryBucketRate": 0.3083716257315356,
+      "templates": [
+        {
+          "id": "cut",
+          "meanBucketRate": 0.6731056027481912,
+          "minBucketRate": 0.6529734549114634,
+          "maxBucketRate": 0.7005758003613765,
+          "meanRoundWinRate": 0.7993524111814622
+        },
+        {
+          "id": "screen",
+          "meanBucketRate": 0.6989574380094138,
+          "minBucketRate": 0.6824822606733844,
+          "maxBucketRate": 0.7154890915688589,
+          "meanRoundWinRate": 0.8353811055727755
+        },
+        {
+          "id": "roll",
+          "meanBucketRate": 0.7202554694713331,
+          "minBucketRate": 0.6995968367003789,
+          "maxBucketRate": 0.7494937835741832,
+          "meanRoundWinRate": 0.8623844750057436
+        },
+        {
+          "id": "give",
+          "meanBucketRate": 0.5815469525819164,
+          "minBucketRate": 0.5600457240858436,
+          "maxBucketRate": 0.611056006852966,
+          "meanRoundWinRate": 0.6500970187330518
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "strategy": "screen",
+      "stationaryBucketRate": 0.20334553651028484,
+      "templates": [
+        {
+          "id": "cut",
+          "meanBucketRate": 0.5850010188220209,
+          "minBucketRate": 0.5619863956028978,
+          "maxBucketRate": 0.6093621731315121,
+          "meanRoundWinRate": 0.6562116779618477
+        },
+        {
+          "id": "screen",
+          "meanBucketRate": 0.6774322005012176,
+          "minBucketRate": 0.6244682026909175,
+          "maxBucketRate": 0.7070686739784979,
+          "meanRoundWinRate": 0.8050031676094298
+        },
+        {
+          "id": "roll",
+          "meanBucketRate": 0.6141634753269284,
+          "minBucketRate": 0.5926778971511664,
+          "maxBucketRate": 0.6444475718715691,
+          "meanRoundWinRate": 0.7065399975067425
+        },
+        {
+          "id": "give",
+          "meanBucketRate": 0.513270448980834,
+          "minBucketRate": 0.49314869981632564,
+          "maxBucketRate": 0.5438400771882593,
+          "meanRoundWinRate": 0.5248496101280329
+        }
+      ]
+    }
+  ],
+  "runs": [
+    {
+      "roster": [
+        "Dell Curry (1989)",
+        "Tom Meschery (1968)",
+        "Nic Claxton (2023)",
+        "Walt Frazier (1970)",
+        "Karl Malone (2002)"
+      ],
+      "attempts": 21,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Othella Harrington (2000)",
+        "Norm Van Lier (1971)",
+        "Terry Porter (1991)",
+        "Paul Pressey (1986)",
+        "Dwight Howard (2018)"
+      ],
+      "attempts": 23,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 6,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "DeAndre Jordan (2014)",
+        "Keith Van Horn (2000)",
+        "Willie Anderson (1989)",
+        "Jrue Holiday (2020)",
+        "Walt Hazzard (1969)"
+      ],
+      "attempts": 22,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Kirk Hinrich (2007)",
+        "Adrian Dantley (1978)",
+        "Jeff Ruland (1984)",
+        "Kyle Anderson (2021)",
+        "Don Ohl (1963)"
+      ],
+      "attempts": 31,
+      "retries": 2,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 13,
+          "retries": 2,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Boris Diaw (2009)",
+        "Dave Twardzik (1977)",
+        "Mason Plumlee (2023)",
+        "Hal Greer (1962)",
+        "Reggie Williams (1992)"
+      ],
+      "attempts": 23,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "John Lucas (1979)",
+        "Jerry Lucas (1969)",
+        "Paul George (2016)",
+        "Benoit Benjamin (1988)",
+        "Seth Curry (2022)"
+      ],
+      "attempts": 30,
+      "retries": 3,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 13,
+          "retries": 2,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Chris Paul (2007)",
+        "Paul Pressey (1986)",
+        "Thaddeus Young (2019)",
+        "Zach LaVine (2021)",
+        "Chris Webber (1998)"
+      ],
+      "attempts": 20,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Clyde Lovellette (1961)",
+        "Chris Paul (2014)",
+        "Jamal Mashburn (2003)",
+        "Grant Long (1992)",
+        "Danny Ainge (1987)"
+      ],
+      "attempts": 22,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Mitch Richmond (1989)",
+        "Eric Murdock (1994)",
+        "Andre Iguodala (2012)",
+        "Red Kerr (1963)",
+        "Bill Robinzine (1979)"
+      ],
+      "attempts": 30,
+      "retries": 3,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 10,
+          "retries": 2,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Kenny Anderson (1994)",
+        "Buck Williams (1983)",
+        "Tom Van Arsdale (1972)",
+        "Bill Russell (1967)",
+        "CJ McCollum (2017)"
+      ],
+      "attempts": 16,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Kareem Abdul-Jabbar (1974)",
+        "Rory Sparrow (1989)",
+        "Kyle Korver (2015)",
+        "Charles Barkley (1991)",
+        "Ray Scott (1966)"
+      ],
+      "attempts": 20,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Miles Bridges (2022)",
+        "Benoit Benjamin (1990)",
+        "Sleepy Floyd (1989)",
+        "Tom Gola (1963)",
+        "Raja Bell (2009)"
+      ],
+      "attempts": 22,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Jack Twyman (1962)",
+        "Dave Twardzik (1977)",
+        "Kiki Vandeweghe (1984)",
+        "Jusuf Nurkić (2017)",
+        "Michael Jordan (1990)"
+      ],
+      "attempts": 22,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Wilt Chamberlain (1964)",
+        "Kevin Porter (1978)",
+        "T.J. Warren (2020)",
+        "Landry Fields (2011)",
+        "Horace Grant (1992)"
+      ],
+      "attempts": 30,
+      "retries": 2,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 13,
+          "retries": 2,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Dean Garrett (1997)",
+        "Goran Dragić (2014)",
+        "Kyle Lowry (2020)",
+        "Tom Chambers (1987)",
+        "Damien Wilkins (2007)"
+      ],
+      "attempts": 21,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Norm Van Lier (1971)",
+        "P.J. Brown (2001)",
+        "Tom Gola (1963)",
+        "Dejounte Murray (2022)",
+        "Larry Nance (1987)"
+      ],
+      "attempts": 17,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Nic Claxton (2023)",
+        "Larry Staverman (1963)",
+        "Raymond Felton (2011)",
+        "Carmelo Anthony (2008)",
+        "Dale Ellis (1989)"
+      ],
+      "attempts": 20,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Patrick Beverley (2017)",
+        "Roy Tarpley (1990)",
+        "Larry Drew (1983)",
+        "Dick Snyder (1969)",
+        "Brad Miller (2002)"
+      ],
+      "attempts": 19,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Jerry West (1967)",
+        "Jeff Hornacek (1996)",
+        "Mehmet Okur (2009)",
+        "John Collins (2020)",
+        "Chris Mullin (1988)"
+      ],
+      "attempts": 18,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Andre Iguodala (2008)",
+        "Mickey Johnson (1980)",
+        "Nikola Jokić (2018)",
+        "Guy Rodgers (1966)",
+        "Kenny Smith (1991)"
+      ],
+      "attempts": 38,
+      "retries": 4,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 10,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 17,
+          "retries": 3,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Sam Lacey (1980)",
+        "Damon Stoudamire (1996)",
+        "Danny Green (2019)",
+        "Rick Barry (1975)",
+        "Bill Bridges (1969)"
+      ],
+      "attempts": 21,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Latrell Sprewell (2003)",
+        "Courtney Lee (2016)",
+        "Chet Holmgren (2024)",
+        "Buck Williams (1983)",
+        "Derek Harper (1990)"
+      ],
+      "attempts": 20,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Rudy LaRusso (1960)",
+        "Richard Hamilton (2008)",
+        "Allan Bristow (1977)",
+        "Tim Hardaway (1991)",
+        "Karl-Anthony Towns (2019)"
+      ],
+      "attempts": 18,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "James Harden (2017)",
+        "Stu Lantz (1971)",
+        "Derrick Coleman (1994)",
+        "George Johnson (1980)",
+        "Jalen Johnson (2024)"
+      ],
+      "attempts": 29,
+      "retries": 2,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Jim Washington (1968)",
+        "Marko Jarić (2005)",
+        "Jerry Lucas (1971)",
+        "Zach LaVine (2019)",
+        "Eddie Johnson (1987)"
+      ],
+      "attempts": 17,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Walt Bellamy (1963)",
+        "Gerald Green (2012)",
+        "Rasheed Wallace (1998)",
+        "Anthony Edwards (2023)",
+        "Allen Iverson (2005)"
+      ],
+      "attempts": 28,
+      "retries": 2,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Brandon Ingram (2023)",
+        "Chris Paul (2007)",
+        "Artis Gilmore (1982)",
+        "Hersey Hawkins (1997)",
+        "Dolph Schayes (1960)"
+      ],
+      "attempts": 25,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Al Jefferson (2009)",
+        "Jeff Mullins (1972)",
+        "Cliff Hagan (1962)",
+        "Rory Sparrow (1989)",
+        "Detlef Schrempf (1993)"
+      ],
+      "attempts": 20,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Jerry Lucas (1969)",
+        "Mike Conley (2012)",
+        "Damien Wilkins (2007)",
+        "Nikola Jokić (2023)",
+        "Nick Anderson (1995)"
+      ],
+      "attempts": 28,
+      "retries": 2,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 10,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 6,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Brad Lohaus (1990)",
+        "Tiny Archibald (1977)",
+        "Earl Monroe (1969)",
+        "Andre Drummond (2020)",
+        "Tracy McGrady (2005)"
+      ],
+      "attempts": 42,
+      "retries": 5,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 11,
+          "retries": 2,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 12,
+          "retries": 2,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Walt Hazzard (1970)",
+        "Daniel Gafford (2024)",
+        "Andrei Kirilenko (2006)",
+        "Dick Van Arsdale (1969)",
+        "George Johnson (1980)"
+      ],
+      "attempts": 28,
+      "retries": 2,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Rod Higgins (1989)",
+        "Pau Gasol (2007)",
+        "Elgin Baylor (1963)",
+        "Jimmy Walker (1972)",
+        "CJ McCollum (2022)"
+      ],
+      "attempts": 18,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Donovan Mitchell (2024)",
+        "Bob McAdoo (1974)",
+        "LaPhonso Ellis (1997)",
+        "Willie Anderson (1989)",
+        "Jameer Nelson (2009)"
+      ],
+      "attempts": 34,
+      "retries": 3,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 10,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Andrew Wiggins (2023)",
+        "World B. Free (1979)",
+        "Kevin Love (2014)",
+        "Byron Scott (1988)",
+        "Nick Collison (2009)"
+      ],
+      "attempts": 17,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Derrick McKey (1989)",
+        "Jarrett Allen (2022)",
+        "Mike Miller (2007)",
+        "Hedo Türkoğlu (2011)",
+        "Kevin Loughery (1969)"
+      ],
+      "attempts": 28,
+      "retries": 2,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Jae'Sean Tate (2021)",
+        "Swen Nater (1979)",
+        "Mark Jackson (1997)",
+        "Walt Hazzard (1966)",
+        "Anthony Davis (2013)"
+      ],
+      "attempts": 31,
+      "retries": 3,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 17,
+          "retries": 3,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Tyson Chandler (2008)",
+        "Derek Harper (1987)",
+        "LaPhonso Ellis (1997)",
+        "Robert Covington (2019)",
+        "Donovan Mitchell (2024)"
+      ],
+      "attempts": 45,
+      "retries": 6,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 12,
+          "retries": 2,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 18,
+          "retries": 3,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Reggie Theus (1985)",
+        "Nick Van Exel (2001)",
+        "Anthony Davis (2019)",
+        "Len Chappell (1969)",
+        "Gordon Hayward (2024)"
+      ],
+      "attempts": 21,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Randy Smith (1976)",
+        "Reggie Williams (1991)",
+        "Jayson Tatum (2024)",
+        "Jack Sikma (1985)",
+        "Jamaal Tinsley (2005)"
+      ],
+      "attempts": 24,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Derek Fisher (2001)",
+        "Julius Erving (1977)",
+        "Ricky Sobers (1983)",
+        "Shaquille O'Neal (1994)",
+        "Aaron Gordon (2023)"
+      ],
+      "attempts": 23,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Dwight Howard (2018)",
+        "Austin Carr (1973)",
+        "Mark Jackson (1988)",
+        "Rick Barry (1967)",
+        "Brad Lohaus (1990)"
+      ],
+      "attempts": 23,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Jack Sikma (1989)",
+        "JJ Redick (2018)",
+        "Kevin Loughery (1969)",
+        "Adrian Dantley (1978)",
+        "Nemanja Bjelica (2020)"
+      ],
+      "attempts": 19,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Alonzo Mourning (1999)",
+        "Gene Shue (1961)",
+        "Zion Williamson (2023)",
+        "Ron Harper (1989)",
+        "Grant Hill (2000)"
+      ],
+      "attempts": 23,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Dejounte Murray (2024)",
+        "Bob Kauffman (1973)",
+        "Gus Williams (1984)",
+        "Bailey Howell (1967)",
+        "Pau Gasol (2010)"
+      ],
+      "attempts": 18,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Caron Butler (2008)",
+        "Khris Middleton (2016)",
+        "Elvin Hayes (1974)",
+        "Nemanja Bjelica (2022)",
+        "Flynn Robinson (1969)"
+      ],
+      "attempts": 34,
+      "retries": 4,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 11,
+          "retries": 2,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Devin Vassell (2024)",
+        "Jameer Nelson (2009)",
+        "Larry Nance (1992)",
+        "Artis Gilmore (1983)",
+        "Mike Riordan (1973)"
+      ],
+      "attempts": 18,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Richie Guerin (1962)",
+        "Sam Lacey (1975)",
+        "Kyrie Irving (2019)",
+        "Michael Finley (1998)",
+        "Terry Cummings (1983)"
+      ],
+      "attempts": 20,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Joel Embiid (2017)",
+        "Allan Bristow (1977)",
+        "Grant Long (1989)",
+        "Marko Jarić (2005)",
+        "Nick Anderson (1995)"
+      ],
+      "attempts": 23,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Dejounte Murray (2022)",
+        "Otto Porter Jr. (2018)",
+        "Mark Blount (2004)",
+        "Terry Cummings (1983)",
+        "Jon McGlocklin (1971)"
+      ],
+      "attempts": 18,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Ron Boone (1977)",
+        "Cade Cunningham (2024)",
+        "Lamar Odom (2006)",
+        "DeMarre Carroll (2015)",
+        "Benoit Benjamin (1991)"
+      ],
+      "attempts": 23,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Jamal Mashburn (2003)",
+        "Hal Greer (1969)",
+        "Bob McAdoo (1974)",
+        "John Collins (2020)",
+        "Pooh Richardson (1991)"
+      ],
+      "attempts": 25,
+      "retries": 2,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 12,
+          "retries": 2,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Aaron McKie (2002)",
+        "Theo Ratliff (1998)",
+        "Campy Russell (1979)",
+        "Norm Nixon (1985)",
+        "Kris Humphries (2012)"
+      ],
+      "attempts": 20,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Jeff Mullins (1972)",
+        "Jrue Holiday (2022)",
+        "Terry Cummings (1983)",
+        "Jim Fox (1969)",
+        "Tom Gugliotta (1995)"
+      ],
+      "attempts": 32,
+      "retries": 3,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 13,
+          "retries": 2,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Magic Johnson (1990)",
+        "Patrick Ewing (1989)",
+        "Jerry Lucas (1969)",
+        "O.J. Mayo (2010)",
+        "Jaden McDaniels (2023)"
+      ],
+      "attempts": 23,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Trevor Ariza (2020)",
+        "Amar'e Stoudemire (2011)",
+        "Thabo Sefolosha (2009)",
+        "Christian Laettner (1997)",
+        "Michael Ray Richardson (1985)"
+      ],
+      "attempts": 19,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Ben Gordon (2012)",
+        "Bob Pettit (1962)",
+        "Chet Holmgren (2024)",
+        "Walt Hazzard (1972)",
+        "Michael Finley (1998)"
+      ],
+      "attempts": 23,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Kevin Loughery (1969)",
+        "Kareem Abdul-Jabbar (1974)",
+        "Marcus Thornton (2011)",
+        "Clifford Robinson (2002)",
+        "Michael Finley (1998)"
+      ],
+      "attempts": 21,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Fat Lever (1987)",
+        "Caris LeVert (2018)",
+        "Derrick Coleman (1994)",
+        "Anfernee Hardaway (2000)",
+        "Wes Unseld (1974)"
+      ],
+      "attempts": 24,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Gerald Green (2012)",
+        "Baron Davis (2008)",
+        "Pervis Ellison (1992)",
+        "Richie Guerin (1962)",
+        "Gar Heard (1974)"
+      ],
+      "attempts": 22,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Bob Gross (1978)",
+        "Larry Foust (1960)",
+        "John Long (1980)",
+        "Chris Paul (2022)",
+        "Chris Webber (2006)"
+      ],
+      "attempts": 17,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Don Kojis (1969)",
+        "Donyell Marshall (2003)",
+        "Norm Nixon (1979)",
+        "Bob Lanier (1980)",
+        "Kobe Bryant (2013)"
+      ],
+      "attempts": 21,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Darnell Hillman (1978)",
+        "Wilson Chandler (2011)",
+        "Nikola Jokić (2023)",
+        "Cuttino Mobley (2007)",
+        "Magic Johnson (1990)"
+      ],
+      "attempts": 20,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Luc Longley (1998)",
+        "Luka Dončić (2024)",
+        "Erick Strickland (2000)",
+        "Tayshaun Prince (2010)",
+        "Neil Johnson (1969)"
+      ],
+      "attempts": 23,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Jalen Suggs (2024)",
+        "Rod Higgins (1989)",
+        "Detlef Schrempf (1995)",
+        "Alonzo Mourning (2000)",
+        "Archie Clark (1971)"
+      ],
+      "attempts": 20,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Dejounte Murray (2024)",
+        "Archie Clark (1972)",
+        "Anthony Davis (2013)",
+        "Shawn Bradley (1997)",
+        "Keith Erickson (1968)"
+      ],
+      "attempts": 17,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "DeAndre Jordan (2014)",
+        "Spencer Haywood (1974)",
+        "Jim Barnett (1969)",
+        "Josh Hart (2023)",
+        "Norm Nixon (1985)"
+      ],
+      "attempts": 24,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Andre Miller (2002)",
+        "Jeff Mullins (1972)",
+        "Paul Millsap (2012)",
+        "Onyeka Okongwu (2024)",
+        "Jack Twyman (1962)"
+      ],
+      "attempts": 23,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 10,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Joe Ingles (2018)",
+        "Kermit Washington (1979)",
+        "Derek Fisher (2001)",
+        "Guy Rodgers (1966)",
+        "Kristaps Porziņģis (2020)"
+      ],
+      "attempts": 33,
+      "retries": 3,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 12,
+          "retries": 2,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Jalen Brunson (2024)",
+        "Walt Bellamy (1963)",
+        "Michael Ray Richardson (1980)",
+        "Otis Thorpe (1999)",
+        "Bill Bradley (1973)"
+      ],
+      "attempts": 18,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Terry Porter (1989)",
+        "Spencer Haywood (1979)",
+        "Jae'Sean Tate (2021)",
+        "David Robinson (1994)",
+        "Don Ohl (1963)"
+      ],
+      "attempts": 22,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Rick Barry (1975)",
+        "Jalen Suggs (2024)",
+        "Tyson Chandler (2007)",
+        "Derrick Coleman (1997)",
+        "Larry Drew (1983)"
+      ],
+      "attempts": 19,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Rod Thorn (1968)",
+        "Jamal Mashburn (2000)",
+        "Brook Lopez (2010)",
+        "Lonnie Shelton (1978)",
+        "Greg Anthony (1997)"
+      ],
+      "attempts": 17,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Don Buse (1982)",
+        "Jaden Ivey (2023)",
+        "Boris Diaw (2011)",
+        "Mark Eaton (1991)",
+        "Mike Riordan (1974)"
+      ],
+      "attempts": 29,
+      "retries": 2,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Marcus Thornton (2010)",
+        "Kenny Anderson (1994)",
+        "Brook Lopez (2009)",
+        "Allan Bristow (1977)",
+        "Dave Greenwood (1981)"
+      ],
+      "attempts": 21,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Hassan Whiteside (2016)",
+        "Byron Scott (1988)",
+        "Clifford Robinson (1995)",
+        "Tyrese Haliburton (2022)",
+        "Larry Kenon (1977)"
+      ],
+      "attempts": 22,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Marvin Williams (2016)",
+        "Richie Guerin (1962)",
+        "David Wesley (1997)",
+        "Chet Holmgren (2024)",
+        "Don Kojis (1970)"
+      ],
+      "attempts": 24,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Bradley Beal (2019)",
+        "Jim Price (1977)",
+        "Jim Fox (1969)",
+        "Chris Mills (1997)",
+        "Nemanja Bjelica (2020)"
+      ],
+      "attempts": 27,
+      "retries": 2,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "A.C. Green (1989)",
+        "Willis Reed (1969)",
+        "Andre Iguodala (2012)",
+        "Marko Jarić (2005)",
+        "Dick Van Arsdale (1970)"
+      ],
+      "attempts": 24,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Johnny Cox (1963)",
+        "Anthony Davis (2019)",
+        "Jayson Tatum (2024)",
+        "Kevin Johnson (1989)",
+        "Luke Walton (2007)"
+      ],
+      "attempts": 22,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Raja Bell (2009)",
+        "Kyle Macy (1986)",
+        "OG Anunoby (2023)",
+        "Larry Staverman (1963)",
+        "Channing Frye (2010)"
+      ],
+      "attempts": 28,
+      "retries": 2,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Karl-Anthony Towns (2019)",
+        "Kevin Loughery (1969)",
+        "Miles Bridges (2022)",
+        "Wally Szczerbiak (2006)",
+        "Jeff Hornacek (1989)"
+      ],
+      "attempts": 27,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Norm Nixon (1985)",
+        "Dwight Jones (1978)",
+        "Landry Fields (2011)",
+        "Jamal Mashburn (2003)",
+        "Wilt Chamberlain (1962)"
+      ],
+      "attempts": 24,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Phil Chenier (1975)",
+        "Gordon Hayward (2021)",
+        "Amar'e Stoudemire (2008)",
+        "B.J. Armstrong (1994)",
+        "Kiki Vandeweghe (1984)"
+      ],
+      "attempts": 18,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Raef LaFrentz (2002)",
+        "Si Green (1962)",
+        "Charles Barkley (1991)",
+        "Zion Williamson (2023)",
+        "Mike Conley (2012)"
+      ],
+      "attempts": 32,
+      "retries": 3,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 16,
+          "retries": 3,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Marvin Williams (2016)",
+        "Dick Van Arsdale (1970)",
+        "Clifford Robinson (1995)",
+        "Shaquille O'Neal (2000)",
+        "Flynn Robinson (1969)"
+      ],
+      "attempts": 23,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Tiny Archibald (1972)",
+        "Terry Cummings (1987)",
+        "Rasual Butler (2007)",
+        "Myles Turner (2019)",
+        "Scottie Barnes (2024)"
+      ],
+      "attempts": 22,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 6,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Kemba Walker (2016)",
+        "Jim Washington (1968)",
+        "Rick Barry (1975)",
+        "Shawn Kemp (1994)",
+        "Aaron McKie (2002)"
+      ],
+      "attempts": 21,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Paul George (2016)",
+        "Cuttino Mobley (2002)",
+        "Jusuf Nurkić (2024)",
+        "Spencer Haywood (1974)",
+        "Slick Leonard (1962)"
+      ],
+      "attempts": 18,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Rich Kelley (1979)",
+        "Jamal Mashburn (2000)",
+        "Carlos Rogers (1997)",
+        "Landry Fields (2011)",
+        "Jrue Holiday (2024)"
+      ],
+      "attempts": 32,
+      "retries": 3,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 12,
+          "retries": 2,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Kurt Rambis (1989)",
+        "LeBron James (2019)",
+        "Dejounte Murray (2022)",
+        "Bob McAdoo (1974)",
+        "Jason Richardson (2006)"
+      ],
+      "attempts": 34,
+      "retries": 3,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 14,
+          "retries": 2,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "David Robinson (2000)",
+        "Tom Meschery (1968)",
+        "Raymond Felton (2011)",
+        "Kevin Johnson (1989)",
+        "Grant Long (1992)"
+      ],
+      "attempts": 20,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Alonzo Mourning (2000)",
+        "Slick Leonard (1962)",
+        "Mikal Bridges (2021)",
+        "Ray Williams (1982)",
+        "Paul Millsap (2012)"
+      ],
+      "attempts": 24,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Michael Dickerson (2000)",
+        "Gordon Hayward (2020)",
+        "Walt Frazier (1969)",
+        "Al Jefferson (2014)",
+        "Dan Roundfield (1981)"
+      ],
+      "attempts": 19,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 6,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Latrell Sprewell (2003)",
+        "Brook Lopez (2017)",
+        "Otis Thorpe (1989)",
+        "Lenny Wilkens (1968)",
+        "Steve Smith (1993)"
+      ],
+      "attempts": 20,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Marcus Camby (1998)",
+        "Tom Gola (1960)",
+        "Chet Walker (1972)",
+        "Maurice Lucas (1982)",
+        "Russell Westbrook (2021)"
+      ],
+      "attempts": 19,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Pete Maravich (1978)",
+        "Derek Harper (1990)",
+        "Bob Boozer (1969)",
+        "Marc Gasol (2017)",
+        "Gordon Hayward (2021)"
+      ],
+      "attempts": 26,
+      "retries": 2,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Julius Randle (2021)",
+        "Bob Rule (1969)",
+        "Jeff Teague (2015)",
+        "Julius Erving (1980)",
+        "George Gervin (1978)"
+      ],
+      "attempts": 15,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Hal Greer (1962)",
+        "Walt Williams (1996)",
+        "Raef LaFrentz (2002)",
+        "Chris Paul (2022)",
+        "Johnny Green (1971)"
+      ],
+      "attempts": 17,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "CJ McCollum (2017)",
+        "Dan Roundfield (1978)",
+        "Derek Harper (1990)",
+        "Mark Aguirre (1987)",
+        "Victor Wembanyama (2024)"
+      ],
+      "attempts": 22,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Tim Hardaway (1991)",
+        "Boris Diaw (2011)",
+        "Ray Allen (2001)",
+        "Jae'Sean Tate (2021)",
+        "Nate Thurmond (1970)"
+      ],
+      "attempts": 17,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Jim Barnett (1969)",
+        "Derrick McKey (1995)",
+        "Deron Williams (2010)",
+        "Nikola Jokić (2023)",
+        "Paul Silas (1972)"
+      ],
+      "attempts": 23,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "James Harden (2020)",
+        "Deron Williams (2012)",
+        "Tom Meschery (1968)",
+        "Kermit Washington (1979)",
+        "Tyson Chandler (2007)"
+      ],
+      "attempts": 30,
+      "retries": 3,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Rudy Gobert (2022)",
+        "Flynn Robinson (1969)",
+        "Doug Christie (2003)",
+        "Charles Barkley (1993)",
+        "Carmelo Anthony (2010)"
+      ],
+      "attempts": 20,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Dominique Wilkins (1985)",
+        "Rashard Lewis (2008)",
+        "Alonzo Mourning (1999)",
+        "Khris Middleton (2016)",
+        "Phil Ford (1979)"
+      ],
+      "attempts": 20,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 7,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Emeka Okafor (2007)",
+        "Grant Hill (1997)",
+        "Don Buse (1982)",
+        "Lonnie Shelton (1978)",
+        "Si Green (1962)"
+      ],
+      "attempts": 20,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Dave Greenwood (1981)",
+        "Jerry West (1967)",
+        "OG Anunoby (2023)",
+        "Raef LaFrentz (2002)",
+        "Steve Smith (1998)"
+      ],
+      "attempts": 21,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Shane Battier (2006)",
+        "Don Buse (1977)",
+        "Hal Greer (1962)",
+        "Kelly Olynyk (2024)",
+        "Harold Pressley (1989)"
+      ],
+      "attempts": 29,
+      "retries": 2,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 10,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Connie Dierking (1968)",
+        "Ray Williams (1982)",
+        "Jaden McDaniels (2023)",
+        "Derrick Coleman (1997)",
+        "Allen Iverson (2005)"
+      ],
+      "attempts": 27,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Brad Miller (2002)",
+        "Michael Finley (1998)",
+        "Walt Hazzard (1970)",
+        "Thaddeus Young (2014)",
+        "Rolando Blackman (1989)"
+      ],
+      "attempts": 30,
+      "retries": 2,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 10,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Paul Millsap (2018)",
+        "Hal Greer (1962)",
+        "Johnny Moore (1985)",
+        "Rudy Tomjanovich (1974)",
+        "Kelly Olynyk (2024)"
+      ],
+      "attempts": 26,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Bob Pettit (1962)",
+        "Stephen Curry (2016)",
+        "M.L. Carr (1979)",
+        "Bob Lanier (1980)",
+        "Michael Jordan (1990)"
+      ],
+      "attempts": 20,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Larry Nance (1989)",
+        "Spud Webb (1992)",
+        "Clyde Lovellette (1961)",
+        "M.L. Carr (1979)",
+        "CJ McCollum (2021)"
+      ],
+      "attempts": 25,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Larry Hughes (2005)",
+        "Brook Lopez (2010)",
+        "T.J. Warren (2020)",
+        "Doc Rivers (1989)",
+        "Lonnie Shelton (1978)"
+      ],
+      "attempts": 21,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "OG Anunoby (2023)",
+        "Jerry Lucas (1969)",
+        "Brent Barry (2002)",
+        "Thomas Bryant (2019)",
+        "Dana Barros (1995)"
+      ],
+      "attempts": 28,
+      "retries": 2,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Thomas Bryant (2019)",
+        "Greg Smith (1971)",
+        "Al Attles (1968)",
+        "Manu Ginóbili (2008)",
+        "Derrick Jones Jr. (2024)"
+      ],
+      "attempts": 22,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Bob Gross (1978)",
+        "Chris Webber (1997)",
+        "Dick Van Arsdale (1969)",
+        "Robert Parish (1981)",
+        "Ja Morant (2022)"
+      ],
+      "attempts": 20,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Tom Chambers (1987)",
+        "Baron Davis (2002)",
+        "Clifford Robinson (1999)",
+        "Moses Malone (1979)",
+        "Donte DiVincenzo (2024)"
+      ],
+      "attempts": 21,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 8,
+          "retries": 1,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Danny Green (2019)",
+        "Daniel Gafford (2024)",
+        "Jason Williams (2003)",
+        "Wilt Chamberlain (1967)",
+        "Shareef Abdur-Rahim (1999)"
+      ],
+      "attempts": 24,
+      "retries": 1,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 9,
+          "retries": 1,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Gordon Hayward (2020)",
+        "Magic Johnson (1990)",
+        "Dale Ellis (1989)",
+        "Othella Harrington (2000)",
+        "Connie Dierking (1968)"
+      ],
+      "attempts": 19,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 5,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    },
+    {
+      "roster": [
+        "Phil Chenier (1975)",
+        "Walt Bellamy (1965)",
+        "Gus Williams (1985)",
+        "Detlef Schrempf (1995)",
+        "Giannis Antetokounmpo (2024)"
+      ],
+      "attempts": 19,
+      "retries": 0,
+      "perLevel": [
+        {
+          "level": 1,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 2,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 3,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 4,
+          "attempts": 3,
+          "retries": 0,
+          "won": true
+        },
+        {
+          "level": 5,
+          "attempts": 4,
+          "retries": 0,
+          "won": true
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "completed": 120,
+    "meanPossessions": 23.3,
+    "medianPossessions": 22,
+    "p90Possessions": 31,
+    "maxPossessions": 45,
+    "meanRetries": 1.025,
+    "paceEstimate": "At 3.4 seconds of playback plus 6–12 seconds to decide/edit per possession, excluding drafting and tutorial."
+  }
+}

@@ -1,0 +1,118 @@
+[
+  {
+    "id": "UX01",
+    "severity": "high",
+    "title": "Automatic passing silently replaces the ball handler",
+    "expected": "Selecting player 4 and choosing automatic delivery preserves player 4.",
+    "observed": "Local browser reproduced starter becoming 0 (player 1).",
+    "repro": "Draft five \u2192 Passing options \u2192 starter 4 \u2192 Use automatic passing.",
+    "code": "old src/main.jsx: useAutomaticPlay",
+    "fix": "Direct always-visible handler action; preserve starter in all delivery changes.",
+    "screenshot": "before-game.png",
+    "status": "fixed"
+  },
+  {
+    "id": "UX02",
+    "severity": "high",
+    "title": "The game loop is split across a scrolling dashboard",
+    "expected": "Draw, run, watch and retry in one court-sized view.",
+    "observed": "Large heading, toolbar and side form compete; result/actions require scrolling at phone sizes.",
+    "repro": "Draft five \u2192 inspect full game screen \u2192 run.",
+    "code": "old src/main.jsx and style.css game layout",
+    "fix": "Viewport-fitted arena with HUD, court and persistent action dock.",
+    "screenshot": "before-game.png",
+    "status": "fixed"
+  },
+  {
+    "id": "UX03",
+    "severity": "high",
+    "title": "First possession gives instructions instead of a playable introduction",
+    "expected": "Try one cut with a visible action and immediate feedback.",
+    "observed": "Starter drawing and explanatory panel, no short interactive first-play cue.",
+    "repro": "Complete a first draft.",
+    "code": "old src/main.jsx App game stage",
+    "fix": "Optional three-step on-court introduction and editable plays.",
+    "screenshot": "before-result.png",
+    "status": "fixed"
+  },
+  {
+    "id": "UX04",
+    "severity": "medium",
+    "title": "Draft identity is overwhelmed by statistics and repeated status",
+    "expected": "Quickly compare basketball strengths and pick a legend for an open slot.",
+    "observed": "Large introductory copy, repeated position information and five stat columns before every pick.",
+    "repro": "Open fresh draft.",
+    "code": "old PlayerCard and draft-section",
+    "fix": "Jersey cards with compact strengths; details on demand; filled positions compact.",
+    "screenshot": "before-draft.png",
+    "status": "fixed"
+  },
+  {
+    "id": "UX05",
+    "severity": "high",
+    "title": "No evidence that ordinary teams can comfortably finish",
+    "expected": "All five levels have practical winning approaches with normal randomness.",
+    "observed": "Existing full-ladder UI check forces every outcome; only single-possession ordinary UI evidence.",
+    "repro": "Inspect tests/browser/game.spec.js runWithRandom and ladder test.",
+    "code": "tests/browser/game.spec.js; engine simulate",
+    "fix": "Varied-lineup probability/retry measurements plus unmodified-randomness browser ladders.",
+    "screenshot": "before-result.png",
+    "status": "fixed"
+  },
+  {
+    "id": "UX06",
+    "severity": "medium",
+    "title": "Screen movement cannot continue into a roll",
+    "expected": "Route through a screen then to the rim plants briefly and continues.",
+    "observed": "Only final route endpoint can plant; continuing the drawing removes that pick.",
+    "repro": "Extend a setter route beyond its screen endpoint.",
+    "code": "engine planPlay/playerPoint",
+    "fix": "Infer an intermediate screen point with approach, plant and roll phases.",
+    "screenshot": "before-game.png",
+    "status": "fixed"
+  },
+  {
+    "id": "UX07",
+    "severity": "high",
+    "title": "Hover motion makes the next Play button jitter",
+    "expected": "After practice or a result, Play remains a stable click target.",
+    "observed": "The old hover translation oscillated when a changed label left the pointer at its edge; the walkthrough could not click Play.",
+    "repro": "Complete warm-up, click Start challenge, then click Play from the same pointer position.",
+    "code": "src/style.css .primary:hover; tests/browser/game.spec.js optional coaching",
+    "fix": "Keep primary action geometry stationary on hover; retain color and shadow feedback.",
+    "status": "fixed"
+  },
+  {
+    "id": "UX08",
+    "severity": "high",
+    "title": "Small-phone controls extend beyond the viewport",
+    "expected": "All main actions fit at 320 px without horizontal scrolling or clipping.",
+    "observed": "Intrinsic grid sizing widened the court and dock; the ladder also exceeded its track.",
+    "repro": "Draft five, use 320\u00d7640 viewport, inspect each control bounding box.",
+    "code": "src/style.css arena grid and compact ladder",
+    "fix": "Give the arena an explicit minmax(0,1fr) column, constrain court sizing and tighten only the smallest ladder spacing.",
+    "status": "fixed"
+  },
+  {
+    "id": "UX09",
+    "severity": "medium",
+    "title": "A basic cut receives an incidental planted screen",
+    "expected": "The Cut starter teaches movement; Screen teaches a pick.",
+    "observed": "A stationary template teammate occupied the cut\u2019s path, implicitly screening without that being the play\u2019s lesson.",
+    "repro": "Inspect default Cut plan and actual contact events.",
+    "code": "src/game/playbook.js; tests/rebuild.test.js cuts versus screens",
+    "fix": "Spread inactive teammates away from the cut. Screen and Roll starters still create actual contact.",
+    "status": "fixed"
+  },
+  {
+    "id": "UX10",
+    "severity": "medium",
+    "title": "Close-range shot arc can clip above the court",
+    "expected": "The ball stays visible from release through the rim.",
+    "observed": "Full-speed footage showed an oversized close-range arc reaching the top boundary.",
+    "repro": "Run a close-range pick and roll and inspect the shot phase.",
+    "code": "src/components/Court.jsx shot arc",
+    "fix": "Use a bounded 40-unit arc, preserving one visible ball and the rim landing.",
+    "status": "fixed"
+  }
+]

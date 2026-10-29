@@ -1,4 +1,52 @@
-# Verification evidence
+# Rebuild verification
+
+## Playable arena rebuild
+
+- **43 unit tests passed** (no failed/skipped tests), including all prior data and draft
+  checks, every handler/shooter combination through presets and resets, intermediate
+  planted screens and rolls, actual contact, one-ball delivery and interception termination.
+- **18 browser tests passed** on the production output, across desktop and touch projects.
+  Covers drafting, per-position locks, full role selection in auto mode, drawing, touch
+  dragging, clear/reset/undo/reload, pass arrows, tutorial, sound preference, keyboard,
+  dialogs, source details, six viewport sizes and full ordinary-randomness progression.
+- **Two additional recorded full-speed UI journeys** reached victory with unmodified
+  randomness and visible mouse/touch input. Desktop: 21 possessions, one rematch, 83 s.
+  Touch: 20 possessions, no rematches; exact timing and outcomes in `walkthroughs.json`.
+  Automated decisions make those timings shorter than a human drawing/thinking session.
+- **120 varied valid drafted lineups** completed seeded balance simulations. Median
+  22 possessions, p90 31, maximum 45, mean 1.025 rematches. Predeclared reasonable plays
+  produced 72–74% bucket rates on the first four opponents, 68% against the final team,
+  versus 20–34% for the same formation standing still. These are game-model measurements,
+  not claims about actual NBA statistics or human enjoyment.
+- Production build and the real Cloudflare prebuilt packaging dry run passed.
+- Historical source records are unchanged. Barlow Condensed is bundled with its OFL license.
+
+[Annotated UX review](qa/rebuild/review.html), [findings](qa/rebuild/findings.json),
+[balance evidence](qa/rebuild/balance.json), [recorded walkthroughs](qa/rebuild/walkthroughs.json),
+[ordinary browser ladders](qa/rebuild/browser-walks.json).
+
+The review followed the supplied Agent Team Kit’s expectation/observation loop and
+control-sweep method against the disposable local build. It found and resolved the
+handler reset, scrolling dashboard, missing playable introduction, draft information
+load, unproven fairness, missing rolls, jittering Play hover, smallest-phone overflow,
+incidental preset screens and a clipped shot arc. A touch assertion initially read
+localStorage before React finished processing the gesture; event inspection proved
+correct final coordinates, and the check now waits for that exact expected position.
+No gameplay assertion or safety check was removed to obtain a pass.
+
+Playwright’s optional encoder download was blocked by the network policy. No allowlist
+or credential was changed. Recordings use the already-installed `/usr/bin/ffmpeg` and
+Chromium’s local screencast stream instead. Generated videos stay in ignored test output.
+
+Limits: agent-conducted QA, no independent human usability study; Chromium and emulated
+touch, not physical phones/Safari/Firefox. Sound setting and synthesis are checked, not
+subjective audio quality. This remains an arcade tactics model, without rebounding or
+moving-screen foul physics. The 5–10-minute human session target is an estimate allowing
+for drafting and 6–12 seconds of thought per possession. The data mirror’s lack of an
+explicit license remains disclosed in DATA.md. Nonfatal bundler notices remain for the
+icon library and the bundled historical-data chunk.
+
+The following sections preserve the verification history of earlier releases.
 
 **Verified live game: https://chalk-and-dynasty.tyhoag.workers.dev**
 

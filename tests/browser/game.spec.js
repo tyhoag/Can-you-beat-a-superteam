@@ -1,581 +1,424 @@
 import { test, expect } from "@playwright/test";
 const KEY = "chalk-dynasty-v2";
-async function state(page) {
-  return page.evaluate((key) => JSON.parse(localStorage.getItem(key)), KEY);
-}
-async function openPassing(page) {
-  const panel = page.locator(".passing-options");
-  if (!(await panel.evaluate((el) => el.open)))
-    await panel.locator("summary").click();
-  await expect(panel).toHaveAttribute("open", "");
-}
-async function draftFive(page) {
-  const eras = [],
-    teams = [],
-    ids = [];
+const read = (page) =>
+  page.evaluate((k) => JSON.parse(localStorage.getItem(k)), KEY);
+async function draft(page, { tutorial = false, offset = 0 } = {}) {
+  await page.goto("/");
   for (let i = 0; i < 5; i++) {
-    const g = await state(page);
-    eras.push(g.eras[i]);
-    teams.push(g.draftTeams[i]);
     const choices = page.getByRole("button", { name: /^Draft / });
     await expect(choices).toHaveCount(5 - i);
-    await expect(
-      page.locator(".player-card .draft-button:disabled"),
-    ).toHaveCount(i);
-    await choices.nth(i % (5 - i)).click();
-    const next = await state(page);
-    ids.push(next.roster.at(-1));
+    await choices.nth((offset + i) % (5 - i)).click();
   }
-  expect(new Set(eras).size).toBe(5);
-  expect(new Set(ids).size).toBe(5);
-  expect(teams.every(Boolean)).toBeTruthy();
-  const drafted = await page.evaluate(async (key) => {
-    const g = JSON.parse(localStorage.getItem(key));
-    const data = await fetch("/players.json").then((r) => r.json());
-    return g.roster.map((id) => data.find((p) => p.key === id).position);
-  }, KEY);
-  expect([...drafted].sort()).toEqual(["C", "PF", "PG", "SF", "SG"]);
-  await expect(
-    page.getByRole("button", { name: "Run the play", exact: false }),
-  ).toBeVisible();
-  return ids;
+  if (!tutorial)
+    await page
+      .getByRole("button", { name: "Skip · I’m ready to play" })
+      .click();
+  await expect(page.locator(".court")).toBeVisible();
 }
-async function courtPoint(page, x, y) {
-  await page.locator(".court").scrollIntoViewIfNeeded();
+async function select(page, i) {
+  await page.locator(`[data-player="${i}"]`).press("Enter");
+}
+async function point(page, x, y) {
   const r = await page.locator(".court").boundingBox();
   return { x: r.x + (x / 500) * r.width, y: r.y + (y / 470) * r.height };
 }
-async function tapCourt(page, x, y, mobile) {
-  const p = await courtPoint(page, x, y);
+async function tap(page, x, y, mobile) {
+  const p = await point(page, x, y);
   mobile
     ? await page.touchscreen.tap(p.x, p.y)
     : await page.mouse.click(p.x, p.y);
 }
-async function dragPoint(page, from, to, mobile) {
-  const a = await courtPoint(page, ...from),
-    b = await courtPoint(page, ...to);
+async function drag(page, a, b, mobile) {
+  a = await point(page, ...a);
+  b = await point(page, ...b);
   if (mobile) {
-    const cdp = await page.context().newCDPSession(page);
-    await cdp.send("Input.dispatchTouchEvent", {
+    const c = await page.context().newCDPSession(page);
+    await c.send("Input.dispatchTouchEvent", {
       type: "touchStart",
-      touchPoints: [{ x: a.x, y: a.y }],
+      touchPoints: [a],
     });
-    for (let i = 1; i <= 8; i++)
-      await cdp.send("Input.dispatchTouchEvent", {
+    for (let i = 1; i <= 10; i++)
+      await c.send("Input.dispatchTouchEvent", {
         type: "touchMove",
         touchPoints: [
-          { x: a.x + ((b.x - a.x) * i) / 8, y: a.y + ((b.y - a.y) * i) / 8 },
+          { x: a.x + ((b.x - a.x) * i) / 10, y: a.y + ((b.y - a.y) * i) / 10 },
         ],
       });
-    await cdp.send("Input.dispatchTouchEvent", {
+    await c.send("Input.dispatchTouchEvent", {
       type: "touchEnd",
       touchPoints: [],
     });
-    await cdp.detach();
+    await c.detach();
   } else {
     await page.mouse.move(a.x, a.y);
     await page.mouse.down();
-    await page.mouse.move(b.x, b.y, { steps: 8 });
+    await page.mouse.move(b.x, b.y, { steps: 10 });
     await page.mouse.up();
   }
 }
-async function runWithRandom(page, value) {
-  await page.evaluate((value) => {
-    Math.random = () => value;
-  }, value);
-  const before = (await state(page)).totalAttempts;
-  await page
-    .getByRole("button", { name: "Run the play", exact: false })
-    .click();
-  await expect
-    .poll(async () => (await state(page)).totalAttempts)
-    .toBe(before + 1);
+async function run(page) {
+  const n = (await read(page)).totalAttempts;
+  await page.getByRole("button", { name: "PLAY", exact: true }).click();
+  await expect.poll(async () => (await read(page)).totalAttempts).toBe(n + 1);
+  await expect(page.locator(".court-result")).toBeVisible();
 }
-test("full draft, team-era variety, resume, court editing, undo, both modes and pass validation", async ({
-  page,
-}, info) => {
-  const errors = [];
-  page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/");
-  await draftFive(page);
-  const ids = (await state(page)).roster;
-  await page.reload();
-  await expect(page.locator(".roster-strip button")).toHaveCount(5);
-  expect((await state(page)).roster).toEqual(ids);
-  const mobile = info.project.name === "mobile";
-  await page.getByRole("button", { name: "Position", exact: true }).click();
-  await dragPoint(page, [250, 365], [220, 340], mobile);
-  expect((await state(page)).play.positions[0].x).toBeCloseTo(220, 0);
-  await page
-    .getByRole("button", { name: "Undo last edit", exact: true })
-    .click();
-  expect((await state(page)).play.positions[0].x).toBe(250);
-  await page.getByRole("button", { name: "Draw route", exact: true }).click();
-  await page
-    .getByRole("button", { name: "Clear selected player route", exact: true })
-    .click();
-  await tapCourt(page, 225, 260, mobile);
-  await tapCourt(page, 220, 190, mobile);
-  expect((await state(page)).play.routes[0]).toHaveLength(2);
-  await page
-    .getByRole("button", { name: "Undo last edit", exact: true })
-    .click();
-  expect((await state(page)).play.routes[0]).toHaveLength(1);
-  await page
-    .getByRole("button", { name: "Load example play", exact: true })
-    .click();
-  await openPassing(page);
-  await page
-    .getByRole("button", { name: "Routes + passes", exact: true })
-    .click();
-  await expect(page.locator(".pass-sequence>span")).toHaveCount(3);
-  await page.getByLabel("TAKES THE SHOT", { exact: true }).selectOption("3");
-  await expect(page.getByRole("alert")).toContainText("End the pass sequence");
-  await expect(
-    page.getByRole("button", { name: "Run the play", exact: false }),
-  ).toBeDisabled();
-  await page
-    .getByRole("button", { name: /^Pass to / })
-    .nth(3)
-    .click();
-  await expect(
-    page.getByRole("button", { name: "Run the play", exact: false }),
-  ).toBeEnabled();
-  await page
-    .getByRole("button", { name: /^Pass to / })
-    .nth(3)
-    .click();
-  await expect(page.getByRole("alert")).toContainText("themselves");
-  await page.getByRole("button", { name: "Undo pass", exact: true }).click();
-  await page.getByRole("button", { name: "Draw route", exact: true }).click();
-  await page
-    .getByRole("button", { name: "Clear selected player route", exact: true })
-    .click();
-  await dragPoint(page, [235, 265], [195, 200], mobile);
-  expect((await state(page)).play.routes[0].length).toBeGreaterThan(1);
-  await runWithRandom(page, 0.99);
-  await expect(page.locator(".result-panel")).toContainText("Off the mark.");
-  await expect(page.locator(".result-panel")).toContainText(
-    "game-model chance",
-  );
-  await page.getByRole("button", { name: "Routes", exact: true }).click();
-  await runWithRandom(page, 0.001);
-  await expect(page.locator(".result-panel")).toContainText("picked off");
-  expect(errors).toEqual([]);
-  await page.screenshot({
-    path: `test-results/${info.project.name}-game.png`,
-    fullPage: true,
-  });
-});
-test("all five challenge levels, animated makes, final victory and complete reset", async ({
+
+test("draft completes each position once, details and source search work, save resumes", async ({
   page,
 }) => {
   await page.goto("/");
-  await draftFive(page);
-  // Move shooter 1 to a high-percentage rim look; keep a no-pass possession.
-  await page.getByRole("button", { name: "Position", exact: true }).click();
-  await page.getByLabel("TAKES THE SHOT", { exact: true }).selectOption("0");
   await page
-    .getByRole("button", { name: "Clear selected player route", exact: true })
+    .getByRole("button", { name: /^Details for / })
+    .first()
     .click();
-  await page.evaluate(() => {
-    Math.random = () => 0.13;
-  });
-  for (let level = 0; level < 5; level++) {
-    for (let i = 0; i < 3; i++) await runWithRandom(page, 0.13);
-    await expect(page.locator(".round-outcome")).toContainText(
-      "Defense beaten.",
+  await expect(page.getByRole("dialog")).toContainText(
+    "Regular-season per-game",
+  );
+  await page.getByRole("button", { name: "Close dialog" }).click();
+  for (let i = 0; i < 5; i++) {
+    await expect(page.getByRole("button", { name: /^Draft / })).toHaveCount(
+      5 - i,
     );
     await page
-      .getByRole("button", {
-        name: level === 4 ? "Claim the dynasty" : "Next defense",
-        exact: false,
-      })
+      .getByRole("button", { name: /^Draft / })
+      .first()
       .click();
-    if (level < 4) expect((await state(page)).level).toBe(level + 1);
+    if (i === 1) await page.reload();
   }
-  await expect(
-    page.getByRole("heading", { name: /The chalkboard/ }),
-  ).toBeVisible();
-  expect((await state(page)).victory).toBeTruthy();
-  expect((await state(page)).totalAttempts).toBe(15);
+  await page.getByRole("button", { name: "Skip · I’m ready to play" }).click();
+  const g = await read(page);
+  const positions = await page.evaluate(async (keys) => {
+    const data = await fetch("/players.json").then((r) => r.json());
+    return keys.map((k) => data.find((p) => p.key === k).position);
+  }, g.roster);
+  expect([...positions].sort()).toEqual(["C", "PF", "PG", "SF", "SG"]);
+  expect(new Set(g.eras).size).toBe(5);
   await page.reload();
-  await expect(
-    page.getByRole("heading", { name: /The chalkboard/ }),
-  ).toBeVisible();
+  expect((await read(page)).roster).toEqual(g.roster);
+  await expect(page.locator(".warmup-card")).toHaveCount(0);
+  await page.getByRole("button", { name: "Stats and credits" }).click();
   await page
-    .getByRole("button", { name: "Build another dynasty", exact: false })
-    .click();
-  await expect(page.getByRole("button", { name: /^Draft / })).toHaveCount(5);
-  expect((await state(page)).roster).toHaveLength(0);
+    .getByRole("textbox", { name: "Search source records" })
+    .fill("Wilt Chamberlain");
+  await expect(page.locator(".source-records")).toContainText("— STL");
+  await page.getByRole("button", { name: "Close dialog" }).click();
 });
-test("failed round allows unlimited retry, revision and reset confirmation", async ({
+
+test("every handler is available in auto mode and survives plays, clear, reset, run and reload", async ({
   page,
 }) => {
-  await page.goto("/");
-  await draftFive(page);
-  for (let i = 0; i < 3; i++) await runWithRandom(page, 0.99);
-  await expect(
-    page.getByRole("button", { name: "Retry this defense", exact: false }),
-  ).toBeVisible();
-  const ids = (await state(page)).roster;
+  await draft(page);
+  const roster = (await read(page)).roster;
+  for (let i = 0; i < 5; i++) {
+    await select(page, i);
+    await page
+      .getByRole("button", { name: "Start with ball", exact: true })
+      .click();
+    await page.getByRole("button", { name: "Use automatic passing" }).click();
+    expect((await read(page)).play.starter).toBe(i);
+  }
+  for (const name of [
+    "Load Backdoor cut",
+    "Load Screen & cut",
+    "Load Pick & roll",
+    "Load Give & go",
+  ]) {
+    await page.getByRole("button", { name, exact: true }).click();
+    expect((await read(page)).play.starter).toBe(4);
+  }
+  await page.getByRole("button", { name: "Use automatic passing" }).click();
+  await page.getByRole("button", { name: "Clear all routes" }).click();
+  await page.getByRole("button", { name: "Full reset" }).click();
+  await select(page, 2);
   await page
-    .getByRole("button", { name: "Retry this defense", exact: false })
+    .getByRole("button", { name: "Take the shot", exact: true })
     .click();
-  expect((await state(page)).results).toHaveLength(0);
-  expect((await state(page)).round).toBe(2);
-  expect((await state(page)).roster).toEqual(ids);
-  await page.getByRole("button", { name: "New draft", exact: false }).click();
-  await expect(page.getByRole("dialog")).toBeVisible();
-  await page.getByRole("button", { name: "Keep playing", exact: true }).click();
-  expect((await state(page)).roster).toEqual(ids);
-  await page.getByRole("button", { name: "New draft", exact: false }).click();
-  await page.getByRole("button", { name: "Start fresh", exact: false }).click();
-  expect((await state(page)).roster).toHaveLength(0);
+  expect((await read(page)).play.starter).toBe(4);
+  await page.getByRole("button", { name: "Load Backdoor cut" }).click();
+  await page.reload();
+  expect((await read(page)).play.starter).toBe(4);
+  expect((await read(page)).play.shooter).toBe(2);
+  await expect(page.locator('.court [data-player="4"]')).toHaveAttribute(
+    "data-ball",
+    "true",
+  );
+  await expect(page.locator("select")).toHaveCount(0);
+  await run(page);
+  expect((await read(page)).play.starter).toBe(4);
+  expect((await read(page)).roster).toEqual(roster);
 });
-test("responsive layout, help dialog, data search and historical unavailable stats", async ({
+
+test("mouse and touch draw implied off-ball screens; undo and real possession work", async ({
   page,
 }, info) => {
-  await page.goto("/");
-  await expect(page.locator(".player-card")).toHaveCount(5);
-  for (const width of info.project.name === "mobile"
-    ? [320, 390, 430]
-    : [768, 1024, 1440]) {
-    await page.setViewportSize({ width, height: 900 });
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
-      ),
-    ).toBeTruthy();
-  }
-  await page.getByRole("button", { name: "How to play", exact: false }).click();
-  await expect(page.getByRole("dialog")).toContainText("Passing options");
+  const mobile = info.project.name === "mobile";
+  await draft(page);
+  await page.getByRole("button", { name: "Full reset" }).click();
+  await drag(page, [145, 145], [100, 253], mobile);
+  let g = await read(page);
+  expect(g.play.routes[3].at(-1).x).toBeCloseTo(100, 0);
+  await expect(
+    page.locator('[data-screener="3"][data-cutter="1"]'),
+  ).toBeVisible();
+  await select(page, 1);
+  await tap(page, 130, 260, mobile);
+  await tap(page, 165, 185, mobile);
+  await tap(page, 265, 105, mobile);
   await page
-    .getByRole("button", { name: "Let’s draw it up", exact: false })
+    .getByRole("button", { name: "Take the shot", exact: true })
     .click();
+  await select(page, 0);
   await page
-    .getByRole("button", { name: "Data & credits", exact: false })
+    .getByRole("button", { name: "Start with ball", exact: true })
     .click();
-  await expect(page.getByRole("dialog")).toContainText("1,231 unique players");
-  await page.getByLabel("Search source records").fill("Bill Russell");
-  await expect(page.locator("tbody tr")).toHaveCount(1);
-  await expect(page.locator("tbody tr")).toContainText("—");
-  await page.getByLabel("Search source records").fill("Utah Jazz");
-  await expect(page.locator("tbody tr")).not.toHaveCount(0);
-  await page
-    .getByRole("button", { name: "Close information", exact: true })
-    .click();
-  await draftFive(page);
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
-    ),
-  ).toBeTruthy();
+  await run(page);
+  await expect(page.locator(".live-cue")).toContainText(
+    /screen|pick|pass|look|defender|shot/i,
+  );
+  await page.getByRole("button", { name: "Next possession" }).click();
+  await page.getByRole("button", { name: "Load Pick & roll" }).click();
+  await expect(page.locator(".screen-marker")).toContainText(["PICK + ROLL"]);
 });
-test("keyboard editing, modal Escape, corrupt saved-state recovery", async ({
+
+test("clear keeps spots, full reset restores formation, undo and reload preserve team and roles", async ({
+  page,
+}, info) => {
+  await draft(page);
+  await page.getByRole("button", { name: "Full reset" }).click();
+  const original = (await read(page)).play.positions;
+  await page.getByRole("button", { name: "Move players" }).click();
+  await drag(page, [250, 365], [215, 335], info.project.name === "mobile");
+  await expect
+    .poll(async () => (await read(page)).play.positions[0].x)
+    .toBeCloseTo(215, 0);
+  let g = await read(page);
+  const moved = g.play.positions;
+  await page.getByRole("button", { name: "Draw route" }).click();
+  await tap(page, 220, 240, info.project.name === "mobile");
+  const route = (await read(page)).play.routes;
+  await page.getByRole("button", { name: "Clear all routes" }).click();
+  g = await read(page);
+  expect(g.play.positions).toEqual(moved);
+  expect(g.play.routes.every((r) => !r.length)).toBeTruthy();
+  await page.getByRole("button", { name: "Undo last edit" }).click();
+  expect((await read(page)).play.routes).toEqual(route);
+  await page.getByRole("button", { name: "Full reset" }).click();
+  expect((await read(page)).play.positions).toEqual(original);
+  await page.getByRole("button", { name: "Undo last edit" }).click();
+  expect((await read(page)).play.positions).toEqual(moved);
+  await page.reload();
+  expect((await read(page)).play.positions).toEqual(moved);
+  expect((await read(page)).roster).toEqual(g.roster);
+});
+
+test("court pass arrows are editable and automatic delivery retains explicit roles", async ({
   page,
 }) => {
-  await page.goto("/");
-  await page.evaluate(
-    (key) => localStorage.setItem(key, '{"version":2,"play":{}}'),
-    KEY,
-  );
+  await draft(page);
+  await select(page, 3);
+  await page
+    .getByRole("button", { name: "Start with ball", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Draw pass", exact: true }).click();
+  await select(page, 1);
+  await select(page, 4);
+  let p = (await read(page)).play;
+  expect(p.passes).toEqual([3, 1, 4]);
+  expect(p.shooter).toBe(4);
+  expect(p.starter).toBe(3);
+  await expect(page.locator(".pass-arrow")).toHaveCount(2);
+  await page.getByRole("button", { name: "Use automatic passing" }).click();
+  p = (await read(page)).play;
+  expect(p.starter).toBe(3);
+  expect(p.shooter).toBe(4);
+  expect(p.mode).toBe("routes");
+  await page.getByRole("button", { name: "Load Screen & cut" }).click();
+  await run(page);
+  await expect(page.locator(".basketball")).toHaveCount(1);
+});
+
+test("optional playable coaching teaches ball, cut and shot without consuming a real attempt", async ({
+  page,
+}) => {
+  await draft(page, { tutorial: true });
+  await page.getByRole("button", { name: "30-second warm-up" }).click();
+  await expect(page.locator(".live-cue")).toContainText("COACH · 1");
+  await select(page, 3);
+  await page
+    .getByRole("button", { name: "Start with ball", exact: true })
+    .click();
+  await expect(page.locator(".live-cue")).toContainText("COACH · 2");
+  await page.getByRole("button", { name: "Load Backdoor cut" }).click();
+  await expect(page.locator(".live-cue")).toContainText("COACH · 3");
+  await page.getByRole("button", { name: "PLAY", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Start challenge" }),
+  ).toBeVisible();
+  expect((await read(page)).totalAttempts).toBe(0);
+  expect((await read(page)).play.starter).toBe(3);
+  await page.getByRole("button", { name: "Start challenge" }).click();
+  await run(page);
+  expect((await read(page)).totalAttempts).toBe(1);
+});
+
+test("keyboard, sound preference, reset confirmation and malformed-save recovery", async ({
+  page,
+}) => {
+  await draft(page);
+  await page.getByRole("button", { name: "Full reset" }).click();
+  await page.locator('[data-player="0"]').press("ArrowUp");
+  expect((await read(page)).play.routes[0]).toHaveLength(1);
+  await page.getByRole("button", { name: "Turn sound on" }).click();
   await page.reload();
-  await expect(page.getByRole("button", { name: /^Draft / })).toHaveCount(5);
-  await draftFive(page);
-  await page.getByRole("button", { name: "Position", exact: true }).click();
-  const marker = page.locator(".offensive-player").first();
-  await marker.focus();
-  await page.keyboard.press("ArrowLeft");
-  expect((await state(page)).play.positions[0].x).toBe(240);
-  await page.getByRole("button", { name: "Draw route", exact: true }).click();
-  await marker.focus();
-  const count = (await state(page)).play.routes[0].length;
-  await page.keyboard.press("ArrowUp");
-  expect((await state(page)).play.routes[0]).toHaveLength(count + 1);
-  await page.getByRole("button", { name: "How to play", exact: false }).click();
+  await expect(page.getByRole("button", { name: "Mute sound" })).toBeVisible();
+  await page.getByRole("button", { name: "How to play" }).click();
+  await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
-});
-
-test("unmodified random gameplay completes a possession without runtime network dependencies", async ({
-  page,
-  baseURL,
-}) => {
-  const requests = [];
-  page.on("request", (request) => {
-    if (new URL(request.url()).origin !== new URL(baseURL).origin)
-      requests.push(request.url());
-  });
-  await page.goto("/");
-  await draftFive(page);
-  await page
-    .getByRole("button", { name: "Run the play", exact: false })
-    .click();
-  await expect.poll(async () => (await state(page)).totalAttempts).toBe(1);
-  const g = await state(page);
-  expect(g.results).toHaveLength(1);
-  expect(typeof g.results[0]).toBe("boolean");
-  await expect(page.locator(".result-panel")).toHaveClass(/has-result/);
-  expect(requests).toEqual([]);
-});
-
-test("clear-all and full reset have separate semantics, support undo, and preserve the challenge", async ({
-  page,
-}, info) => {
-  await page.goto("/");
-  await draftFive(page);
-  await openPassing(page);
-  await page
-    .getByRole("button", { name: "Routes + passes", exact: true })
-    .click();
-  await page.getByRole("button", { name: "Position", exact: true }).click();
-  await dragPoint(page, [250, 365], [220, 340], info.project.name === "mobile");
-  const before = await state(page);
-  await page
-    .getByRole("button", { name: "Clear all routes", exact: true })
-    .click();
-  let g = await state(page);
-  expect(g.play.routes.every((r) => r.length === 0)).toBeTruthy();
-  expect(g.play.positions).toEqual(before.play.positions);
-  expect(g.play.passes).toEqual(before.play.passes);
-  await page
-    .getByRole("button", { name: "Undo last edit", exact: true })
-    .click();
-  expect((await state(page)).play).toEqual(before.play);
-  await page
-    .getByRole("button", { name: "Try a screen play", exact: false })
-    .click();
-  const screened = await state(page);
-  await expect(
-    page.locator('.screen-marker[data-screener="3"][data-cutter="1"]'),
-  ).toHaveCount(1);
-  await page.getByRole("button", { name: "Full reset", exact: true }).click();
-  g = await state(page);
-  expect(g.play.routes.every((r) => r.length === 0)).toBeTruthy();
-  expect(g.play.positions[0]).toEqual({ x: 250, y: 365 });
-  await expect(page.locator(".screen-marker")).toHaveCount(0);
-  expect(g.play.passes).toEqual([0, 1]);
-  expect(g.roster).toEqual(before.roster);
-  expect(g.level).toEqual(before.level);
-  expect(g.results).toEqual(before.results);
-  await page
-    .getByRole("button", { name: "Undo last edit", exact: true })
-    .click();
-  expect((await state(page)).play).toEqual(screened.play);
+  const roster = (await read(page)).roster;
+  await page.getByRole("button", { name: "New draft", exact: true }).click();
+  await page.getByRole("button", { name: "Keep playing" }).click();
+  expect((await read(page)).roster).toEqual(roster);
+  await page.getByRole("button", { name: "New draft", exact: true }).click();
+  await page.getByRole("button", { name: "Start fresh" }).click();
+  await expect(page.getByRole("button", { name: /^Draft / })).toHaveCount(5);
+  await page.evaluate((k) => localStorage.setItem(k, "{broken"), KEY);
   await page.reload();
-  expect((await state(page)).play).toEqual(screened.play);
+  await expect(page.getByRole("button", { name: /^Draft / })).toHaveCount(5);
 });
-test("drawing directly into a defender implies an off-ball screen and automatic delivery", async ({
+
+test("court and core actions fit phone, tablet and desktop viewports without scrolling", async ({
+  page,
+}) => {
+  await draft(page);
+  for (const [width, height] of [
+    [320, 640],
+    [390, 844],
+    [430, 932],
+    [768, 1024],
+    [1024, 768],
+    [1440, 900],
+  ]) {
+    await page.setViewportSize({ width, height });
+    const bounds = await page.evaluate(() => ({
+      w: document.documentElement.scrollWidth,
+      h: document.documentElement.scrollHeight,
+      innerH: innerHeight,
+    }));
+    expect(bounds.w).toBeLessThanOrEqual(width);
+    expect(bounds.h).toBeLessThanOrEqual(height + 1);
+    for (const selector of [
+      ".court",
+      ".run-button",
+      ".player-actions",
+      ".court-toolbar",
+    ]) {
+      const r = await page.locator(selector).boundingBox();
+      expect(r.x).toBeGreaterThanOrEqual(0);
+      expect(r.x + r.width).toBeLessThanOrEqual(width + 1);
+      expect(r.y + r.height).toBeLessThanOrEqual(height + 1);
+    }
+  }
+});
+
+test("ordinary randomness: drafted team completes all five opponents with honest retries", async ({
   page,
 }, info) => {
-  const errors = [];
+  test.setTimeout(240000);
+  const errors = [],
+    foreign = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/");
-  await draftFive(page);
-  await page.getByRole("button", { name: "Full reset", exact: true }).click();
-  const mobile = info.project.name === "mobile";
-  // Releasing a route on a teammate must finish the route, rather than select them.
-  await dragPoint(page, [145, 145], [80, 285], mobile);
-  expect((await state(page)).play.routes[3].at(-1).x).toBeCloseTo(80, 0);
-  await expect(
-    page.locator('.screen-marker[data-screener="3"][data-cutter="1"]'),
-  ).toHaveCount(1);
-  await page
-    .getByRole("button", { name: "Undo last edit", exact: true })
-    .click();
-  // Draw from the numbered setter straight into the other player's defender.
-  await dragPoint(page, [145, 145], [100.4, 253], mobile);
-  await expect(
-    page.locator('.screen-marker[data-screener="3"][data-cutter="1"]'),
-  ).toHaveCount(1);
-  // Draw the off-ball cutter around that screen and toward the basket.
-  await dragPoint(page, [80, 285], [135, 245], mobile);
-  await tapCourt(page, 165, 185, mobile);
-  await tapCourt(page, 265, 105, mobile);
-  await page.getByLabel("TAKES THE SHOT", { exact: true }).selectOption("1");
-  const drawn = await state(page);
-  expect(drawn.play.starter).toBe(0);
-  expect(drawn.play.shooter).toBe(1);
-  expect(drawn.play.routes[3].at(-1).x).toBeCloseTo(100.4, 0);
-  expect(drawn.play.routes[1].length).toBeGreaterThan(2);
-  expect(drawn.play).not.toHaveProperty("routeBeats");
-  expect(drawn.play).not.toHaveProperty("passBeats");
-  expect(drawn.play).not.toHaveProperty("screen");
-  await runWithRandom(page, 0.99);
-  await expect(page.locator(".result-panel")).toContainText("screen slowed");
-  await page.reload();
-  expect((await state(page)).play).toEqual(drawn.play);
-  await expect(
-    page.locator('.screen-marker[data-screener="3"][data-cutter="1"]'),
-  ).toHaveCount(1);
-  await openPassing(page);
-  await expect(
-    page.locator(".pass-timings, .screen-fields, .beat-strip, #route-beat"),
-  ).toHaveCount(0);
-  await page
-    .getByRole("button", { name: "Try a screen play", exact: false })
-    .click();
-  await page
-    .getByRole("button", { name: "Routes + passes", exact: true })
-    .click();
-  await runWithRandom(page, 0.99);
-  await expect(page.locator(".result-panel")).toContainText("screen slowed");
-  expect((await state(page)).totalAttempts).toBe(2);
+  page.on("request", (r) => {
+    if (
+      !r
+        .url()
+        .startsWith(
+          new URL(
+            info.project.use.baseURL ||
+              process.env.PLAYWRIGHT_BASE_URL ||
+              "http://localhost:5173",
+          ).origin,
+        ) &&
+      !r.url().startsWith("data:")
+    )
+      foreign.push(r.url());
+  });
+  await draft(page, { offset: info.project.name === "mobile" ? 2 : 1 });
+  const beginning = await read(page),
+    log = [];
+  for (let level = 0; level < 5; level++) {
+    if (level === 4) {
+      await page.getByRole("button", { name: "Meet their five" }).click();
+      await expect(page.locator(".boss-lineup button")).toHaveCount(5);
+      await page.locator(".boss-lineup button").first().click();
+      await expect(page.getByRole("dialog")).toContainText(
+        "Regular-season per-game",
+      );
+      await page.getByRole("button", { name: "Close dialog" }).click();
+    }
+    await page
+      .getByRole("button", {
+        name: [
+          "Load Backdoor cut",
+          "Load Backdoor cut",
+          "Load Screen & cut",
+          "Load Pick & roll",
+          "Load Screen & cut",
+        ][level],
+        exact: true,
+      })
+      .click();
+    let attempts = 0,
+      retries = 0;
+    while (
+      !(await page
+        .getByRole("button", {
+          name: level === 4 ? "Claim the trophy" : "Next opponent",
+          exact: true,
+        })
+        .isVisible()) &&
+      attempts < 100
+    ) {
+      if (
+        await page
+          .getByRole("button", { name: "Rematch", exact: true })
+          .isVisible()
+      ) {
+        retries++;
+        await page
+          .getByRole("button", { name: "Rematch", exact: true })
+          .click();
+      } else if (
+        await page
+          .getByRole("button", { name: "Next possession", exact: true })
+          .isVisible()
+      )
+        await page
+          .getByRole("button", { name: "Next possession", exact: true })
+          .click();
+      await run(page);
+      attempts++;
+    }
+    log.push({ level: level + 1, attempts, retries });
+    await page
+      .getByRole("button", {
+        name: level === 4 ? "Claim the trophy" : "Next opponent",
+        exact: true,
+      })
+      .click();
+  }
+  await expect(page.locator(".victory-screen")).toContainText("THE SUPERTEAM");
+  expect((await read(page)).roster).toEqual(beginning.roster);
   expect(errors).toEqual([]);
-  for (const width of mobile ? [320, 390, 430] : [768, 1024, 1440]) {
-    await page.setViewportSize({ width, height: 900 });
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
-      ),
-    ).toBeTruthy();
-  }
-  await page.screenshot({
-    path: `test-results/${info.project.name}-natural-screens.png`,
-    fullPage: true,
+  expect(foreign).toEqual([]);
+  await info.attach("ordinary-ladder.json", {
+    body: JSON.stringify(
+      { project: info.project.name, roster: beginning.roster, log },
+      null,
+      2,
+    ),
+    contentType: "application/json",
   });
-});
-
-test("draft locks a filled position, persists the lock, and finishes one PG SG SF PF C", async ({
-  page,
-}, info) => {
-  await page.goto("/");
-  const pg = page.locator(".player-card").filter({
-    has: page.locator(".card-top>span").filter({ hasText: /^PG$/ }),
-  });
-  await pg.getByRole("button", { name: /^Draft / }).click();
-  await expect(
-    page.getByRole("button", { name: /^PG filled:/ }),
-  ).toBeDisabled();
-  await expect(page.getByRole("button", { name: /^Draft / })).toHaveCount(4);
-  await expect(page.locator(".draft-position-status .filled")).toHaveCount(1);
-  const first = (await state(page)).roster[0];
   await page.reload();
-  expect((await state(page)).roster).toEqual([first]);
-  await expect(
-    page.getByRole("button", { name: /^PG filled:/ }),
-  ).toBeDisabled();
-  await page.screenshot({
-    path: `test-results/${info.project.name}-position-lock.png`,
-    fullPage: true,
-  });
-  for (const position of ["SG", "SF", "PF", "C"]) {
-    const card = page.locator(".player-card").filter({
-      has: page
-        .locator(".card-top>span")
-        .filter({ hasText: new RegExp("^" + position + "$") }),
-    });
-    await card.getByRole("button", { name: /^Draft / }).click();
-  }
-  const g = await state(page);
-  expect(g.roster).toHaveLength(5);
-  expect(g.stage).toBe("game");
-  const positions = await page.evaluate(async (key) => {
-    const data = await fetch("/players.json").then((r) => r.json());
-    return JSON.parse(localStorage.getItem(key)).roster.map(
-      (id) => data.find((p) => p.key === id).position,
-    );
-  }, KEY);
-  expect(positions).toEqual(["PG", "SG", "SF", "PF", "C"]);
-  await expect(
-    page.getByRole("button", { name: "Run the play", exact: false }),
-  ).toBeVisible();
-});
-
-test("simple play keeps optional controls tucked away and runs without configuring them", async ({
-  page,
-}, info) => {
-  await page.goto("/");
-  await draftFive(page);
-  await expect(page.locator(".passing-options")).not.toHaveAttribute("open");
-  await expect(page.getByLabel("Screen setter", { exact: true })).toHaveCount(
-    0,
-  );
-  await expect(
-    page.getByLabel("STARTS WITH THE BALL", { exact: true }),
-  ).not.toBeVisible();
-  await expect(
-    page.locator(".beat-strip, .pass-timings, #route-beat"),
-  ).toHaveCount(0);
-  await expect(
-    page.getByRole("button", { name: "Routes + passes", exact: true }),
-  ).not.toBeVisible();
-  await expect(
-    page.getByLabel("TAKES THE SHOT", { exact: true }),
-  ).toBeVisible();
-  await page.getByLabel("TAKES THE SHOT", { exact: true }).selectOption("0");
-  await runWithRandom(page, 0.99);
-  expect((await state(page)).results).toHaveLength(1);
-  await expect(page.locator(".custom-play-note")).toHaveCount(0);
-  await page.screenshot({
-    path: `test-results/${info.project.name}-simple-play.png`,
-    fullPage: true,
-  });
-});
-
-test("optional receiver choices preserve drawings, implied screens and saved progress", async ({
-  page,
-}) => {
-  await page.goto("/");
-  await draftFive(page);
-  const summary = page.locator(".passing-options > summary");
-  await summary.focus();
-  await page.keyboard.press("Enter");
-  await expect(
-    page.getByLabel("STARTS WITH THE BALL", { exact: true }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Try a screen play", exact: false })
-    .click();
-  await page
-    .getByRole("button", { name: "Routes + passes", exact: true })
-    .click();
-  const custom = await state(page);
-  await summary.click();
-  expect((await state(page)).play).toEqual(custom.play);
-  await expect(page.locator(".custom-play-note")).toContainText(
-    "Your chosen pass order is on",
-  );
-  await page.reload();
-  await expect(page.locator(".passing-options")).not.toHaveAttribute("open");
-  expect((await state(page)).play).toEqual(custom.play);
-  await expect(page.locator(".custom-play-note")).toBeVisible();
-  await page
-    .getByRole("button", { name: "Use automatic passing", exact: true })
-    .click();
-  const automatic = await state(page);
-  expect(automatic.play.mode).toBe("routes");
-  await expect(
-    page.locator('.screen-marker[data-screener="3"][data-cutter="1"]'),
-  ).toHaveCount(1);
-  expect(automatic.play).not.toHaveProperty("routeBeats");
-  expect(automatic.play).not.toHaveProperty("passBeats");
-  expect(automatic.play.positions).toEqual(custom.play.positions);
-  expect(automatic.play.routes).toEqual(custom.play.routes);
-  expect(automatic.play.shooter).toBe(custom.play.shooter);
-  expect(automatic.roster).toEqual(custom.roster);
-  expect(automatic.results).toEqual(custom.results);
-  await expect(page.locator(".custom-play-note")).toHaveCount(0);
-  await page
-    .getByRole("button", { name: "Undo last edit", exact: true })
-    .click();
-  expect((await state(page)).play).toEqual(custom.play);
-  await openPassing(page);
-  await page.getByLabel("TAKES THE SHOT", { exact: true }).selectOption("4");
-  await summary.click();
-  await expect(page.getByRole("alert")).toContainText("End the pass sequence");
-  await page
-    .getByRole("button", { name: "Edit passing options", exact: true })
-    .click();
-  await expect(
-    page.getByRole("button", { name: "Undo pass", exact: true }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Use automatic passing", exact: true })
-    .click();
-  await expect(
-    page.getByRole("button", { name: "Run the play", exact: false }),
-  ).toBeEnabled();
-  expect((await state(page)).play.shooter).toBe(4);
+  await expect(page.locator(".victory-screen")).toBeVisible();
 });
