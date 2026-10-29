@@ -129,7 +129,8 @@ export function draftPools(players, era) {
   );
 }
 export const POSITIONS = ["PG", "SG", "SF", "PF", "C"];
-export function draftOffers(players, era, roster, team = null) {
+export const DRAFT_CHOICES_PER_POSITION = 3;
+export function draftOptions(players, era, roster, team = null) {
   const picked = roster
     .map((key) => players.find((p) => p.key === key))
     .filter(Boolean);
@@ -143,19 +144,31 @@ export function draftOffers(players, era, roster, team = null) {
         a.id.localeCompare(b.id) ||
         a.key.localeCompare(b.key),
     );
-  return POSITIONS.map((position) => {
-    const candidates = pool.filter((p) => p.position === position);
-    const player = candidates.find((p) => !usedIds.has(p.id)) ?? candidates[0];
-    if (!player) return null;
-    return {
+  return POSITIONS.flatMap((position) => {
+    const seen = new Set();
+    const candidates = pool.filter((p) => {
+      if (p.position !== position || seen.has(p.id)) return false;
+      seen.add(p.id);
+      return true;
+    });
+    const available = candidates.filter((p) => !usedIds.has(p.id));
+    const choices = available.length ? available : candidates.slice(0, 1);
+    return choices.slice(0, DRAFT_CHOICES_PER_POSITION).map((player) => ({
       ...player,
       draftBlockedReason: filled.has(position)
         ? `${position} filled`
         : usedIds.has(player.id)
           ? "Already drafted"
           : null,
-    };
-  }).filter(Boolean);
+    }));
+  });
+}
+// One opening card per position; all alternatives use the same eligibility rules.
+export function draftOffers(players, era, roster, team = null) {
+  const options = draftOptions(players, era, roster, team);
+  return POSITIONS.map((position) =>
+    options.find((p) => p.position === position),
+  ).filter(Boolean);
 }
 export function eligibleDraftTeam(
   players,
@@ -183,7 +196,7 @@ export function selectDraftPlayer(state, key, players, random = Math.random) {
   )
     return state;
   const index = state.roster.length;
-  const choice = draftOffers(
+  const choice = draftOptions(
     players,
     state.eras[index],
     state.roster,

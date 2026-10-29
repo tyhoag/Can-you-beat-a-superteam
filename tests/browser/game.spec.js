@@ -422,3 +422,99 @@ test("ordinary randomness: drafted team completes all five opponents with honest
   await page.reload();
   await expect(page.locator(".victory-screen")).toBeVisible();
 });
+
+test("browse position alternatives, compare details, draft the chosen player and keep the slot locked", async ({
+  page,
+}, info) => {
+  await page.goto("/");
+  const card = page
+    .locator(".draft-card")
+    .filter({ has: page.locator(".candidate-picker button:not(:disabled)") })
+    .first();
+  const position = await card.locator(".card-top>b").innerText();
+  const original = await card.locator("h3").innerText();
+  const next = card.getByRole("button", {
+    name: `Next ${position} player`,
+    exact: true,
+  });
+  const previous = card.getByRole("button", {
+    name: `Previous ${position} player`,
+    exact: true,
+  });
+  const click = (locator) =>
+    info.project.name === "mobile" ? locator.tap() : locator.click();
+  await click(next);
+  const alternative = await card.locator("h3").innerText();
+  expect(alternative).not.toBe(original);
+  await click(previous);
+  await expect(card.locator("h3")).toHaveText(original);
+  await click(next);
+  await expect(card.locator("h3")).toHaveText(alternative);
+  await card
+    .getByRole("button", { name: `Details for ${alternative}`, exact: true })
+    .click();
+  await expect(page.getByRole("dialog")).toContainText(alternative);
+  await expect(page.getByRole("dialog")).toContainText(
+    "Regular-season per-game",
+  );
+  await page.getByRole("button", { name: "Close dialog" }).click();
+  await page.screenshot({
+    path: `docs/qa/draft-options/${info.project.name}-options.png`,
+    fullPage: true,
+  });
+  await card
+    .getByRole("button", { name: `Draft ${alternative}`, exact: true })
+    .click();
+  const g = await read(page);
+  const picked = await page.evaluate(
+    async (key) =>
+      (await (await fetch("/players.json")).json()).find((p) => p.key === key),
+    g.roster[0],
+  );
+  expect(picked.name).toBe(alternative);
+  expect(picked.position).toBe(position);
+  expect(picked.era).toBe(g.eras[0]);
+  expect(picked.team).toBe(g.draftTeams[0]);
+  await page.reload();
+  expect((await read(page)).roster).toEqual(g.roster);
+  const locked = page.locator(
+    `.draft-card[aria-label="${position} candidates"]`,
+  );
+  await expect(locked.locator(".draft-button")).toBeDisabled();
+  await expect(locked.locator(".candidate-picker button")).toHaveCount(2);
+  for (const b of await locked.locator(".candidate-picker button").all())
+    await expect(b).toBeDisabled();
+});
+
+test("a full team of alternative choices can finish the draft and play a real possession", async ({
+  page,
+}, info) => {
+  await page.goto("/");
+  let alternatives = 0;
+  for (let i = 0; i < 5; i++) {
+    const card = page.locator(".draft-card:not(.locked)").first();
+    const next = card.locator(".candidate-picker button").last();
+    if (await next.isEnabled()) {
+      info.project.name === "mobile" ? await next.tap() : await next.click();
+      alternatives++;
+    }
+    const name = await card.locator("h3").innerText();
+    await card
+      .getByRole("button", { name: `Draft ${name}`, exact: true })
+      .click();
+    const g = await read(page);
+    const p = await page.evaluate(
+      async (key) =>
+        (await (await fetch("/players.json")).json()).find(
+          (p) => p.key === key,
+        ),
+      g.roster.at(-1),
+    );
+    expect(p.name).toBe(name);
+    if (i === 2) await page.reload();
+  }
+  expect(alternatives).toBeGreaterThan(0);
+  await page.getByRole("button", { name: "Skip · I’m ready to play" }).click();
+  await run(page);
+  expect((await read(page)).roster).toHaveLength(5);
+});

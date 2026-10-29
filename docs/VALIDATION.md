@@ -1,4 +1,21 @@
-# Rebuild verification
+# Verification evidence
+
+## Draft alternatives
+
+- **46 unit tests passed** and **22 desktop/touch browser tests passed**, with no
+  failures or skips. Both normal-randomness full ladder runs also completed.
+- Tests browse previous/next candidates, verify the selected player’s season/details,
+  draft alternatives through all five positions, reload saved picks, keep filled slots
+  locked, reject duplicate identities, and run a real possession with the chosen team.
+- All 204 team-era pools are checked. 978 position groups offer three distinct players,
+  35 offer two, and seven offer one based on the historical records.
+- Source consistency: **3,261 records / 29,349 numerical fields** verified against the
+  original source CSVs. All 2,443 previous records and the final opponent are unchanged.
+- Production build and Cloudflare prebuilt dry run passed.
+
+[Selection and QA notes](qa/draft-options/README.md),
+[desktop](qa/draft-options/desktop-options.png),
+[touch](qa/draft-options/mobile-options.png).
 
 ## Playable arena rebuild
 

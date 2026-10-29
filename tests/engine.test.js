@@ -10,6 +10,7 @@ import {
   ratings,
   superteam,
   draftOffers,
+  draftOptions,
   draftPools,
   freshGame,
   defaultPlay,
@@ -34,9 +35,9 @@ const seed = (s) => () => {
   return s / 4294967296;
 };
 test("dataset spans every historical team-era pool and more than 1,200 unique players", () => {
-  assert.equal(players.length, 2443);
-  assert.equal(new Set(players.map((p) => p.id)).size, 1231);
-  assert.equal(new Set(players.map((p) => p.key)).size, 2443);
+  assert.equal(players.length, 3261);
+  assert.equal(new Set(players.map((p) => p.id)).size, 1525);
+  assert.equal(new Set(players.map((p) => p.key)).size, 3261);
   assert.equal(
     ERAS.reduce((n, e) => n + draftPools(players, e).length, 0),
     204,
@@ -83,7 +84,7 @@ test("200 randomized drafts finish with exactly one of all five positions and no
     let g = freshGame(players);
     assert.equal(new Set(g.eras).size, 5);
     for (let i = 0; i < 5; i++) {
-      const all = draftOffers(players, g.eras[i], g.roster, g.draftTeams[i]);
+      const all = draftOptions(players, g.eras[i], g.roster, g.draftTeams[i]);
       const available = all.filter((p) => !p.draftBlockedReason);
       assert.ok(available.length > 0);
       const selected = available[Math.floor(rng() * available.length)];
@@ -636,4 +637,74 @@ test("unfinished legacy drafts keep the valid prefix before a repeated position;
     totalAttempts: 17,
   };
   assert.deepEqual(restoreGame(JSON.stringify(legacy), players), legacy);
+});
+
+test("every position offers up to three distinct sourced team-era alternatives and accepts every visible choice", () => {
+  const coverage = { 1: 0, 2: 0, 3: 0 };
+  for (const era of ERAS)
+    for (const pool of draftPools(players, era)) {
+      const eras = [era, ...ERAS.filter((e) => e !== era).slice(0, 4)];
+      const state = {
+        ...freshGame(players),
+        eras,
+        draftTeams: [
+          pool.team,
+          ...eras.slice(1).map((e) => draftPools(players, e)[0].team),
+        ],
+      };
+      const options = draftOptions(players, era, [], pool.team);
+      for (const position of POSITIONS) {
+        const choices = options.filter((p) => p.position === position);
+        const available = players.filter(
+          (p) =>
+            p.era === era && p.team === pool.team && p.position === position,
+        );
+        assert.equal(
+          choices.length,
+          Math.min(3, new Set(available.map((p) => p.id)).size),
+        );
+        assert.equal(new Set(choices.map((p) => p.id)).size, choices.length);
+        coverage[choices.length]++;
+        for (const p of choices) {
+          assert.ok(!p.draftBlockedReason);
+          assert.equal(p.era, era);
+          assert.equal(p.team, pool.team);
+          const next = selectDraftPlayer(state, p.key, players);
+          assert.deepEqual(next.roster, [p.key]);
+          const later = draftOptions(
+            players,
+            next.eras[1],
+            next.roster,
+            next.draftTeams[1],
+          );
+          assert.ok(
+            later
+              .filter((q) => !q.draftBlockedReason)
+              .every((q) => q.id !== p.id && q.position !== p.position),
+          );
+        }
+      }
+    }
+  assert.deepEqual(coverage, { 1: 7, 2: 35, 3: 978 });
+});
+test("duplicate seasons of one identity never inflate the candidate carousel", () => {
+  const p = players[0],
+    extra = { ...p, key: p.key + "-other-season", season: p.season - 1 };
+  const options = draftOptions([p, extra], p.era, [], p.team);
+  assert.equal(options.length, 1);
+  assert.equal(options[0].id, p.id);
+});
+test("an alternative pick survives reload with its real position and season", () => {
+  let g = freshGame(players);
+  const options = draftOptions(players, g.eras[0], [], g.draftTeams[0]);
+  const alt = options.find(
+    (p, i) => i > 0 && p.position === options[i - 1].position,
+  );
+  assert.ok(alt);
+  g = selectDraftPlayer(g, alt.key, players);
+  assert.deepEqual(restoreGame(JSON.stringify(g), players), g);
+  assert.equal(
+    players.find((p) => p.key === g.roster[0]).position,
+    alt.position,
+  );
 });

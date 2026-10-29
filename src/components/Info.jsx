@@ -52,10 +52,15 @@ export default function Info({ players }) {
       <p>Real seasons. Imagined matchups. Your basketball brain.</p>
       <h3>The roster</h3>
       <p>
-        1,231 players, 2,443 team-player seasons and 204 team–decade pools, from
-        seasons ending 1960–2024. Each draft offers a real team from a different
-        decade. One player per position; no duplicate identities. The top
-        available seasons use this game’s rating, not an official ranking.
+        {new Set(players.map((p) => p.id)).size.toLocaleString()} players,{" "}
+        {players.length.toLocaleString()} team-player seasons and{" "}
+        {new Set(players.map((p) => `${p.era}-${p.team}`)).size} team–decade
+        pools, from seasons ending 1960–2024. Each draft offers a real team from
+        a different decade. One player per position; no duplicate identities.
+        The top available seasons use this game’s rating, not an official
+        ranking. Browse up to three different players per position using the
+        arrows on each card. Short-lived historical teams sometimes have fewer
+        eligible players.
       </p>
       <p>
         Season facts:{" "}

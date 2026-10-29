@@ -29,7 +29,7 @@ for r in rows:
  p['key']=f"{p['id']}-{year}-{team}"
  group=pools[p['era'],team]
  if p['id'] not in group or (score(p),p['season'])>(score(group[p['id']]),group[p['id']]['season']):group[p['id']]=p
-out=[];sizes=[]
+out=[];sizes=[];choice_gaps=[];coverage=defaultdict(int)
 for key,group in sorted(pools.items()):
  candidates=sorted(group.values(),key=lambda p:(-score(p),p['id']))
  # Guarantee a range of positions in the retained candidate pool, then add strength.
@@ -41,10 +41,20 @@ for key,group in sorted(pools.items()):
   if len(selected)>=12:break
   if p not in selected:selected.append(p)
  if len(selected)<9:raise ValueError(('Not enough duplicate-safe candidates',key,len(selected)))
+ # Preserve the original selection (and every saved roster key), then guarantee
+ # three different identities at each position wherever the source supports it.
+ for pos in ['PG','SG','SF','PF','C']:
+  choices=[p for p in candidates if p['position']==pos][:3]
+  for p in choices:
+   if p not in selected:selected.append(p)
+  coverage[len(choices)]+=1
+  if len(choices)<3:
+   choice_gaps.append(dict(era=key[0],team=key[1],teamName=candidates[0]['teamName'],position=pos,available=len(choices)))
  out.extend(sorted(selected,key=lambda p:(-score(p),p['id'])))
  sizes.append((key,len(selected)))
 Path('src/players.json').write_text(json.dumps(out,ensure_ascii=False,separators=(',',':'))+'\n')
 Path('public/players.json').write_text(Path('src/players.json').read_text())
 report={'records':len(out),'uniquePlayers':len(set(p['id'] for p in out)),'teamDecadePools':len(sizes),'teams':len(set(p['team'] for p in out)),'earliestSeason':min(p['season'] for p in out),'latestSeason':max(p['season'] for p in out),'sourceSha256':hashlib.sha256(Path(stats_path).read_bytes()).hexdigest(),'teamsSourceSha256':hashlib.sha256(Path(teams_path).read_bytes()).hexdigest(),'unavailableSteals':sum(p['steals'] is None for p in out),'unavailableBlocks':sum(p['blocks'] is None for p in out)}
+report.update(draftChoicesPerPosition=3,positionChoiceCoverage=dict(sorted(coverage.items())),positionChoiceGaps=choice_gaps)
 Path('docs/data-manifest.json').write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps(report,indent=2))

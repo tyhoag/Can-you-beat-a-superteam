@@ -2036,3 +2036,34 @@ em {
     font-size: 9px;
   }
 }
+.candidate-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px;
+  padding: 3px 7px 7px;
+  color: #a9c1c8;
+}
+.candidate-picker button {
+  display: grid;
+  place-items: center;
+  min-width: 36px;
+  min-height: 36px;
+  border: 1px solid #46616a;
+  border-radius: 5px;
+  background: #233d47;
+  color: var(--player);
+}
+.candidate-picker button:hover:not(:disabled) {
+  background: #34525c;
+  border-color: var(--player);
+}
+.candidate-picker span {
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  text-align: center;
+  line-height: 1.3;
+}
+.candidate-picker b {
+  color: #f1f8ee;
+}

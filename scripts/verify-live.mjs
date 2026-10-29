@@ -7,6 +7,8 @@ const base =
   process.env.PLAYWRIGHT_BASE_URL ||
   "https://chalk-and-dynasty.tyhoag.workers.dev";
 const root = ".cloudflare/output/v0/workers/default/assets";
+const outputDir = process.env.VERIFY_OUTPUT_DIR || "docs/qa/rebuild";
+fs.mkdirSync(outputDir, { recursive: true });
 function files(dir) {
   return fs
     .readdirSync(dir, { withFileTypes: true })
@@ -53,7 +55,7 @@ const remote = await page.evaluate(async (paths) => {
 }, Object.keys(local));
 for (const [p, hash] of Object.entries(local))
   if (remote[p] !== hash) throw Error(`Live asset mismatch: ${p}`);
-await page.screenshot({ path: "docs/qa/rebuild/live-draft.png" });
+await page.screenshot({ path: `${outputDir}/live-draft.png` });
 for (let i = 0; i < 5; i++)
   await page
     .getByRole("button", { name: /^Draft / })
@@ -71,7 +73,7 @@ const before = await page.evaluate(() =>
 );
 if (before.play.starter !== 4)
   throw Error("Live automatic passing replaced handler");
-await page.screenshot({ path: "docs/qa/rebuild/live-arena.png" });
+await page.screenshot({ path: `${outputDir}/live-arena.png` });
 await page.getByRole("button", { name: "PLAY", exact: true }).click();
 await page
   .getByRole("button", { name: "Next possession", exact: true })
@@ -81,10 +83,10 @@ const after = await page.evaluate(() =>
 );
 if (after.totalAttempts !== before.totalAttempts + 1)
   throw Error("Live possession failed");
-await page.screenshot({ path: "docs/qa/rebuild/live-result.png" });
+await page.screenshot({ path: `${outputDir}/live-result.png` });
 await page.setViewportSize({ width: 390, height: 844 });
 await page.getByRole("button", { name: "Next possession" }).click();
-await page.screenshot({ path: "docs/qa/rebuild/live-phone.png" });
+await page.screenshot({ path: `${outputDir}/live-phone.png` });
 if (errors.length) throw Error(errors.join("\n"));
 const report = {
   url: base,
@@ -97,7 +99,7 @@ const report = {
   realPossession: after.results,
 };
 fs.writeFileSync(
-  "docs/qa/rebuild/live-verification.json",
+  `${outputDir}/live-verification.json`,
   JSON.stringify(report, null, 2) + "\n",
 );
 await browser.close();

@@ -49,12 +49,15 @@ that team's actual partial-season line; the displayed games count makes that bas
 2. For each player identity in that pool, keep the season with the highest game score;
    use the later season as a tie-break. Identity is Basketball-Reference's stable ID,
    so name changes and trades do not permit duplicates.
-3. Retain each position's best candidate, then fill by score to at most 12 unique
-   players. All 204 pools contain at least nine and include every roster position.
-   Retained replacements help preserve identity deduplication.
+3. Preserve the original selection: each position’s best candidate plus the next
+   highest scores up to 12 identities. Then add each position’s top three distinct
+   identities wherever supported by the eligible source records. Keeping the original
+   records makes every existing saved roster key remain valid; every old fact is unchanged.
 4. Each draft shuffles the seven eras without replacement and uses five. For every
-   pick it assigns a real team pool in that era. Show one candidate per position;
-   candidates whose position is already filled are disabled. Exclude already-drafted
+   pick it assigns a real team pool in that era. Each position’s card has previous/next
+   arrows to browse up to three distinct available players, ranked by the same game
+   score. Each candidate uses their own displayed season and stats. Candidates whose
+   position is already filled are disabled. Exclude already-drafted
    identities from selectable candidates, even if their position changed in another
    season. The displayed season position determines the roster slot: exactly one PG,
    SG, SF, PF and C. If the planned team has no selectable player for the remaining
@@ -65,10 +68,23 @@ positions keep their valid prefix before the first repeated position; the game e
 that the remaining slots must be drafted under the new rule. This retains era/pick
 alignment instead of silently assigning players invented positions.
 
-This covers **1,231 identities / 2,443 season records / 204 pools / 55 historical
+This covers **1,525 identities / 3,261 season records / 204 pools / 55 historical
 abbreviations**. It is intentionally not a claim to include every player or every
 possible season. Teams are available only in decades in which they actually played.
 A relocated team's old and new abbreviations are distinct historical draft pools.
+
+Three distinct options are available in **978 of 1,020 team–decade position groups**
+(95.9%). Another 35 have two options and seven have one under the 20-game eligibility
+rule and real historical team abbreviations. Short-lived team eras are not padded
+with invented players or another franchise’s seasons. The exact gaps are listed in
+`data-manifest.json` under `positionChoiceGaps`. Already-drafted identities may reduce
+available options during a particular run; the existing same-era team recovery still
+prevents a draft from getting stuck.
+
+The expansion adds 818 source-verified season records and 294 identities. All 2,443
+previous records are preserved byte-for-byte at the object-field level. Source CSV
+SHA-256 digests match the original inputs; this is a broader selection, not a refresh
+with different statistics.
 
 ## Transparent game estimates
 

@@ -8,7 +8,8 @@ React/Vite game with an original SVG arena, optional local audio and no account 
 ## Play
 
 1. Draft exactly one PG, SG, SF, PF and C from five different team–decade draws. Season
-   facts and player details are available on each card; identities cannot repeat.
+   facts and player details are available on each card; identities cannot repeat. Use the
+   arrows on each position’s card to compare up to three players from that team and era.
 2. Try the optional three-step warm-up, or jump straight into the challenge.
 3. Tap a jersey. **Start with ball** and **Take the shot** work with automatic passing.
    **Draw** drags a route or adds tapped waypoints; **Move** changes starting positions.
@@ -65,9 +66,10 @@ See [verification evidence](docs/VALIDATION.md) for actual results and limitatio
 
 ## Historical data
 
-- 1,231 player identities, 2,443 team-player-season records, 204 historical team–decade
+- 1,525 player identities, 3,261 team-player-season records, 204 historical team–decade
   pools and 55 team abbreviations, covering seasons ending 1960–2024.
-- Up to 12 eligible players per pool; at least 20 games with that team. No combined
+- Up to three draft choices per position, plus retained legacy roster records; at least
+  20 games with that team. Short-lived historical teams can have fewer choices. No combined
   multi-team totals, invented teams or ABA records.
 - Points, rebounds, assists, steals and blocks are real single-season per-game facts.
   Unavailable historical fields remain null and display “—”.
