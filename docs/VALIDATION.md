@@ -1,5 +1,29 @@
 # Verification evidence
 
+## Quick playbook, position formation, draft reshuffles and automatic passing
+
+**Live:** https://chalk-and-dynasty.tyhoag.workers.dev
+
+- Application commit: `bf5ae62fa77d2b9f880794511abeba61a8472fb3`.
+- Cloudflare version: `75331641-2820-437b-8bdc-de47b4bdb55d`.
+- **Eight focused public desktop/touch checks passed**. Actual ball ownership was observed
+  changing to a teammate and returning to the chosen handler in automatic mode. Reshuffles,
+  saved budgets, reversed-order drafts, formation reset, tutorial playback and keyboard
+  navigation all worked on the public site. No randomness or successful results were injected.
+- Public HTTPS 200; **all eight assets match the tested build by SHA-256**; a separate
+  live possession finished without page errors. [Verification](qa/playbook-update/live-verification.json).
+- **52 unit tests passed**, including all 120 position orders. **30 distinct browser
+  scenarios checked** locally, including two normal-randomness complete ladder runs.
+  One outdated feedback assertion was corrected and rerun; final tutorial/focus changes
+  also received targeted passing checks. [Details and screenshots](qa/playbook-update/README.md).
+- **120/120 model runs completed** using predeclared plays and independent seeded rolls:
+  median 22 possessions, p90 30, mean 1.03 retries. This measures the simplified model,
+  not a human enjoyment study. [Balance results](qa/playbook-update/balance.json).
+- Production build, formatting, diff check and Cloudflare prebuilt dry run passed.
+- Existing player records remain unchanged. Saves retain drawings and progress; Full reset
+  restores the new position-based formation with the PG holding the ball.
+
+
 ## Draft alternatives
 
 **Live:** https://chalk-and-dynasty.tyhoag.workers.dev

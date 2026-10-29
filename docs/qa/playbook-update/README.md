@@ -48,3 +48,12 @@ receiver arrows remain optional and retain automatic timing.
 
 Screenshots show desktop/mobile formation and the quick playbook. Public deployment and
 asset verification are recorded in [DEPLOYMENT.md](../../DEPLOYMENT.md).
+
+## Public verification
+
+Cloudflare version `75331641-2820-437b-8bdc-de47b4bdb55d`, application
+`bf5ae62fa77d2b9f880794511abeba61a8472fb3`, deployed to the existing free Worker.
+All eight feature browser checks passed on public HTTPS across desktop and touch.
+The formation/guide screenshots in this folder now show those public sessions. A separate
+live walk completed a real possession with no page errors and verified SHA-256 matches for
+all eight served static files; see `live-verification.json` and the `live-*.png` images.

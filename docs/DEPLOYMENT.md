@@ -7,20 +7,21 @@ The complete game is published as an **assets-only Cloudflare Worker** named
 No database, paid resource, custom domain, account provisioning, or billing change
 was created.
 
-- Application source commit: `6be15bda3205f1352a19f7f0076c1d86c6097dfa`.
-- Cloudflare version: `fe4f9382-3bff-4603-8877-eabcffafab88`.
+- Application source commit: `bf5ae62fa77d2b9f880794511abeba61a8472fb3`.
+- Cloudflare version: `75331641-2820-437b-8bdc-de47b4bdb55d`.
 - Account ID: `516850fdbfa65daee3e49f0ed2504d3d` (public identifier).
-- Five changed static assets uploaded; three unchanged assets reused.
+- Three changed static assets uploaded; five unchanged assets reused.
 - Public HTTPS returned 200. All eight public static files match the tested output by
-  SHA-256, including the expanded player records and application bundle.
-- Four focused live browser checks passed across desktop and emulated touch: browsing
-  alternatives, comparing details, choosing the visible player, reload/position locks,
-  completing an alternate-choice lineup and playing a real possession.
-- [Public asset hashes](qa/draft-options/live-verification.json),
-  [selection coverage](DATA.md) and [full validation](VALIDATION.md).
-- Previous version retained for rollback: `23b15a6b-ebe3-4f43-abba-f0b5ecbc408b`
-  (application `969f198ffb1da11660a7214797f22dcfed740d75`). Existing client saves remain
-  compatible; every previously bundled player record is preserved exactly.
+  SHA-256. A real possession completed with no page errors.
+- Eight focused live desktop/touch tests passed: visible automatic give-and-go delivery,
+  reshuffle budgets and reloads, PG-last formation/reset, tutorial animation/pause/replay,
+  keyboard focus and loading/running its pick-and-roll example.
+- [Public asset hashes](qa/playbook-update/live-verification.json),
+  [feature checks](qa/playbook-update/README.md) and [full validation](VALIDATION.md).
+- Previous version retained for rollback: `fe4f9382-3bff-4603-8877-eabcffafab88`
+  (application `6be15bda3205f1352a19f7f0076c1d86c6097dfa`). Existing saved drawings and
+  progress remain compatible. Reset applies the new formation to an existing team;
+  old saved drafts receive the two-reshuffle budget.
 
 ## Updating the game
 
