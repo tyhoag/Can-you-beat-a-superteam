@@ -2581,6 +2581,14 @@ footer button {
   line-height: 1.6;
   color: #65765a;
 }
+@media (max-width: 600px) {
+  .strategy-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .play-controls select {
+    font-size: 14px;
+  }
+}
 .custom-play-note {
   border-left: 2px solid #bf8d5e;
   padding: 4px 0 4px 10px;
