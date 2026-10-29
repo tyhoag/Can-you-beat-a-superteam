@@ -2,6 +2,14 @@
 
 ## Draft alternatives
 
+**Live:** https://chalk-and-dynasty.tyhoag.workers.dev
+
+- Application commit: `6be15bda3205f1352a19f7f0076c1d86c6097dfa`.
+- Cloudflare version: `fe4f9382-3bff-4603-8877-eabcffafab88`.
+- **Four focused live desktop/touch tests passed**. Public HTTPS returned 200 and all
+  eight static-file hashes match the tested build. A real possession completed with
+  no page errors. [Public verification](qa/draft-options/live-verification.json).
+
 - **46 unit tests passed** and **22 desktop/touch browser tests passed**, with no
   failures or skips. Both normal-randomness full ladder runs also completed.
 - Tests browse previous/next candidates, verify the selected player’s season/details,

@@ -27,5 +27,6 @@ Checks:
   real possession, on desktop and emulated touch.
 
 Local screenshots: `desktop-options.png`, `mobile-options.png`.
-Public verification and exact deployment identifiers are recorded in `docs/VALIDATION.md`
-and `docs/DEPLOYMENT.md` after release.
+Four focused live desktop/touch checks also pass. All eight public static files match
+the tested build by SHA-256; see `live-verification.json`. Exact release identifiers
+are recorded in `docs/VALIDATION.md` and `docs/DEPLOYMENT.md`.

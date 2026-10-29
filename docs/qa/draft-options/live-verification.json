@@ -1,0 +1,21 @@
+{
+  "url": "https://chalk-and-dynasty.tyhoag.workers.dev",
+  "http": 200,
+  "verifiedAt": "2026-10-29T18:58:39.451Z",
+  "assetCount": 8,
+  "assets": {
+    "/assets/index-CXOq9_OA.css": "e4d23a0bc9f72a51aa677cba65b47d9d509638377203b514bb2e8b55de470f86",
+    "/assets/index-D25Bv7uo.js": "d9f884d2543bb273504a21b9b75ee10dbb3f5159ce14bbf2e72701e085b5c3e1",
+    "/assets/player-data-DOlgoegL.js": "efd8ada984a4a7861441901fb8e3bebf1a4a61bd6ba0a69925db0d31904253e1",
+    "/fonts/BarlowCondensed-ExtraBold.ttf": "724c9c25952d5f4a2d87185d9767aa006144c5f0d944dc05bf7d5d603551c260",
+    "/fonts/OFL.txt": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f",
+    "/icon.svg": "6ee2b1077321342224b67193003ac619380f13599fadb5ff9dbaf4abd4846e33",
+    "/index.html": "7d4bc9b264bddd9e7fa18a006df1b598eb220690eb2342ae39e96a3921ce4b01",
+    "/players.json": "09584aa90dd08641a97f9cdf1c722e5c8b2a45b61899abe2392e9537b333a97f"
+  },
+  "errors": [],
+  "handler": 4,
+  "realPossession": [
+    false
+  ]
+}

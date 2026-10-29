@@ -7,20 +7,20 @@ The complete game is published as an **assets-only Cloudflare Worker** named
 No database, paid resource, custom domain, account provisioning, or billing change
 was created.
 
-- Application source commit: `969f198ffb1da11660a7214797f22dcfed740d75`.
-- Cloudflare version: `23b15a6b-ebe3-4f43-abba-f0b5ecbc408b`.
+- Application source commit: `6be15bda3205f1352a19f7f0076c1d86c6097dfa`.
+- Cloudflare version: `fe4f9382-3bff-4603-8877-eabcffafab88`.
 - Account ID: `516850fdbfa65daee3e49f0ed2504d3d` (public identifier).
-- Five new/changed static assets uploaded; three unchanged assets reused.
-- The public HTTPS game returned 200. All eight public static files match the tested
-  production output by SHA-256, including JavaScript, CSS, player records and local font.
-- Six focused live browser checks passed across desktop and emulated touch: every
-  handler in automatic mode, direct drawn screens, actual possessions, clear/reset/undo
-  and saved-state persistence. A separate browser verification completed a real possession.
-- [Exact public asset hashes](qa/rebuild/live-verification.json) and
-  [full validation](VALIDATION.md) are committed with the release evidence.
-- Previous version retained for rollback: `116bfe4e-986d-466d-935d-cdf1eb3dfe9c`
-  (application `9f324f28afbbffada9238eb1d559f1adf5e883ba`). No backend or stored server
-  state was migrated. Existing client saves remain compatible.
+- Five changed static assets uploaded; three unchanged assets reused.
+- Public HTTPS returned 200. All eight public static files match the tested output by
+  SHA-256, including the expanded player records and application bundle.
+- Four focused live browser checks passed across desktop and emulated touch: browsing
+  alternatives, comparing details, choosing the visible player, reload/position locks,
+  completing an alternate-choice lineup and playing a real possession.
+- [Public asset hashes](qa/draft-options/live-verification.json),
+  [selection coverage](DATA.md) and [full validation](VALIDATION.md).
+- Previous version retained for rollback: `23b15a6b-ebe3-4f43-abba-f0b5ecbc408b`
+  (application `969f198ffb1da11660a7214797f22dcfed740d75`). Existing client saves remain
+  compatible; every previously bundled player record is preserved exactly.
 
 ## Updating the game
 
