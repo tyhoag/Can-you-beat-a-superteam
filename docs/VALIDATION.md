@@ -2,6 +2,16 @@
 
 ## Playable arena rebuild
 
+**Live and verified:** https://chalk-and-dynasty.tyhoag.workers.dev
+
+- Application commit: `969f198ffb1da11660a7214797f22dcfed740d75`.
+- Cloudflare version: `23b15a6b-ebe3-4f43-abba-f0b5ecbc408b`.
+- **Six focused live browser tests passed**, desktop and touch, with no failures/skips.
+- Public HTTPS returned 200; **all eight static-file SHA-256 hashes match** the tested
+  output. A real live possession completed with the chosen handler preserved and no
+  page errors. [Machine-readable verification](qa/rebuild/live-verification.json).
+
+
 - **43 unit tests passed** (no failed/skipped tests), including all prior data and draft
   checks, every handler/shooter combination through presets and resets, intermediate
   planted screens and rolls, actual contact, one-ball delivery and interception termination.

@@ -1,7 +1,7 @@
 # Basketball game rebuild: Astra handoff
 
 Status: implementation authorized by the user after the requested Astra handoff.
-The rebuild is being executed in the existing repository and Cloudflare game. See
+The rebuild is implemented and verified on the existing Cloudflare game. See
 `docs/qa/rebuild` for the baseline findings, balance measurements and playthrough evidence.
 
 ## Product goal

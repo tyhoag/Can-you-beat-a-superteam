@@ -7,13 +7,20 @@ The complete game is published as an **assets-only Cloudflare Worker** named
 No database, paid resource, custom domain, account provisioning, or billing change
 was created.
 
-- Application source commit: `9f324f28afbbffada9238eb1d559f1adf5e883ba`.
-- Cloudflare version: `116bfe4e-986d-466d-935d-cdf1eb3dfe9c`.
+- Application source commit: `969f198ffb1da11660a7214797f22dcfed740d75`.
+- Cloudflare version: `23b15a6b-ebe3-4f43-abba-f0b5ecbc408b`.
 - Account ID: `516850fdbfa65daee3e49f0ed2504d3d` (public identifier).
-- The final phone-layout adjustment uploaded two changed assets and reused four unchanged assets;
-  the Worker and `workers.dev` trigger deployed successfully.
-- Public HTTPS returns 200 and the expected game title and five draft candidates.
-- Browser tests target the actual public URL; see [validation](VALIDATION.md).
+- Five new/changed static assets uploaded; three unchanged assets reused.
+- The public HTTPS game returned 200. All eight public static files match the tested
+  production output by SHA-256, including JavaScript, CSS, player records and local font.
+- Six focused live browser checks passed across desktop and emulated touch: every
+  handler in automatic mode, direct drawn screens, actual possessions, clear/reset/undo
+  and saved-state persistence. A separate browser verification completed a real possession.
+- [Exact public asset hashes](qa/rebuild/live-verification.json) and
+  [full validation](VALIDATION.md) are committed with the release evidence.
+- Previous version retained for rollback: `116bfe4e-986d-466d-935d-cdf1eb3dfe9c`
+  (application `9f324f28afbbffada9238eb1d559f1adf5e883ba`). No backend or stored server
+  state was migrated. Existing client saves remain compatible.
 
 ## Updating the game
 
