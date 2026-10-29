@@ -2,7 +2,41 @@
 
 **Verified live game: https://chalk-and-dynasty.tyhoag.workers.dev**
 
-## Simpler play editor
+## Inferred screens and automatic passing
+
+- `npm test`: **35 passed**, none failed or skipped.
+- Full production-preview browser suite: **22 passed** across desktop and mobile.
+- Live Cloudflare browser suite with
+  `--grep 'full draft|drawing directly|simple play|optional receiver|clear-all'`:
+  **10 passed**, none failed, flaky or skipped, across desktop and mobile.
+- Production build, Cloudflare packaging dry run and actual deployment passed.
+- Application commit: `f6c2fb225a28628b1430320f2a0828568730263c`.
+- Cloudflare version: `757924cf-654c-4ab5-9910-0c5629997393`.
+
+The unit suite verifies screen intent from routes ending at a defender or teammate,
+stationary teammates beside through-cuts, actual on-ball and off-ball contact, two
+independent screens in one play, misplaced screens receiving no bonus, cyclic and
+zero-length routes, chained setters finishing before cutters move, automatic delivery
+changing with geometry, seven non-overlapping passes with one ball, and no credit for
+screens after the shot or a turnover. Legacy timing fields no longer influence motion
+or delivery, and save migration preserves drawings, receivers, team and progress.
+
+The browser checks draw directly from a numbered setter onto a teammate and then a
+defender, undo, draw an off-ball cut, choose a shooter and run. They verify inferred
+screen markers, contact in the possession result, replay in both delivery modes,
+save/reload, absence of timing/screen dropdowns even when Passing options is open,
+clear-all versus full-reset semantics, and overflow at 320–1440 px. The full local run
+also covers all five challenges, victory, retries, drafting, keyboard controls and data.
+
+An initial mobile run caught a player-name label intercepting a route waypoint and
+switching the selected player. Name labels and shooter stars no longer capture pointer
+input; the focused desktop/mobile check and complete final 22-test run then passed.
+
+Screenshots from the public browser run: [desktop](screenshots/desktop-natural-screens.png)
+and [mobile](screenshots/mobile-natural-screens.png). The optional receiver panel is
+expanded in these screenshots to show the absence of timing controls; it starts closed.
+
+## Previous simpler play editor
 
 - `npm test`: **30 passed**, none failed or skipped.
 - `PLAYWRIGHT_BASE_URL=http://localhost:4173 npm run test:browser`: **22 passed**
@@ -111,9 +145,11 @@ assertion disabling, or unverified production artifact was used.
 
 ## Limits
 
-One stationary screen is supported per possession, with an optional Finish-beat roll.
-Screen contact, defensive slowdown and the four-percentage-point cutter-shot bonus are
-explicit game estimates, not measured NBA screening statistics or a physics simulation.
+Multiple planted screens are inferred from route endpoints and teammates beside cuts.
+Automatic rolling after a screen, moving-screen fouls and contact physics are not modeled.
+Screen contact, defensive slowdown, automatic pass selection and the non-stacking
+four-percentage-point cutter-shot bonus are explicit game estimates, not measured NBA
+screening statistics or a physics simulation.
 
 Safari, Firefox and physical phones were not tested. A fresh-task environment snapshot
 restore is not claimed. Nonfatal build notices remain for the icon library's React Server
