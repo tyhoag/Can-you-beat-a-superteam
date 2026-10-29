@@ -146,8 +146,7 @@ const report = {
       "At 3.4 seconds of playback plus 6–12 seconds to decide/edit per possession, excluding drafting and tutorial.",
   },
 };
-fs.writeFileSync(
-  "docs/qa/rebuild/balance.json",
-  JSON.stringify(report, null, 2) + "\n",
-);
+const output = process.env.BALANCE_OUTPUT || "docs/qa/rebuild/balance.json";
+fs.mkdirSync(output.slice(0, output.lastIndexOf("/")), { recursive: true });
+fs.writeFileSync(output, JSON.stringify(report, null, 2) + "\n");
 console.log(JSON.stringify({ summary: report.summary, levels }, null, 2));

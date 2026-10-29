@@ -5,8 +5,15 @@ import {
   Info,
   ChevronLeft,
   ChevronRight,
+  Shuffle,
 } from "lucide-react";
-import { POSITIONS, draftOptions, draftPools, ratings } from "../engine.js";
+import {
+  POSITIONS,
+  draftOptions,
+  draftPools,
+  ratings,
+  reshuffleChoices,
+} from "../engine.js";
 export const season = (p) => `${p.season - 1}–${String(p.season).slice(-2)}`;
 export const num = (n) => (n === null ? "—" : n.toFixed(1));
 export const last = (n) => n.split(" ").at(-1);
@@ -42,7 +49,14 @@ export function Jersey({ number, color, className = "" }) {
     </svg>
   );
 }
-export default function Draft({ game, players, onPick, onDetails, onReset }) {
+export default function Draft({
+  game,
+  players,
+  onPick,
+  onDetails,
+  onReset,
+  onReshuffle,
+}) {
   const roster = game.roster.map((id) => players.find((p) => p.key === id));
   const pick = roster.length;
   const offers = useMemo(
@@ -95,9 +109,23 @@ export default function Draft({ game, players, onPick, onDetails, onReset }) {
             );
           })}
         </div>
-        <p className="draft-cue" role="status">
-          {game.draftPositionNotice ||
-            `Browse each position, then draft your favorite. ${5 - pick} ${5 - pick === 1 ? "spot" : "spots"} left.`}
+        <div className="draft-decision">
+          <p className="draft-cue" role="status">
+            {game.draftPositionNotice ||
+              `Browse each position, then draft your favorite. ${5 - pick} ${5 - pick === 1 ? "spot" : "spots"} left.`}
+          </p>
+          <button
+            className="secondary reshuffle"
+            onClick={onReshuffle}
+            disabled={!reshuffleChoices(game, players).length}
+            aria-label={`Reshuffle team · ${game.reshufflesLeft} left`}
+            title="New team, same decade. Your drafted players stay."
+          >
+            <Shuffle size={16} /> Reshuffle <b>{game.reshufflesLeft} left</b>
+          </button>
+        </div>
+        <p className="reshuffle-note">
+          Two reshuffles per draft. New team, same decade. Keep your picks.
         </p>
         <div
           className="draft-cards"

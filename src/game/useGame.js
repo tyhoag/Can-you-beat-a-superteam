@@ -3,6 +3,7 @@ import {
   freshGame,
   restoreGame,
   selectDraftPlayer,
+  reshuffleDraft,
   simulate,
   superteam,
   recordResult,
@@ -86,6 +87,10 @@ export function useGame(players) {
     try {
       localStorage.setItem("chalk-coach-done", "yes");
     } catch {}
+  }
+  function reshuffle() {
+    setGame((g) => reshuffleDraft(g, players));
+    sound("pick", !muted);
   }
   function run() {
     if (error || runningRef.current || outcome || status !== "playing") return;
@@ -188,6 +193,7 @@ export function useGame(players) {
     edit,
     undo,
     pick,
+    reshuffle,
     run,
     nextPossession,
     retry,

@@ -106,7 +106,7 @@ test("new draft starts with a real point guard and an editable valid basketball 
   const p = firstPlay([...roster].reverse());
   assert.equal([...roster].reverse()[p.starter].position, "PG");
   assert.equal(validatePlay(p), null);
-  assert.ok(p.routes[p.shooter].length);
+  assert.ok(p.routes.every((route) => route.length === 0));
 });
 test("saved games preserve the rebuild ball choice, drawings, old roster and challenge progress", () => {
   const g = {

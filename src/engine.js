@@ -130,6 +130,7 @@ export function draftPools(players, era) {
 }
 export const POSITIONS = ["PG", "SG", "SF", "PF", "C"];
 export const DRAFT_CHOICES_PER_POSITION = 3;
+export const DRAFT_RESHUFFLES = 2;
 export function draftOptions(players, era, roster, team = null) {
   const picked = roster
     .map((key) => players.find((p) => p.key === key))
@@ -187,6 +188,37 @@ export function eligibleDraftTeam(
     )[0]?.team ?? null
   );
 }
+export function reshuffleChoices(state, players) {
+  if (state.stage !== "draft" || state.reshufflesLeft <= 0) return [];
+  const index = state.roster.length;
+  const seen = new Set([
+    state.draftTeams[index],
+    ...(state.draftTeamHistory ?? []),
+  ]);
+  return draftPools(players, state.eras[index]).filter(
+    (pool) =>
+      !seen.has(pool.team) &&
+      draftOffers(players, state.eras[index], state.roster, pool.team).some(
+        (p) => !p.draftBlockedReason,
+      ),
+  );
+}
+export function reshuffleDraft(state, players, random = Math.random) {
+  const choices = reshuffleChoices(state, players);
+  if (!choices.length) return state;
+  const index = state.roster.length;
+  const draftTeams = [...state.draftTeams];
+  draftTeams[index] = shuffle(choices, random)[0].team;
+  return {
+    ...state,
+    draftTeams,
+    reshufflesLeft: state.reshufflesLeft - 1,
+    draftTeamHistory: [
+      ...(state.draftTeamHistory ?? []),
+      state.draftTeams[index],
+    ],
+  };
+}
 export function selectDraftPlayer(state, key, players, random = Math.random) {
   if (state.stage !== "draft" || state.roster.length >= 5) return state;
   const picked = state.roster.map((key) => players.find((p) => p.key === key));
@@ -222,6 +254,7 @@ export function selectDraftPlayer(state, key, players, random = Math.random) {
     draftTeams,
     stage: roster.length === 5 ? "game" : "draft",
     draftPositionNotice: null,
+    draftTeamHistory: [],
   };
 }
 export const DEFAULT_POSITIONS = [
@@ -231,6 +264,19 @@ export const DEFAULT_POSITIONS = [
   { x: 145, y: 145 },
   { x: 355, y: 145 },
 ];
+// Map spots to basketball positions, never to the order the cards were drafted.
+export function formation(roster) {
+  const spots = {
+    PG: { x: 250, y: 365 },
+    SG: { x: 80, y: 285 },
+    SF: { x: 420, y: 285 },
+    PF: { x: 205, y: 165 },
+    C: { x: 295, y: 110 },
+  };
+  return roster.map((p, i) => ({
+    ...(spots[p.position] ?? DEFAULT_POSITIONS[i]),
+  }));
+}
 // Movement and passing are inferred from the drawing, never assigned to timeline slots.
 export function normalizePlay(play) {
   const { routeBeats, passBeats, screen, ...drawing } = play;
@@ -242,14 +288,18 @@ export function clearAllRoutes(play) {
     routes: Array.from({ length: 5 }, () => []),
   };
 }
-export function resetPlay(play) {
-  const passes =
-    play.starter === play.shooter
-      ? [play.starter]
-      : [play.starter, play.shooter];
+export function resetPlay(play, roster) {
+  const starter = roster
+    ? Math.max(
+        0,
+        roster.findIndex((p) => p.position === "PG"),
+      )
+    : play.starter;
+  const passes = starter === play.shooter ? [starter] : [starter, play.shooter];
   return {
     ...clearAllRoutes(play),
-    positions: structuredClone(DEFAULT_POSITIONS),
+    starter,
+    positions: roster ? formation(roster) : structuredClone(DEFAULT_POSITIONS),
     passes,
   };
 }
@@ -479,25 +529,30 @@ function openingScore(play, frames, plan, receiver, time) {
   const rim = Math.max(0, 300 - distance(spot, RIM));
   return Math.min(space, 95) * 0.9 + progress * 18 + rim * 0.07 - time * 2;
 }
-export function schedulePasses(play, frames = null, plan = planPlay(play)) {
-  const passes =
-    play.mode === "passes"
-      ? play.passes
-      : play.starter === play.shooter
-        ? [play.starter]
-        : [play.starter, play.shooter];
+export function schedulePasses(
+  play,
+  frames = null,
+  plan = planPlay(play),
+  order = null,
+) {
   frames ??= Array.from({ length: 49 }, (_, step) => ({
     offense: play.positions.map((_, i) =>
       playerPoint(play, i, step / 48, plan),
     ),
     defenders: initialDefenders(play),
   }));
+  if (!order && play.mode !== "passes")
+    return automaticPassEvents(play, frames, plan);
+  const passes = order ?? play.passes;
   const events = [];
   let earliest = 0.045;
   for (let i = 1; i < passes.length; i++) {
     const from = passes[i - 1],
       to = passes[i];
-    const latest = 0.94 - (passes.length - 1 - i) * 0.115;
+    const latest =
+      play.mode !== "passes" && i < passes.length - 1
+        ? 0.45
+        : 0.94 - (passes.length - 1 - i) * 0.115;
     let best = null;
     for (
       let step = Math.ceil((earliest + 0.035) * 48);
@@ -537,6 +592,55 @@ export function schedulePasses(play, frames = null, plan = planPlay(play)) {
     earliest = event.arrive + 0.025;
   }
   return events;
+}
+// Read the drawing: use a relay or give-and-go when it gives a useful, short
+// connection. Avoid the planted screener and keep the chosen final shooter.
+function automaticPassEvents(play, frames, plan) {
+  const direct =
+    play.starter === play.shooter
+      ? [play.starter]
+      : [play.starter, play.shooter];
+  const candidates = [direct];
+  const cutter = play.routes[play.shooter].length > 0;
+  if (play.starter !== play.shooter || cutter) {
+    for (let helper = 0; helper < 5; helper++) {
+      if (
+        helper === play.starter ||
+        helper === play.shooter ||
+        plan.screens.some((s) => s.screener === helper)
+      )
+        continue;
+      candidates.push([play.starter, helper, play.shooter]);
+    }
+  }
+  let best = null;
+  for (const order of candidates) {
+    const events = schedulePasses(play, frames, plan, order);
+    const time = events.length ? Math.min(1, events.at(-1).arrive + 0.04) : 0.9;
+    let score = openingScore(play, frames, plan, play.shooter, time);
+    let longest = 0,
+      total = 0,
+      valid = true;
+    for (const e of events) {
+      const frame = frames[Math.round(e.t * 48)],
+        a = frame.offense[e.from],
+        b = frames[Math.round(e.arrive * 48)].offense[e.to];
+      const length = distance(a, b);
+      const lane = Math.min(
+        ...frame.defenders.map((d) => segmentDistance(d, a, b)),
+      );
+      longest = Math.max(longest, length);
+      total += length;
+      score -= Math.max(0, 24 - lane) * 0.9 + 3;
+      if (events.length > 1 && (length < 35 || lane < 7)) valid = false;
+    }
+    score -= longest * 0.075 + total * 0.025;
+    // A moving handler can give the ball up before cutting and receive it back.
+    if (play.starter === play.shooter && cutter && events.length === 2)
+      score += 20;
+    if (valid && (!best || score > best.score)) best = { score, events };
+  }
+  return best?.events ?? [];
 }
 export function routePoint(start, route, t) {
   if (t <= 0 || route.length === 0) return { ...start };
@@ -627,12 +731,6 @@ export function simulate(
   if (roster.length !== 5) throw new Error("Draft exactly five players first.");
   const level = LEVELS[levelIndex];
   if (!level) throw new Error("Unknown defense.");
-  const passes =
-    play.mode === "passes"
-      ? play.passes
-      : play.starter === play.shooter
-        ? [play.starter]
-        : [play.starter, play.shooter];
   const plan = planPlay(play, levelIndex);
   let defenders = initialDefenders(play, levelIndex);
   const frames = [];
@@ -711,6 +809,7 @@ export function simulate(
     });
   }
   let passEvents = schedulePasses(play, frames, plan);
+  const passes = [play.starter, ...passEvents.map((event) => event.to)];
   let shotT = passEvents.length
     ? Math.min(1, passEvents.at(-1).arrive + 0.04)
     : 0.15;
@@ -846,6 +945,8 @@ export function freshGame(players = []) {
       (era) => shuffle(draftPools(players, era))[0]?.team || null,
     ),
     roster: [],
+    reshufflesLeft: DRAFT_RESHUFFLES,
+    draftTeamHistory: [],
     level: 0,
     results: [],
     round: 1,
@@ -874,6 +975,17 @@ export function restoreGame(raw, players) {
       s.eras.length !== 5 ||
       new Set(s.eras).size !== 5 ||
       s.eras.some((e) => !ERAS.includes(e))
+    )
+      return null;
+    s.reshufflesLeft ??= DRAFT_RESHUFFLES;
+    s.draftTeamHistory ??= [];
+    if (
+      !Number.isInteger(s.reshufflesLeft) ||
+      s.reshufflesLeft < 0 ||
+      s.reshufflesLeft > DRAFT_RESHUFFLES ||
+      !Array.isArray(s.draftTeamHistory) ||
+      s.draftTeamHistory.length > DRAFT_RESHUFFLES - s.reshufflesLeft ||
+      s.draftTeamHistory.some((team) => typeof team !== "string")
     )
       return null;
     if (

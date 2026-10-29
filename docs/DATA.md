@@ -116,6 +116,12 @@ Actual contact before the shot can give the screened shooter a **4 percentage po
 bonus, capped once per shot before the existing 12–88% bounds. Moving, late or misplaced
 screens get no bonus. These are entertainment mechanics, not recorded NBA screening stats.
 
+Automatic mode compares direct delivery with one-teammate relays (two passes), including
+give-and-go returns when the starting handler cuts. It scores final openings, lane clearance
+and connection length, reserves an earlier outlet pass, and avoids detours through a planted
+screener. It does not force an extra pass into a crowded lane. Manual receiver sequences
+remain available. These choices are game heuristics, not historical passing statistics.
+
 Passes choose arrival/departure times by scoring receiver separation, route progress,
 passing-lane clearance and pass distance over the simulated movement. The schedule keeps
 one ball and reserves room for up to seven ordered passes. The shot follows final delivery;

@@ -475,8 +475,9 @@ test("off-ball and on-ball screens make actual defender contact; misplaced route
     assert.equal(miss.screenBonus, 0);
     assert.notDeepEqual(hit.frames[12].defenders, miss.frames[12].defenders);
     assert.match(hit.explanation, /screen slowed/);
-    if (starter === 0) assert.ok(hit.screenEvents[0].t < hit.passEvents[0].t);
-    else assert.equal(hit.passEvents.length, 0);
+    if (starter === 0)
+      assert.ok(hit.screenEvents[0].t < hit.passEvents.at(-1).t);
+    else assert.equal(hit.passes.at(-1), starter);
   }
 });
 test("two independent off-ball screens can work in one possession", () => {
@@ -542,10 +543,10 @@ test("automatic passes react to the cut and coverage; old timing choices have no
   const p2 = structuredClone(p);
   p2.routes[1] = [{ x: 90, y: 200 }];
   const different = simulate(roster, p2, 1, () => 0.99, roster);
-  assert.notEqual(different.passEvents[0].t, r.passEvents[0].t);
-  assert.ok(r.passEvents[0].arrive > r.plan.movements[1].start);
-  assert.ok(r.passEvents[0].arrive <= r.plan.movements[1].end);
-  assert.ok(r.shotT > r.passEvents[0].arrive && r.shotT <= 1);
+  assert.notEqual(different.passEvents.at(-1).t, r.passEvents.at(-1).t);
+  assert.ok(r.passEvents.at(-1).arrive > r.plan.movements[1].start);
+  assert.ok(r.passEvents.at(-1).arrive <= r.plan.movements[1].end);
+  assert.ok(r.shotT > r.passEvents.at(-1).arrive && r.shotT <= 1);
   assert.deepEqual(
     r.spot,
     r.frames[Math.round(r.shotT * 48)].offense[p.shooter],

@@ -10,7 +10,10 @@ React/Vite game with an original SVG arena, optional local audio and no account 
 1. Draft exactly one PG, SG, SF, PF and C from five different team–decade draws. Season
    facts and player details are available on each card; identities cannot repeat. Use the
    arrows on each position’s card to compare up to three players from that team and era.
-2. Try the optional three-step warm-up, or jump straight into the challenge.
+   Two reshuffles per draft replace the current team, keep the decade and retain your picks.
+2. Your PG starts with the ball, SG/SF on the wings and PF/C in the key, whatever the
+   draft order. Try the optional warm-up or open **Playbook** for four six-second examples
+   of cuts, passing, off-ball screens and pick-and-rolls. Each example can load onto your court.
 3. Tap a jersey. **Start with ball** and **Take the shot** work with automatic passing.
    **Draw** drags a route or adds tapped waypoints; **Move** changes starting positions.
 4. Draw into a defender or teammate to imply a screen. Cut another player around it.
@@ -20,12 +23,15 @@ React/Vite game with an original SVG arena, optional local audio and no account 
    Three misses end the round early. **Rematch** keeps your team and drawing.
 
 Four editable starting plays: Backdoor cut, Screen & cut, Pick & roll, Give & go.
-Passing reads openings automatically. To choose receivers, select **Pass** and tap
+Automatic passing reads openings and can use a two-pass relay or give-and-go. It keeps
+a direct pass when that connection works better. To choose receivers, select **Pass** and tap
 jerseys on the court. The last receiver shoots; no timing form is required. **Auto
 passes** keeps the chosen starting handler and shooter.
 
 **Clear** erases all routes and keeps positions. **Reset** restores the original formation
-and direct delivery. **Undo** reverses either. These actions preserve the drafted team.
+with the PG holding the ball, and clears routes. Explicit ball-handler choices stay intact
+through automatic passing, Clear and play templates; Full reset restores the PG.
+**Undo** reverses either. These actions preserve the drafted team.
 A new draft requires a separate confirmation. Existing compatible saved teams, progress,
 roles and drawings remain usable; unfinished invalid manual passing recovers to automatic.
 

@@ -94,9 +94,7 @@ export function template(id, play = defaultPlay()) {
       { x: 165, y: 115 },
       { x: 240, y: 100 },
     ];
-    p.mode = "passes";
-    p.passes =
-      start === shoot ? [start, helper, shoot] : [start, helper, shoot];
+    // The helper is a natural passing outlet; automatic delivery chooses the lane.
   }
   return p;
 }
@@ -112,7 +110,7 @@ export function firstPlay(roster) {
         ratings(p).rim + (p.position === "SG" || p.position === "SF" ? 7 : 0),
     }))
     .sort((a, b) => b.score - a.score)[0].i;
-  return template("cut", { ...defaultPlay(), starter, shooter });
+  return automatic(resetPlay({ ...defaultPlay(), starter, shooter }, roster));
 }
 export function feedback(result) {
   if (result.turnover)

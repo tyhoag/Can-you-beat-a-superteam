@@ -296,8 +296,10 @@ export default function Arena({ g, onNewDraft, onDetails, onOpponentInfo }) {
                 aria-label="Full reset"
                 title="Restore positions and clear routes"
                 onClick={() => {
-                  g.edit(resetPlay(play));
-                  setTip("Original positions restored. Routes cleared.");
+                  g.edit(resetPlay(play, roster));
+                  setTip(
+                    "Bigs inside. Wings outside. Point guard has the ball.",
+                  );
                   setActivePlay("");
                 }}
               >

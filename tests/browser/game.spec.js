@@ -104,7 +104,7 @@ test("draft completes each position once, details and source search work, save r
   await page.getByRole("button", { name: "Close dialog" }).click();
 });
 
-test("every handler is available in auto mode and survives plays, clear, reset, run and reload", async ({
+test("every handler is available in auto mode; reset restores the PG and later choices survive reload", async ({
   page,
 }) => {
   await draft(page);
@@ -129,6 +129,11 @@ test("every handler is available in auto mode and survives plays, clear, reset, 
   await page.getByRole("button", { name: "Use automatic passing" }).click();
   await page.getByRole("button", { name: "Clear all routes" }).click();
   await page.getByRole("button", { name: "Full reset" }).click();
+  expect((await read(page)).play.starter).toBe(0);
+  await select(page, 4);
+  await page
+    .getByRole("button", { name: "Start with ball", exact: true })
+    .click();
   await select(page, 2);
   await page
     .getByRole("button", { name: "Take the shot", exact: true })
@@ -154,13 +159,22 @@ test("mouse and touch draw implied off-ball screens; undo and real possession wo
   const mobile = info.project.name === "mobile";
   await draft(page);
   await page.getByRole("button", { name: "Full reset" }).click();
-  await drag(page, [145, 145], [100, 253], mobile);
-  let g = await read(page);
-  expect(g.play.routes[3].at(-1).x).toBeCloseTo(100, 0);
+  const g = await read(page);
+  const data = await page.evaluate(async () =>
+    fetch("/players.json").then((r) => r.json()),
+  );
+  const team = g.roster.map((k) => data.find((p) => p.key === k));
+  const setter = team.findIndex((p) => p.position === "PF");
+  const cutter = team.findIndex((p) => p.position === "SG");
+  const start = g.play.positions[setter];
+  await drag(page, [start.x, start.y], [100, 253], mobile);
+  await expect
+    .poll(async () => (await read(page)).play.routes[setter].at(-1)?.x)
+    .toBeCloseTo(100, 0);
   await expect(
-    page.locator('[data-screener="3"][data-cutter="1"]'),
+    page.locator(`[data-screener="${setter}"][data-cutter="${cutter}"]`),
   ).toBeVisible();
-  await select(page, 1);
+  await select(page, cutter);
   await tap(page, 130, 260, mobile);
   await tap(page, 165, 185, mobile);
   await tap(page, 265, 105, mobile);
@@ -173,7 +187,7 @@ test("mouse and touch draw implied off-ball screens; undo and real possession wo
     .click();
   await run(page);
   await expect(page.locator(".live-cue")).toContainText(
-    /screen|pick|pass|look|defender|shot/i,
+    /screen|pick|pass|look|defender|shot|ball movement/i,
   );
   await page.getByRole("button", { name: "Next possession" }).click();
   await page.getByRole("button", { name: "Load Pick & roll" }).click();

@@ -10,8 +10,17 @@ export default function Modal({ title, children, onClose }) {
       if (e.key === "Escape") onClose();
       if (e.key === "Tab") {
         const all = [
-          ...el.querySelectorAll('button,a[href],input,select,[tabindex="0"]'),
-        ].filter((x) => !x.disabled);
+          ...el.querySelectorAll(
+            'button,a[href],input,select,summary,[tabindex="0"]',
+          ),
+        ].filter((x) => {
+          const closed = x.closest("details:not([open])");
+          return (
+            !x.disabled &&
+            x.getClientRects().length > 0 &&
+            (!closed || closed.querySelector("summary")?.contains(x))
+          );
+        });
         if (e.shiftKey && document.activeElement === all[0]) {
           e.preventDefault();
           all.at(-1)?.focus();

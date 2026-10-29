@@ -9,3 +9,7 @@
 - Broad historical roster, one player at each position, real sourced single-season facts.
 - Clear routes preserves starting spots; full reset restores them. Neither loses the team.
 - Preserve the existing free public Cloudflare game and its saved progress where possible.
+
+- Default/reset formation follows actual positions: PG ball, SG/SF wings, PF/C in key.
+- Two team reshuffles for each draft, keeping the decade and previous picks.
+- Short visual basketball examples; automatic multi-pass movement so passing is not a chore.
