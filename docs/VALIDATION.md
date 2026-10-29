@@ -6,12 +6,14 @@
 
 - `npm test`: **35 passed**, none failed or skipped.
 - Full production-preview browser suite: **22 passed** across desktop and mobile.
+- A final CSS adjustment stacks the play panel across phone widths up to 600 px; the
+  focused desktop/mobile drawing and simple-play checks then passed **4/4** locally.
 - Live Cloudflare browser suite with
   `--grep 'full draft|drawing directly|simple play|optional receiver|clear-all'`:
   **10 passed**, none failed, flaky or skipped, across desktop and mobile.
 - Production build, Cloudflare packaging dry run and actual deployment passed.
-- Application commit: `f6c2fb225a28628b1430320f2a0828568730263c`.
-- Cloudflare version: `757924cf-654c-4ab5-9910-0c5629997393`.
+- Application commit: `9f324f28afbbffada9238eb1d559f1adf5e883ba`.
+- Cloudflare version: `116bfe4e-986d-466d-935d-cdf1eb3dfe9c`.
 
 The unit suite verifies screen intent from routes ending at a defender or teammate,
 stationary teammates beside through-cuts, actual on-ball and off-ball contact, two

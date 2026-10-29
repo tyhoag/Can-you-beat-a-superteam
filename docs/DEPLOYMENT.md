@@ -7,10 +7,10 @@ The complete game is published as an **assets-only Cloudflare Worker** named
 No database, paid resource, custom domain, account provisioning, or billing change
 was created.
 
-- Application source commit: `f6c2fb225a28628b1430320f2a0828568730263c`.
-- Cloudflare version: `757924cf-654c-4ab5-9910-0c5629997393`.
+- Application source commit: `9f324f28afbbffada9238eb1d559f1adf5e883ba`.
+- Cloudflare version: `116bfe4e-986d-466d-935d-cdf1eb3dfe9c`.
 - Account ID: `516850fdbfa65daee3e49f0ed2504d3d` (public identifier).
-- The inferred-screen and automatic-passing update uploaded three changed assets and reused three unchanged assets;
+- The final phone-layout adjustment uploaded two changed assets and reused four unchanged assets;
   the Worker and `workers.dev` trigger deployed successfully.
 - Public HTTPS returns 200 and the expected game title and five draft candidates.
 - Browser tests target the actual public URL; see [validation](VALIDATION.md).
